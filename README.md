@@ -11,16 +11,16 @@ The Database is a json file named "Restaurant.json" where there's meals with the
 {
   "plat" : [
     {
-      "Id": 1,
-      "Name": "Ramen",
-      "Restaurant": "Lyianhg Restaurant",
-      "Price" : "3.50"
+      "id": 1,
+      "name": "Ramen",
+      "restaurant": "Lyianhg Restaurant",
+      "price" : "3.50"
     },
     {
-      "Id": 2,
-      "Name": "Pizza",
-      "Restaurant": "Bar Roger",
-      "Price" : "6.00"
+      "id": 2,
+      "name": "Pizza",
+      "restaurant": "Bar Roger",
+      "price" : "6.00"
     }
   ]
 }
@@ -33,83 +33,78 @@ pip install flask
 
 ## API Usage
 
+* Request type :: [GET] http://127.0.0.1:4001/receive_event
+
 ### Restaurant
 
-* Get Restaurant who make the meal :: `[GET] http://127.0.0.1:5000/OrderMeal/<meal>`
+* Get Restaurant who make the meal ::
 
-Example :
-
-> [GET] http://127.0.0.1:5000/OrderMeal/Ramen
+> Request Body 
 
 ```json
 {
-  "Order": {
-    "Meal": "Ramen",
-    "Price": "3.50",
-    "Restaurant": "Lyianhg Restaurant"
-  }
+    "action" : "order_meal",
+    "message" :
+    {
+        "meal": something
+    }
+}
+```
+
+
+Example :
+
+>with "meal" : "Ramen"
+> [GET] http://127.0.0.1:4001/receive_event
+
+```json
+{
+    "action": "compute_eta",
+    "message": {
+        "meal": "Ramen",
+        "price": "3.50",
+        "restaurant": "Lyianhg Restaurant"
+    }
 }
 ```
 
 ### Validation
 
-* Return json of Order with unique ID for command :: `[GET] http://127.0.0.1:5000/ValidateOrder`
+* Return json of Order with unique ID for command
+
+> Request Body 
+
+```json
+{
+    "action" : "validate_order",
+    "message" :
+    {
+        "meal": "Ramen",
+        "restaurant": "Lyianhg Restaurant",
+        "delivery_address": "Templier",
+        "pick_up_date": "40",
+        "delivery_date": "60",
+        "price" : "15.00€"
+    }
+}
+```
 
 Example :
 
-> [POST] http://127.0.0.1:5000/ValidateOrder/OK
-
->> Request Body 
 
 ```json
 {
-  "Meal": "Ramen",
-  "Restaurant": "Lyianhg Restaurant",
-  "Delivery_Address": "Templier",
-  "Pick_Up_Date": "40",
-  "Delivery_Date": "60",
-  "Total Price" : "15.00€"
+    "action": {
+        "command_id": 47,
+        "delivery_address": "Templier",
+        "delivery_date": "60",
+        "meal": "Ramen",
+        "price": "15.00€",
+        "restaurant": "Lyianhg Restaurant"
+    },
+    "status": "Accepted"
 }
 ```
 
->>Answer
-
-```json
-{
-  "Order": {
-    "Command_Id": 62,
-    "Delivery_Address": "Templier",
-    "Delivery_Date": "60",
-    "Meal": "Ramen",
-    "Pick_Up_Date": "40",
-    "Restaurant": "Lyianhg Restaurant",
-    "Total Price": "15.00€"
-  },
-  "Status": "Accepted"
-}
-```
-
-> [POST] http://127.0.0.1:5000/ValidateOrder/NO
->> Request Body 
-
-```json
-{
-  "Meal": "Ramen",
-  "Restaurant": "Lyianhg Restaurant",
-  "Delivery_Address": "Templier",
-  "Pick_Up_Date": "40",
-  "Delivery_Date": "60",
-  "Total Price" : "15.00€"
-}
-```
-
->>Answer
-
-```json
-{
-  "Order": "none",
-  "Status": "Canceled"
-}
-```
 
   
