@@ -11,6 +11,17 @@ The database is mocked before each request.
 
 Only `Read` Operations are available.
 
+## Server Startup
+
+```bash
+export FLASK_APP=app.py
+export FLASK_ENV=development
+
+flask run --host 0.0.0.0 --port 5000
+
+# * Serving Flask application
+```
+
 ## API Usage
 
 ### Categories
