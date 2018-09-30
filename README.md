@@ -33,7 +33,7 @@ pip install flask
 
 ## API Usage
 
-* Request type :: [GET] http://127.0.0.1:4001/receive_event
+* Request type :: [POST] http://127.0.0.1:4001/receive_event
 
 ### Restaurant
 
@@ -55,7 +55,7 @@ pip install flask
 Example :
 
 >with "meal" : "Ramen"
-> [GET] http://127.0.0.1:4001/receive_event
+> [POST] http://127.0.0.1:4001/receive_event
 
 ```json
 {
