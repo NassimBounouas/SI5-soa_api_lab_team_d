@@ -67,7 +67,7 @@ Example :
   "Restaurant": "Lyianhg Restaurant",
   "Delivery_Address": "Templier",
   "Pick_Up_Date": "40",
-  "Delivery_Date": "60"
+  "Delivery_Date": "60",
   "Total Price" : "15.00€"
 }
 ```
@@ -98,7 +98,7 @@ Example :
   "Restaurant": "Lyianhg Restaurant",
   "Delivery_Address": "Templier",
   "Pick_Up_Date": "40",
-  "Delivery_Date": "60"
+  "Delivery_Date": "60",
   "Total Price" : "15.00€"
 }
 ```
