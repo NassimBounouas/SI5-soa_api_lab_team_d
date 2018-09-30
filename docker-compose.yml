@@ -1,6 +1,10 @@
 version: '3'
 services:
-  restaurant:
-    image: restaurant 
+  chinese-restaurant:
+    image: uberoolab/team-d-chinese-restaurant-service:1.0 
     ports:
-     - "4000:8080"
+     - "4003:8080"
+  delivery:
+    image: uberoolab/team-d-delivery-service:1.0 
+    ports:
+     - "4004:8080"
