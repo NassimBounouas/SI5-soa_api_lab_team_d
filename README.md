@@ -13,12 +13,14 @@ The Database is a json file named "Restaurant.json" where there's meals with the
     {
       "Id": 1,
       "Name": "Ramen",
-      "Restaurant": "Lyianhg Restaurant"
+      "Restaurant": "Lyianhg Restaurant",
+      "Price" : "3.50"
     },
     {
       "Id": 2,
       "Name": "Pizza",
-      "Restaurant": "Bar Roger"
+      "Restaurant": "Bar Roger",
+      "Price" : "6.00"
     }
   ]
 }
@@ -41,8 +43,11 @@ Example :
 
 ```json
 {
-  "Meal": "Ramen",
-  "Restaurant": "Lyianhg Restaurant"
+  "Order": {
+    "Meal": "Ramen",
+    "Price": "3.50",
+    "Restaurant": "Lyianhg Restaurant"
+  }
 }
 ```
 
@@ -52,7 +57,7 @@ Example :
 
 Example :
 
-> [POST] http://127.0.0.1:5000/ValidateOrder
+> [POST] http://127.0.0.1:5000/ValidateOrder/OK
 
 >> Request Body 
 
@@ -63,6 +68,7 @@ Example :
   "Delivery_Address": "Templier",
   "Pick_Up_Date": "40",
   "Delivery_Date": "60"
+  "Total Price" : "15.00€"
 }
 ```
 
@@ -70,11 +76,40 @@ Example :
 
 ```json
 {
-  "Command_Id": 15,
-  "Delivery_Address": "Templier",
-  "Delivery_Date": "60",
-  "Meal": "Ramen",
-  "Pick_Up_Date": "40",
-  "Restaurant": "Lyianhg Restaurant"
+  "Order": {
+    "Command_Id": 62,
+    "Delivery_Address": "Templier",
+    "Delivery_Date": "60",
+    "Meal": "Ramen",
+    "Pick_Up_Date": "40",
+    "Restaurant": "Lyianhg Restaurant",
+    "Total Price": "15.00€"
+  },
+  "Status": "Accepted"
 }
 ```
+
+> [POST] http://127.0.0.1:5000/ValidateOrder/NO
+>> Request Body 
+
+```json
+{
+  "Meal": "Ramen",
+  "Restaurant": "Lyianhg Restaurant",
+  "Delivery_Address": "Templier",
+  "Pick_Up_Date": "40",
+  "Delivery_Date": "60"
+  "Total Price" : "15.00€"
+}
+```
+
+>>Answer
+
+```json
+{
+  "Order": "none",
+  "Status": "Canceled"
+}
+```
+
+  
