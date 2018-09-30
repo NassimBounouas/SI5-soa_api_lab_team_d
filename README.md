@@ -152,3 +152,14 @@ Response :
 
 > Note :
 > The category must be passed by the category name
+
+## Example with cURL
+
+Read categories with cURL
+
+```bash
+curl -X POST http://localhost:5000/receive_event -H "Content-Type: application/json" --data '{
+    "Action": "READ_CATEGORIES",
+    "Message": {}
+}'
+```
