@@ -1,51 +1,35 @@
 from flask import Flask, request, jsonify
+import json
 import random
 
 app = Flask(__name__)
-jsonMessage = {}
 
-def whoFunction():
-    if jsonMessage["EVENT"] == "ORDER_MEAL":
-        return orderMeal()
-    elif jsonMessage["EVENT"] == "VALIDATE_ORDER":
-        return validateOrder()
-    else:
-        print("400 BAD REQUEST")
-        return jsonify(jsonMessage)
 
+@app.route('/OrderMeal',methods = ['POST'])
 def orderMeal():
-    global jsonMessage
-    f = open ("Restaurant.txt","r")
-    line = f.readline()
-    while line:
-        name = line.split(" ")
-        if jsonMessage["MEAL"] == name[0]:
-            restaurant = name[1]
-        line = f.readline()
+    jsonMessage = request.get_json(force=True)
+    resto = ""
+    with open("Restaurant.json") as f:
+        file = json.load(f)
     f.close()
-    return jsonify(EVENT = jsonMessage["EVENT"],
-                    RESTAURANT = restaurant,
-                    MEAL = jsonMessage["MEAL"])
+    for i in file["plat"]:
+        if i["Name"] == "Ramen":
+            resto = i["Restaurant"]
+            break
+    return jsonify(
+                    Restaurant = resto,
+                    Meal = jsonMessage["Meal"])
 
+@app.route('/ValidateOrder',methods = ['POST'])
 def validateOrder():
-    global jsonMessage
-    return jsonify(EVENT = jsonMessage["EVENT"],
-                   RESTAURANT = jsonMessage["RESTAURANT"],
-                   MEAL = jsonMessage["MEAL"],
-                   DELIVERYADDRESS = jsonMessage["DELIVERYADDRESS"],
-                   PICKUPDATE = jsonMessage["PICKUPDATE"],
-                   DELIVERYDATE = jsonMessage["DELIVERYDATE"],
-                   COMMANDID = random.randint(0,100))
-
-
-@app.route('/',methods = ['GET','POST'])
-def main():
-    if request.method == 'POST' :
-        global jsonMessage
-        jsonMessage = request.get_json(force=True)
-        return 'JSON posted'
-    elif request.method == 'GET':
-        return whoFunction()
+    jsonMessage = request.get_json(force=True)
+    return jsonify(
+                   Restaurant = jsonMessage["Restaurant"],
+                   Meal = jsonMessage["Meal"],
+                   Delivery_Address = jsonMessage["Delivery_Address"],
+                   Pick_Up_Date = jsonMessage["Pick_Up_Date"],
+                   Delivery_Date = jsonMessage["Delivery_Date"],
+                   Command_Id = random.randint(0,100))
 
 if __name__ == '__main__':
-    app.run(host='192.168.1.17')
+    app.run()
