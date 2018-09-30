@@ -36,6 +36,21 @@ flask run --host 0.0.0.0 --port 5000
 ### Run
 `docker run -p 5000:5000 menuapp`
 
+### Publish
+```bash
+mint-virtual-machine SI5_soa_api_lab_team_d_menu_service # docker login --username=nrousseauetu
+Password: 
+Login Succeeded
+mint-virtual-machine SI5_soa_api_lab_team_d_menu_service # docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+menuapp             latest              dea9321cc24c        7 minutes ago       155MB
+python              3.6.5-slim          b31cb11e68a1        3 months ago        138MB
+mint-virtual-machine SI5_soa_api_lab_team_d_menu_service # docker tag dea9321cc24c uberoolab/team-d-menu-service:latest
+mint-virtual-machine SI5_soa_api_lab_team_d_menu_service # docker push uberoolab/team-d-menu-service
+The push refers to repository [docker.io/uberoolab/team-d-menu-service]
+[...]
+```
+
 ### Pull From Hub
 `docker pull uberoolab/team-d-menu-service`
 
