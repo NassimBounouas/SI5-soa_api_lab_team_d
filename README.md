@@ -22,6 +22,7 @@ The Database is a json file named "Restaurant.json" where there's meals with the
     }
   ]
 }
+```
 
 ## Requirements
 ```
