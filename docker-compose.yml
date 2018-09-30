@@ -1,5 +1,9 @@
 version: '3'
 services:
+  menu:
+    image: uberoolab/team-d-menu-service
+    ports:
+     - "4000:5000"
   chinese-restaurant:
     image: uberoolab/team-d-chinese-restaurant-service:1.0 
     ports:
