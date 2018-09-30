@@ -1,15 +1,21 @@
 # SI5_soa_api_lab_team_d_menu_service
 
 ### Author
-Nikita ROUSSEAU
+__Nikita ROUSSEAU__
 ### Updated
-11:52 30/09/2018
+__11:52 30/09/2018__
 
 ## Remarks
 
 The database is mocked before each request.
 
-Only `Read` Operations are available.
+Only `Read` operations are available.
+
+## Requirements
+
+```bash
+pip install flask
+```
 
 ## Server Startup
 
