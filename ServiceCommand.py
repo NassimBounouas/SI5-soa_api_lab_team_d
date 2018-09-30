@@ -15,11 +15,8 @@ def orderMeal(meal : str):
         if i["Name"] == meal:
             resto = i["Restaurant"]
             break
-    Order = {
-        'Restaurant' : resto,
-        'Meal' : meal
-    }
-    return jsonify(Order)
+    return jsonify( Restaurant = resto,
+                    Meal = meal))
 
 @app.route('/ValidateOrder',methods = ['POST'])
 def validateOrder():
