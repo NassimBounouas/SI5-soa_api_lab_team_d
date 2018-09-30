@@ -4,6 +4,10 @@ services:
     image: uberoolab/team-d-menu-service
     ports:
      - "4000:5000"
+  order:
+    image: uberoolab/team-d-ordering-service
+    ports:
+     - "4001:5000"
   chinese-restaurant:
     image: uberoolab/team-d-chinese-restaurant-service:1.0 
     ports:

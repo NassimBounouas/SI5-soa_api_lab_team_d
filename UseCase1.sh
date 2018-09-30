@@ -14,6 +14,28 @@ curl -s -X POST --header "Content-Type: application/json" http://localhost:4000/
 	}
 }' | json_pp
 
+echo -e " \n\n### ORDER A RAMEN MEAL\n"
+curl -s -X POST http://localhost:4001/receive_event --data '{
+    "action" : "order_meal",
+    "message" :
+    {
+        "meal": "Ramen"
+    }
+}' | json_pp
+
+echo -e " \n\n### VALIDATE THE RAMEN MEAL ORDER\n"
+curl -s -X POST http://localhost:4001/receive_event --data '{
+    "action" : "validate_order",
+    "message" :
+    {
+        "meal": "Ramen",
+        "restaurant": "Lyianhg Restaurant",
+        "delivery_address": "Templier",
+        "pick_up_date": "40",
+        "delivery_date": "60",
+        "price" : "15.00€"
+    }
+}' | json_pp
 
 echo -e " \n\n### SENDING ORDER TO RESTAURANT SERVICE\n"
 curl -X POST http://localhost:4003/receive_event --data '{
