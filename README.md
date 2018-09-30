@@ -3,7 +3,7 @@
 ### Author
 __Nikita ROUSSEAU__
 ### Updated
-__11:52 30/09/2018__
+__16:00 30/09/2018__
 
 ## Remarks
 
@@ -33,13 +33,16 @@ flask run --host 0.0.0.0 --port 5000
 ### Build
 `docker build -t menuapp .`
 
-### Pull
+### Run
+`docker run -p 5000:5000 menuapp`
+
+### Pull From Hub
 `docker pull uberoolab/team-d-menu-service`
 
-### Run (Interactive)
+### Run From Hub (Interactive)
 `docker run -i -p 5000:5000 -t uberoolab/team-d-menu-service`
 
-### Run (Detached)
+### Run From Hub (Detached)
 `docker run -d -p 5000:5000 -t uberoolab/team-d-menu-service`
 
 ## API Usage
