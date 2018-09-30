@@ -5,20 +5,21 @@ import random
 app = Flask(__name__)
 
 
-@app.route('/OrderMeal',methods = ['POST'])
-def orderMeal():
-    jsonMessage = request.get_json(force=True)
+@app.route('/OrderMeal/<string:meal>',methods = ['GET'])
+def orderMeal(meal : str):
     resto = ""
     with open("Restaurant.json") as f:
         file = json.load(f)
     f.close()
     for i in file["plat"]:
-        if i["Name"] == "Ramen":
+        if i["Name"] == meal:
             resto = i["Restaurant"]
             break
-    return jsonify(
-                    Restaurant = resto,
-                    Meal = jsonMessage["Meal"])
+    Order = {
+        'Restaurant' : resto,
+        'Meal' : meal
+    }
+    return jsonify(Order)
 
 @app.route('/ValidateOrder',methods = ['POST'])
 def validateOrder():
