@@ -1,16 +1,16 @@
 {
   "plat" : [
     {
-      "Id": 1,
-      "Name": "Ramen",
-      "Restaurant": "Lyianhg Restaurant",
-      "Price" : "3.50"
+      "id": 1,
+      "name": "Ramen",
+      "restaurant": "Lyianhg Restaurant",
+      "price" : "3.50"
     },
     {
-      "Id": 2,
-      "Name": "Pizza",
-      "Restaurant": "Bar Roger",
-      "Price" : "6.00"
+      "id": 2,
+      "name": "Pizza",
+      "restaurant": "Bar Roger",
+      "price" : "6.00"
     }
   ]
 }
