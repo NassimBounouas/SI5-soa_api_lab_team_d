@@ -3,12 +3,14 @@
     {
       "Id": 1,
       "Name": "Ramen",
-      "Restaurant": "Lyianhg Restaurant"
+      "Restaurant": "Lyianhg Restaurant",
+      "Price" : "3.50"
     },
     {
       "Id": 2,
       "Name": "Pizza",
-      "Restaurant": "Bar Roger"
+      "Restaurant": "Bar Roger",
+      "Price" : "6.00"
     }
   ]
 }
