@@ -41,16 +41,15 @@ flask run --host 0.0.0.0 --port 5000
 
 ## API Usage
 
-### Endpoint
+### Endpoint as Event listener
 
-> [POST] http://127.0.0.1:5000`/receive_event`
+> [POST] http://127.0.0.1:5000/receive_event
 
 ### List categories
 
 Usage :
 
-> [POST] http://127.0.0.1:5000`/receive_event`
-
+> [POST] http://127.0.0.1:5000/receive_event
 ```json
 {
 	"Action": "READ_CATEGORIES",
@@ -82,8 +81,7 @@ Response :
 
 Usage :
 
-> [POST] http://127.0.0.1:5000`/receive_event`
-
+> [POST] http://127.0.0.1:5000/receive_event
 ```json
 {
 	"Action": "READ_MEALS_BY_CATEGORY",
