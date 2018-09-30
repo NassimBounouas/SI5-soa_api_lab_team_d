@@ -9,8 +9,6 @@ __13:01 30/09/2018__
 
 The application was developed under Windows 10 with Eclipse and the PyDev module.
 
-There is no database, only two global variables for the service to keep in memory the Json it receives.
-
 ## Requirements
 
 ```
@@ -27,20 +25,26 @@ With Eclipse: Eta.py > right-click > Run As > Python Run
 
 ```
 With Postman: 
-  -Post a Json: -Select POST then enter the following URL, http://127.0.0.1:5000/receiveOrder
+  -Post a Json: -Select POST then enter the following URL, http://127.0.0.1:5000/receive_event
                 -Go on Body, select raw and then choose JSON (application/json) from the drop-down menu
                 -Write your Json and click on Send
-  -Get Eta: -Select GET then enter the following URL, http://127.0.0.1:5000/computeEta
-            -Click on SEND
+		-The server return a Json
 ```
 
 ## API Usage
 
-### Receive Order
+### Compute Eta
 
-Send a Json with [POST] http://127.0.0.1:5000/receiveOrder
+Post a Json with [POST] http://127.0.0.1:5000/receive_event and the server will return a Json including Eta.
 
-Example of Json format:
+The **delivery date** is the time estimated by the system for the customer to receive his order.
+
+The **pick up date** is the time estimated by the system for the delivery person to pick up the order from the restaurant.
+
+**Examples:**
+
+Example of request:
+
 ```
 {
 	"Meal": "Sushi",
@@ -49,15 +53,7 @@ Example of Json format:
 }
 ```
 
-### Compute Eta
-
-Get a Json with [GET] http://127.0.0.1:5000/computeEta
-
-The **delivery date** is the time estimated by the system for the customer to receive his order.
-
-The **pick up date** is the time estimated by the system for the delivery person to pick up the order from the restaurant.
-
-Example of response:
+Example of answer:
 ```
 {
     "DeliveryAddress": "Campus Templier",
