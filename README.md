@@ -25,7 +25,7 @@ With Eclipse: Eta.py > right-click > Run As > Python Run
 
 ```
 With Postman: 
-  -Post a Json: -Select POST then enter the following URL, http://127.0.0.1:5000/receive_event
+  -Post a Json: -Select POST then enter the following URL, http://127.0.0.1:4002/receive_event
                 -Go on Body, select raw and then choose JSON (application/json) from the drop-down menu
                 -Write your Json and click on Send
 		-The server return a Json
@@ -35,7 +35,7 @@ With Postman:
 
 ### Compute Eta
 
-Post a Json with [POST] http://127.0.0.1:5000/receive_event and the server will return a Json including Eta.
+Post a Json with [POST] http://127.0.0.1:4002/receive_event and the server will return a Json including Eta.
 
 The **delivery date** is the time estimated by the system for the customer to receive his order.
 
