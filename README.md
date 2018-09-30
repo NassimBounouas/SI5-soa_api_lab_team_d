@@ -61,10 +61,10 @@ Example :
 ```json
 {
   "Meal": "Ramen",
-  "Restaurant": "Lyianhg Restaurant"
+  "Restaurant": "Lyianhg Restaurant",
   "Delivery_Address": "Templier",
   "Pick_Up_Date": "40",
-  "Delivery_Date": "60",
+  "Delivery_Date": "60"
 }
 ```
 
