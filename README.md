@@ -30,6 +30,9 @@ flask run --host 0.0.0.0 --port 5000
 
 ## Docker
 
+### Build
+`docker build -t menuapp .`
+
 ### Pull
 `docker pull uberoolab/team-d-menu-service`
 
