@@ -28,6 +28,17 @@ flask run --host 0.0.0.0 --port 5000
 # * Serving Flask application
 ```
 
+## Docker
+
+### Pull
+`docker pull uberoolab/team-d-menu-service`
+
+### Run (Interactive)
+`docker run -i -p 5000:5000 -t uberoolab/team-d-menu-service`
+
+### Run (Detached)
+`docker run -d -p 5000:5000 -t uberoolab/team-d-menu-service`
+
 ## API Usage
 
 ### Categories
