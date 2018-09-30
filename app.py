@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from flask import Flask, g, jsonify
+import json
+
+from flask import Flask, g, jsonify, request
 
 from model.category import Category
 from model.meal import Meal
@@ -57,10 +59,22 @@ def hello_world():
     return 'Menu service is online !'
 
 
-@app.route("/categories",
-           methods=['GET'])
-def categories_route():
+@app.route("/receive_event",
+           methods=['POST'])
+def event_listener_route():
 
+    event = json.loads(request.data.decode('utf-8'))
+
+    if event["Action"] == 'READ_CATEGORIES':
+        return getCategories()
+
+    if event["Action"] == 'READ_MEALS_BY_CATEGORY':
+        return getMealsByCategory(event["Message"])
+
+    return jsonify(""), 400
+
+
+def getCategories():
     categories = []
 
     for identifier in g.database["categories"]:
@@ -77,11 +91,13 @@ def categories_route():
     return jsonify(data), 200
 
 
-@app.route("/meals/<string:category>",
-           methods=['GET'])
-def meals_route(category: str):
+def getMealsByCategory(params: dict):
 
     meals = []
+
+    if not params["Category"]:
+        jsonify(meals), 400
+    category = params["Category"]
 
     for identifier in g.database["meals"]:
         meal = g.database["meals"][identifier]

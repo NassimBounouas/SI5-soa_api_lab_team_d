@@ -41,13 +41,24 @@ flask run --host 0.0.0.0 --port 5000
 
 ## API Usage
 
-### Categories
+### Endpoint
 
-* List categories :: [GET] http://127.0.0.1:5000`/categories`
+> [POST] http://127.0.0.1:5000`/receive_event`
 
-Example :
+### List categories
 
-> [GET] http://127.0.0.1:5000`/categories`
+Usage :
+
+> [POST] http://127.0.0.1:5000`/receive_event`
+
+```json
+{
+	"Action": "READ_CATEGORIES",
+	"Message": {}
+}
+```
+
+Response :
 
 ```json
 {
@@ -67,13 +78,22 @@ Example :
 }
 ```
 
-### Meals
+### List meals by category name
 
-* List meals by category :: [GET] http://127.0.0.1:5000`/meals/<category>`
+Usage :
 
-Example :
+> [POST] http://127.0.0.1:5000`/receive_event`
 
-> [GET] http://127.0.0.1:5000/meals/Japonais
+```json
+{
+	"Action": "READ_MEALS_BY_CATEGORY",
+	"Message": {
+		"Category": "Japonais"
+	}
+}
+```
+
+Response :
 
 ```json
 {
