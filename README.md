@@ -35,8 +35,7 @@ pip install flask
 
 ### Restaurant
 
-* Get Restaurant who make the meal :: [GET] http://127.0.0.1:5000'/OrderMeal/<meal>'
-
+* Get Restaurant who make the meal :: [GET] http://127.0.0.1:5000`/OrderMeal/<meal>`
 Example :
 
 > [GET] http://127.0.0.1:5000/OrderMeal/Ramen
@@ -50,7 +49,7 @@ Example :
 
 ### Validation
 
-* Return json of Order with unique ID for command :: [GET] http://127.0.0.1:5000`/ValidateOrder'
+* Return json of Order with unique ID for command :: [GET] http://127.0.0.1:5000`/ValidateOrder`
 
 Example :
 
