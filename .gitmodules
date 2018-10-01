@@ -19,3 +19,6 @@
 [submodule "SI5-soa_api_lab_team_d_menu_database"]
 	path = SI5-soa_api_lab_team_d_menu_database
 	url = git@github.com:NassimBounouas/SI5-soa_api_lab_team_d_menu_database.git
+[submodule "SI5-soa_api_lab_team_d_ordering_database"]
+	path = SI5-soa_api_lab_team_d_ordering_database
+	url = git@github.com:NassimBounouas/SI5-soa_api_lab_team_d_ordering_database.git
