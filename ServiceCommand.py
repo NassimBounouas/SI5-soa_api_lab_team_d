@@ -17,7 +17,7 @@ def orderMeal(jsonRecv):
             break
     data = {
         'restaurant' : resto,
-        'meal' : jsonRecv["meal"],
+        'meal' : jsonRecv["meal"]
     }
     return jsonify(
         action = "compute_eta",
@@ -30,7 +30,7 @@ def validateOrder(jsonMessage):
             'restaurant' : jsonMessage["restaurant"],
             'meal' : jsonMessage["meal"],
             'delivery_address' : jsonMessage["delivery_address"],
-            'delivery_date' : jsonMessage["delivery_date"],
+            'delivery_date' : jsonMessage["delivery_date"]
     }
     return jsonify(
         action = data,
