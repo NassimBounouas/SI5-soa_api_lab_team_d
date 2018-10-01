@@ -14,12 +14,10 @@ def orderMeal(jsonRecv):
     for i in file["plat"]:
         if i["name"] == jsonRecv["meal"]:
             resto = i["restaurant"]
-            price = i["price"]
             break
     data = {
         'restaurant' : resto,
         'meal' : jsonRecv["meal"],
-        'price' : price
     }
     return jsonify(
         action = "compute_eta",
@@ -33,7 +31,6 @@ def validateOrder(jsonMessage):
             'meal' : jsonMessage["meal"],
             'delivery_address' : jsonMessage["delivery_address"],
             'delivery_date' : jsonMessage["delivery_date"],
-            'price' : jsonMessage["price"]
     }
     return jsonify(
         action = data,
