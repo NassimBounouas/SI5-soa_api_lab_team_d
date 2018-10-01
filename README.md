@@ -3,7 +3,7 @@
 ### Author
 __Duminy Gaétan__
 ### Updated
-__15:32 01/10/2018__
+__16:20 01/10/2018__
 
 ## Remarks
 
@@ -51,7 +51,7 @@ Example of request:
     	"Message": {
 	"Meal": "Sushi",
 	"Restaurant": "Le soleil de l'est",
-	"DeliveryAddress": "Campus Templier"
+	"Delivery_Address": "Campus Templier"
 	}
 }
 ```
@@ -61,10 +61,10 @@ Example of answer:
 {
    	"Action": "validate_order",
 	"Message": {
-        "DeliveryAddress": "Campus Templier",
-        "DeliveryDate": 31,
+        "Delivery_Address": "Campus Templier",
+        "Delivery_Date": 31,
         "Meal": "Sushi",
-        "PickUpDate": 20,
+        "Pick_Up_Date": 20,
         "Restaurant": "Le soleil de l'est"
 	}
 }
