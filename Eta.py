@@ -7,7 +7,7 @@ __author__ = "Duminy Gaetan"
 __copyright__ = "Copyright 2018, Polytech Nice Sophia"
 __credits__ = ["Duminy Gaetan"]
 __license__ = "MIT"
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 __maintainer__ = "Duminy Gaetan"
 __email__ = "gaetan.duminy@etu.unice.fr"
 __status__ = "development"
@@ -23,9 +23,9 @@ def computeEta():
             time2 = time1 + random.randint(5, 15)
             data = { "Restaurant": message['Restaurant'],
                      "Meal": message['Meal'],
-                     "DeliveryAddress": message['DeliveryAddress'],
-                     "PickUpDate": time1,
-                     "DeliveryDate": time2
+                     "Delivery_Address": message['Delivery_Address'],
+                     "Pick_Up_Date": time1,
+                     "Delivery_Date": time2
                 }
             return jsonify( Action = "validate_order",
                             Message = data), 200
