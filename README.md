@@ -9,18 +9,16 @@ __30/09/2018__
 The Database is a json file named "Restaurant.json" where there's meals with theirs Restaurant
 ```json
 {
-  "plat" : [
+  "Plat" : [
     {
-      "id": 1,
-      "name": "Ramen",
-      "restaurant": "Lyianhg Restaurant",
-      "price" : "3.50"
+      "Id": 1,
+      "Name": "Ramen",
+      "Restaurant": "Lyianhg Restaurant"
     },
     {
-      "id": 2,
-      "name": "Pizza",
-      "restaurant": "Bar Roger",
-      "price" : "6.00"
+      "Id": 2,
+      "Name": "Pizza",
+      "Restaurant": "Bar Roger"
     }
   ]
 }
@@ -43,10 +41,10 @@ pip install flask
 
 ```json
 {
-    "action" : "order_meal",
-    "message" :
+    "Action" : "order_meal",
+    "Message" :
     {
-        "meal": something
+        "Meal": "Ramen"
     }
 }
 ```
@@ -54,16 +52,15 @@ pip install flask
 
 Example :
 
->with "meal" : "Ramen"
+>with "Meal" : "Ramen"
 > [POST] http://127.0.0.1:4001/receive_event
 
 ```json
 {
-    "action": "compute_eta",
-    "message": {
-        "meal": "Ramen",
-        "price": "3.50",
-        "restaurant": "Lyianhg Restaurant"
+    "Action": "compute_eta",
+    "Message": {
+        "Meal": "Ramen",
+        "Restaurant": "Lyianhg Restaurant"
     }
 }
 ```
@@ -76,15 +73,14 @@ Example :
 
 ```json
 {
-    "action" : "validate_order",
-    "message" :
+    "Action" : "validate_order",
+    "Message" :
     {
-        "meal": "Ramen",
-        "restaurant": "Lyianhg Restaurant",
-        "delivery_address": "Templier",
-        "pick_up_date": "40",
-        "delivery_date": "60",
-        "price" : "15.00€"
+        "Meal": "Ramen",
+        "Restaurant": "Lyianhg Restaurant",
+        "Delivery_Address": "Templier",
+        "Pick_Up_Date": "40",
+        "Delivery_Date": "60"
     }
 }
 ```
@@ -94,15 +90,14 @@ Example :
 
 ```json
 {
-    "action": {
-        "command_id": 47,
-        "delivery_address": "Templier",
-        "delivery_date": "60",
-        "meal": "Ramen",
-        "price": "15.00€",
-        "restaurant": "Lyianhg Restaurant"
+    "Action": {
+        "Command_Id": 47,
+        "Delivery_Address": "Templier",
+        "Delivery_Date": "60",
+        "Meal": "Ramen",
+        "Restaurant": "Lyianhg Restaurant"
     },
-    "status": "Accepted"
+    "Status": "Accepted"
 }
 ```
 
