@@ -8,6 +8,10 @@ services:
     image: uberoolab/team-d-ordering-service
     ports:
      - "4001:5000"
+  eta:
+    image: uberoolab/team-d-eta-computer-service
+    ports:
+     - "4002:5000"
   chinese-restaurant:
     image: uberoolab/team-d-chinese-restaurant-service:1.0 
     ports:
