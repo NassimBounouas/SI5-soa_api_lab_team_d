@@ -20,3 +20,8 @@ services:
     image: uberoolab/team-d-delivery-service:1.0 
     ports:
      - "4004:8080"
+  delivery-database:
+    image: uberoolab/team-d-delivery-database
+    ports:
+     - "4014:3306"
+ 
