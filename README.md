@@ -47,8 +47,8 @@ Example of request:
 
 ```
 {	
-	"Action" = "compute_eta",
-        "Message = {
+	"Action": "compute_eta",
+    	"Message": {
 		"Meal": "Sushi",
 		"Restaurant": "Le soleil de l'est",
 		"DeliveryAddress": "Campus Templier"
