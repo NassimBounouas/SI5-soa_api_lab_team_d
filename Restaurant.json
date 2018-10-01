@@ -1,14 +1,14 @@
 {
-  "plat" : [
+  "Plat" : [
     {
-      "id": 1,
-      "name": "Ramen",
-      "restaurant": "Lyianhg Restaurant"
+      "Id": 1,
+      "Name": "Ramen",
+      "Restaurant": "Lyianhg Restaurant"
     },
     {
-      "id": 2,
-      "name": "Pizza",
-      "restaurant": "Bar Roger"
+      "Id": 2,
+      "Name": "Pizza",
+      "Restaurant": "Bar Roger"
     }
   ]
 }
