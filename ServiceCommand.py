@@ -11,13 +11,13 @@ def orderMeal(jsonRecv):
     with open("Restaurant.json") as f:
         file = json.load(f)
     f.close()
-    for i in file["plat"]:
-        if i["name"] == jsonRecv["meal"]:
-            resto = i["restaurant"]
+    for i in file["Plat"]:
+        if i["Name"] == jsonRecv["Meal"]:
+            resto = i["Restaurant"]
             break
     data = {
-        'restaurant' : resto,
-        'meal' : jsonRecv["meal"]
+        'Restaurant' : resto,
+        'Meal' : jsonRecv["Meal"]
     }
     return jsonify(
         Action = "compute_eta",
@@ -26,11 +26,11 @@ def orderMeal(jsonRecv):
 
 def validateOrder(jsonMessage):
     data =  {
-            'command_id' : random.randint(0,100),
-            'restaurant' : jsonMessage["restaurant"],
-            'meal' : jsonMessage["meal"],
-            'delivery_address' : jsonMessage["delivery_address"],
-            'delivery_date' : jsonMessage["delivery_date"]
+        'Command_Id' : random.randint(0,100),
+        'Restaurant' : jsonMessage["Restaurant"],
+        'Meal' : jsonMessage["Meal"],
+        'Delivery_Address' : jsonMessage["Delivery_Address"],
+        'Delivery_Date' : jsonMessage["Delivery_Date"]
     }
     return jsonify(
         Action = data,
