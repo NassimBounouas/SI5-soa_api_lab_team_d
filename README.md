@@ -3,7 +3,7 @@
 ### Author
 __Duminy Gaétan__
 ### Updated
-__16:00 30/09/2018__
+__15:32 01/10/2018__
 
 ## Remarks
 
@@ -46,21 +46,27 @@ The **pick up date** is the time estimated by the system for the delivery person
 Example of request:
 
 ```
-{
-	"Meal": "Sushi",
-	"Restaurant": "Le soleil de l'est",
-	"DeliveryAddress": "Campus Templier"
+{	
+	"Action" = "compute_eta",
+        "Message = {
+		"Meal": "Sushi",
+		"Restaurant": "Le soleil de l'est",
+		"DeliveryAddress": "Campus Templier"
+		}
 }
 ```
 
 Example of answer:
 ```
-{
-    "DeliveryAddress": "Campus Templier",
-    "DeliveryDate": 29,
-    "Meal": "Sushi",
-    "PickUpDate": 17,
-    "Restaurant": "Le soleil de l'est"
+{	
+	"Action" = "validate_order",
+        "Message = {
+		"DeliveryAddress": "Campus Templier",
+   		 "DeliveryDate": 29,
+   		 "Meal": "Sushi",
+   		 "PickUpDate": 17,
+   		 "Restaurant": "Le soleil de l'est"
+		 }
 }
 ```
 
