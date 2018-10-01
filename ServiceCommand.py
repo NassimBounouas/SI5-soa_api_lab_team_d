@@ -20,8 +20,8 @@ def orderMeal(jsonRecv):
         'meal' : jsonRecv["meal"]
     }
     return jsonify(
-        action = "compute_eta",
-        message = data
+        Action = "compute_eta",
+        Message = data
     )
 
 def validateOrder(jsonMessage):
@@ -33,16 +33,16 @@ def validateOrder(jsonMessage):
             'delivery_date' : jsonMessage["delivery_date"]
     }
     return jsonify(
-        action = data,
-        status = "Accepted")
+        Action = data,
+        Status = "Accepted")
 
 @app.route('/receive_event',methods = ['POST'])
 def main():
     jsonMessage = request.get_json(force=True)
-    if jsonMessage["action"] == "validate_order":
-        return validateOrder(jsonMessage["message"])
-    elif jsonMessage["action"] == "order_meal":
-        return orderMeal(jsonMessage["message"])
+    if jsonMessage["Action"] == "validate_order":
+        return validateOrder(jsonMessage["Message"])
+    elif jsonMessage["Action"] == "order_meal":
+        return orderMeal(jsonMessage["Message"])
     else:
         return jsonify(
             error = "404 Not Found"
