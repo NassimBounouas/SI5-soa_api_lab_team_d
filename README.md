@@ -49,24 +49,24 @@ Example of request:
 {	
 	"Action": "compute_eta",
     	"Message": {
-		"Meal": "Sushi",
-		"Restaurant": "Le soleil de l'est",
-		"DeliveryAddress": "Campus Templier"
-		}
+	"Meal": "Sushi",
+	"Restaurant": "Le soleil de l'est",
+	"DeliveryAddress": "Campus Templier"
+	}
 }
 ```
 
 Example of answer:
 ```
-{	
-	"Action" = "validate_order",
-        "Message = {
-		"DeliveryAddress": "Campus Templier",
-   		 "DeliveryDate": 29,
-   		 "Meal": "Sushi",
-   		 "PickUpDate": 17,
-   		 "Restaurant": "Le soleil de l'est"
-		 }
+{
+   	"Action": "validate_order",
+	"Message": {
+        "DeliveryAddress": "Campus Templier",
+        "DeliveryDate": 31,
+        "Meal": "Sushi",
+        "PickUpDate": 20,
+        "Restaurant": "Le soleil de l'est"
+	}
 }
 ```
 
