@@ -38,6 +38,7 @@ def before_request():
     sushis_saumon = Meal(asie_japon, "Sushis saumon", 3.90)
     sushis_saumon_epice = Meal(asie_japon, "Sushis saumon épicé", 4.50)
     sushis_saumon_marine = Meal(asie_japon, "Sushis saumon mariné au jus de yuzu et ses herbes", 4.80)
+    ramen_nature = Meal(asie_japon, "Ramen nature", 7.0)
     brochette_de_viande_fromage = Meal(asie_chine, "Brochette de viande au fromage", 13.90)
 
     # Meals as Menus
@@ -52,6 +53,7 @@ def before_request():
     g.database["meals"][3] = sushis_saumon_marine
     g.database["meals"][4] = brochette_de_viande_fromage
     g.database["meals"][5] = plateau1_8pcs
+    g.database["meals"][6] = ramen_nature
 
 
 @app.route('/')
