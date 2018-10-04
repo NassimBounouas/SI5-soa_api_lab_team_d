@@ -10,7 +10,8 @@ CREATE TABLE to_get_recipe(
 `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 meal_name varchar(255),
 restaurant_name varchar(255),
-pickup_address varchar(255),
+pick_up_date intger,
+delivery_date integer,
 delivery_adress varchar(255)
 );
 
