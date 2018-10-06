@@ -17,7 +17,11 @@ services:
     ports:
      - "4003:8080"
   delivery:
-    image: uberoolab/team-d-delivery-service:1.0 
+    image: uberoolab/team-d-delivery-service:latest
+    environment:
+      - DATABASE=delivery-database:3306
+    depends_on:
+      - delivery-database
     ports:
      - "4004:8080"
   delivery-database:
