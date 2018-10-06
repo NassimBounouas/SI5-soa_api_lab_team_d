@@ -2,8 +2,14 @@ version: '3'
 services:
   menu:
     image: uberoolab/team-d-menu-service
+    depends_on:
+     - menu-database
     ports:
      - "4000:5000"
+  menu-database:
+    image: uberoolab/team-d-menu-database
+    ports:
+     - "4010:3306"
   order:
     image: uberoolab/team-d-ordering-service
     ports:
