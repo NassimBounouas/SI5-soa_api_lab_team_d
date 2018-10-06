@@ -5,28 +5,41 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"fmt"
 	"log"
+	"strconv"
 )
 
-func Read_to_delivers()  {
-	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:4014)/delivery_db")
+func Read_to_delivers() []string {
+	db, err := sql.Open("mysql", "root:root@tcp("+ Database +")/delivery_db")
 	if err != nil {
 		fmt.Println(err)
 	}
-	stmt, err := db.Prepare("SELECT * FROM to_deliver_table")
+	rows, err := db.Query("SELECT * FROM to_deliver_table")
 	if err != nil {
 		fmt.Println(err)
 	}
-	res, err := stmt.Exec()
-	if err != nil {
-		fmt.Println(err)
+
+	var delivers []string
+	for rows.Next() {
+		var id int
+		var meal_name string
+		var pickup_address string
+		var delivery_address string
+		err = rows.Scan(&id, &meal_name, &pickup_address, &delivery_address)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println("Delivery : ", id, " meal : ", meal_name, " from : ", pickup_address, " to : ", delivery_address)
+		deliver := "Delivery : " + strconv.Itoa(id) + " meal : " + meal_name + " from : " + pickup_address + " to : " + delivery_address
+		delivers = append(delivers, deliver)
 	}
-	fmt.Println(res)
+
 	db.Close()
+	return delivers
 }
 
 func Add_to_deliver(meal, pickup, delivery string) {
 
-	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:4014)/delivery_db")
+	db, err := sql.Open("mysql", "root:root@tcp(" + Database + ")/delivery_db")
 	if err != nil {
 		fmt.Println(err)
 	}
