@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from model.category import Category
+from model.persistent_object import PersistentObject
 
 
-class Meal:
+class Meal(PersistentObject):
     identifier = 0
+    parent_category = None
+    
     name = ""
     price = 0.0
-    parent_category = None
     is_menu = False
     image = ""
 

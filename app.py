@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import configparser
 import json
+import os
+import pymysql.cursors
 
 from flask import Flask, g, jsonify, request
 
@@ -20,19 +23,31 @@ __status__ = "development"
 app = Flask(__name__)
 
 
-@app.before_request
-def before_request():
+def load_config():
     """
-    Populate Database
+    Parse database configuration file
     """
+    config_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "db.ini")
+    if not os.path.exists(config_file):
+        raise FileNotFoundError(config_file)
+    app_config = configparser.ConfigParser()
+    app_config.read(config_file)
+    return app_config
+
+
+def populate_db():
+    """
+    DATABASE IMPORT
+    """
+
     # DB Mock
-    g.database = {}
-    g.database["categories"] = {}
-    g.database["meals"] = {}
+    g.registry = {}
+    g.registry["categories"] = {}
+    g.registry["meals"] = {}
 
     # Categories
-    asie_japon = Category("Japonais", "Asie")
-    asie_chine = Category("Chinois", "Asie")
+    asie_japon = Category(name="Japonais", region="Asie")
+    asie_chine = Category(name="Chinois", region="Asie")
 
     # Meals
     sushis_saumon = Meal(asie_japon, "Sushis saumon", 3.90)
@@ -45,15 +60,42 @@ def before_request():
     plateau1_8pcs = Meal(asie_japon, "Plateau 1 - 8 pièces", 13.90, True)
 
     # Populate
-    g.database["categories"][1] = asie_japon
-    g.database["categories"][2] = asie_chine
+    g.registry["categories"][1] = asie_japon
+    g.registry["categories"][2] = asie_chine
 
-    g.database["meals"][1] = sushis_saumon
-    g.database["meals"][2] = sushis_saumon_epice
-    g.database["meals"][3] = sushis_saumon_marine
-    g.database["meals"][4] = brochette_de_viande_fromage
-    g.database["meals"][5] = plateau1_8pcs
-    g.database["meals"][6] = ramen_nature
+    g.registry["meals"][1] = sushis_saumon
+    g.registry["meals"][2] = sushis_saumon_epice
+    g.registry["meals"][3] = sushis_saumon_marine
+    g.registry["meals"][4] = brochette_de_viande_fromage
+    g.registry["meals"][5] = plateau1_8pcs
+    g.registry["meals"][6] = ramen_nature
+
+
+@app.before_request
+def before_request():
+    # DATABASE CONNECTION
+    g.database_handle = None
+
+    # LOAD CONFIGURATION
+    if not os.environ['FLASK_ENV']:
+        os.environ['FLASK_ENV'] = 'development'
+
+    db_config = load_config()[os.environ['FLASK_ENV']]
+
+    # Connect to the database
+    g.database_handle = pymysql.connect(host=db_config['host'],
+                                        port=int(db_config['port']),
+                                        user=db_config['user'],
+                                        password=db_config['pass'],
+                                        db=db_config['db'],
+                                        cursorclass=pymysql.cursors.DictCursor,
+                                        autocommit=True)
+
+
+@app.after_request
+def after_request():
+    # DISCONNECT FROM THE DATABASE
+    g.database_handle.close()
 
 
 @app.route('/')
@@ -64,7 +106,6 @@ def hello_world():
 @app.route("/receive_event",
            methods=['POST'])
 def event_listener_route():
-
     event = json.loads(request.data.decode('utf-8'))
 
     if event["Action"] == 'READ_CATEGORIES':
@@ -94,7 +135,6 @@ def getCategories():
 
 
 def getMealsByCategory(params: dict):
-
     meals = []
 
     if not params["Category"]:
