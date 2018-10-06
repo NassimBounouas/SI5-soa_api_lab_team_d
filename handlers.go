@@ -20,6 +20,7 @@ func ReceiveEvents(w http.ResponseWriter, r *http.Request) {
 
 func ProcessEvent(event Event) string {
 	if event.Action == "Delivery_request" {
+		// Read_to_delivers()
 		var order Order
 		err := json.Unmarshal([]byte(event.Message), &order)
 		if err != nil {
@@ -27,6 +28,7 @@ func ProcessEvent(event Event) string {
 			fmt.Println("Error while unmarshalling order")
 			return ""
 		}
+		Add_to_deliver(order.Meal, order.RestaurantAdress, order.DeliveryAdress)
 		return "Your request has been accepted, your " + order.Meal + " will be picked up at " + order.RestaurantAdress + " and delivered to " + order.DeliveryAdress
 	}
 	return "unknown action"
