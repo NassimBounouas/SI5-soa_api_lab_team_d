@@ -8,3 +8,9 @@ class PersistentObject:
 
     def __init__(self):
         self.database_handle = g.database_handle
+
+    def merge(self):
+        pass
+
+    def delete(self):
+        pass

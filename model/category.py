@@ -10,7 +10,7 @@ class Category(PersistentObject):
     region = ""
     image = ""
 
-    def __init__(self, name="", region="", image="", **kwargs):
+    def __init__(self, name="", region="", image=""):
         PersistentObject.__init__(self)
 
         self.name = name
@@ -19,9 +19,6 @@ class Category(PersistentObject):
 
         # Sync
         self.merge()
-
-    def __del__(self):
-        self.delete()
 
     def __resolve_identifier(self):
         if self.identifier < 1:
@@ -64,3 +61,10 @@ class Category(PersistentObject):
             "name": self.name,
             "region": self.region
         }
+
+    @staticmethod
+    def get_by_name(name):
+        category = Category(name=name)
+        if category.identifier == 0:
+            return None
+        return category

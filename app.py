@@ -8,7 +8,9 @@ import pymysql.cursors
 from flask import Flask, g, jsonify, request
 
 from model.category import Category
+from model.category_collection import CategoryCollection
 from model.meal import Meal
+from model.meal_collection import MealCollection
 
 __product__ = "Menu Service"
 __author__ = "Nikita ROUSSEAU"
@@ -35,40 +37,26 @@ def load_config():
     return app_config
 
 
-def populate_db():
+def __populate_db():
     """
     DATABASE IMPORT
     """
-
-    # DB Mock
-    g.registry = {}
-    g.registry["categories"] = {}
-    g.registry["meals"] = {}
-
     # Categories
     asie_japon = Category(name="Japonais", region="Asie")
     asie_chine = Category(name="Chinois", region="Asie")
 
     # Meals
-    sushis_saumon = Meal(asie_japon, "Sushis saumon", 3.90)
-    sushis_saumon_epice = Meal(asie_japon, "Sushis saumon épicé", 4.50)
-    sushis_saumon_marine = Meal(asie_japon, "Sushis saumon mariné au jus de yuzu et ses herbes", 4.80)
-    ramen_nature = Meal(asie_japon, "Ramen nature", 7.0)
-    brochette_de_viande_fromage = Meal(asie_chine, "Brochette de viande au fromage", 13.90)
+    Meal(asie_japon, "Sushis saumon", 3.90)
+    Meal(asie_japon, "Sushis saumon épicé", 4.50)
+    Meal(asie_japon, "Sushis saumon mariné au jus de yuzu et ses herbes", 4.80)
+    Meal(asie_japon, "Ramen nature", 7.0)
+    Meal(asie_chine, "Brochette de viande au fromage", 13.90)
 
     # Meals as Menus
-    plateau1_8pcs = Meal(asie_japon, "Plateau 1 - 8 pièces", 13.90, True)
+    Meal(asie_japon, "Plateau 1 - 8 pièces", 13.90, True)
 
-    # Populate
-    g.registry["categories"][1] = asie_japon
-    g.registry["categories"][2] = asie_chine
-
-    g.registry["meals"][1] = sushis_saumon
-    g.registry["meals"][2] = sushis_saumon_epice
-    g.registry["meals"][3] = sushis_saumon_marine
-    g.registry["meals"][4] = brochette_de_viande_fromage
-    g.registry["meals"][5] = plateau1_8pcs
-    g.registry["meals"][6] = ramen_nature
+    # Mark as ready
+    g.database_is_ready = True
 
 
 @app.before_request
@@ -88,14 +76,19 @@ def before_request():
                                         user=db_config['user'],
                                         password=db_config['pass'],
                                         db=db_config['db'],
+                                        charset='utf8mb4',
                                         cursorclass=pymysql.cursors.DictCursor,
                                         autocommit=True)
 
+    if not hasattr(g, 'database_is_ready'):
+        __populate_db()
+
 
 @app.after_request
-def after_request():
+def after_request(response):
     # DISCONNECT FROM THE DATABASE
     g.database_handle.close()
+    return response
 
 
 @app.route('/')
@@ -118,39 +111,26 @@ def event_listener_route():
 
 
 def getCategories():
-    categories = []
-
-    for identifier in g.database["categories"]:
-        category = g.database["categories"][identifier]
-
-        category.identifier = identifier
-        categories.append(category.to_json())
+    categories = CategoryCollection()
 
     data = {
         'status': 'OK',
-        'categories': categories
+        'categories': categories.to_json()
     }
 
     return jsonify(data), 200
 
 
 def getMealsByCategory(params: dict):
-    meals = []
-
     if not params["Category"]:
-        jsonify(meals), 400
+        jsonify([]), 400
     category = params["Category"]
 
-    for identifier in g.database["meals"]:
-        meal = g.database["meals"][identifier]
-
-        if meal.parent_category.name == category:
-            meal.identifier = identifier
-            meals.append(meal.to_json())
+    meals = MealCollection(category)
 
     data = {
         'status': 'OK',
-        'meals': meals
+        'meals': meals.to_json()
     }
 
     return jsonify(data), 200

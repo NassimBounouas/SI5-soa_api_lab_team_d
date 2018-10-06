@@ -3,11 +3,11 @@
 ### Author
 __Nikita ROUSSEAU__
 ### Updated
-__16:00 30/09/2018__
+__18:09 06/10/2018__
 
 ## Remarks
 
-The database is mocked before each request.
+The database is populated (if needed) before each request
 
 Only `Read` operations are available.
 
@@ -15,6 +15,7 @@ Only `Read` operations are available.
 
 ```bash
 pip install flask
+pip install PyMySQL
 ```
 
 ## Server Startup
@@ -84,13 +85,13 @@ Response :
 {
     "categories": [
         {
-            "id": 1,
-            "name": "Japonais",
+            "id": 10,
+            "name": "Chinois",
             "region": "Asie"
         },
         {
-            "id": 2,
-            "name": "Chinois",
+            "id": 9,
+            "name": "Japonais",
             "region": "Asie"
         }
     ],
@@ -118,32 +119,64 @@ Response :
 {
     "meals": [
         {
-            "category": "Japonais",
-            "id": 1,
+            "category": {
+                "id": 9,
+                "name": "Japonais",
+                "region": ""
+            },
+            "id": 28,
+            "image": "",
             "is_menu": false,
             "name": "Sushis saumon",
             "price": 3.9
         },
         {
-            "category": "Japonais",
-            "id": 2,
+            "category": {
+                "id": 9,
+                "name": "Japonais",
+                "region": ""
+            },
+            "id": 27,
+            "image": "",
+            "is_menu": true,
+            "name": "Plateau 1 - 8 pièces",
+            "price": 13.9
+        },
+        {
+            "category": {
+                "id": 9,
+                "name": "Japonais",
+                "region": ""
+            },
+            "id": 29,
+            "image": "",
             "is_menu": false,
             "name": "Sushis saumon épicé",
             "price": 4.5
         },
         {
-            "category": "Japonais",
-            "id": 3,
+            "category": {
+                "id": 9,
+                "name": "Japonais",
+                "region": ""
+            },
+            "id": 30,
+            "image": "",
             "is_menu": false,
             "name": "Sushis saumon mariné au jus de yuzu et ses herbes",
             "price": 4.8
         },
         {
-            "category": "Japonais",
-            "id": 5,
-            "is_menu": true,
-            "name": "Plateau 1 - 8 pièces",
-            "price": 13.9
+            "category": {
+                "id": 9,
+                "name": "Japonais",
+                "region": ""
+            },
+            "id": 31,
+            "image": "",
+            "is_menu": false,
+            "name": "Ramen nature",
+            "price": 7
         }
     ],
     "status": "OK"
