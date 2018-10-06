@@ -31,26 +31,27 @@ func ProcessEvent(event Event) Event {
 		var order Order
 		err := json.Unmarshal([]byte(event.Message), &order)
 		if err != nil {
-			fmt.Println(err)
-			fmt.Println("Error while unmarshalling order")
-			var errorEvent Event
-			errorEvent.Action = "Error"
-			errorEvent.Message = "The submitted Order is malformed"
-			return errorEvent
+			fmt.Println("Error while unmarshalling order", err)
+			return generateErrorEvent("The submitted Order is malformed")
 		}
 		Add_to_deliver(order.Meal, order.RestaurantAdress, order.DeliveryAdress)
-		var returnedEvent Event
-		returnedEvent.Action = "Response"
-		returnedEvent.Message = "Your request has been accepted, your " + order.Meal + " will be picked up at " + order.RestaurantAdress + " and delivered to " + order.DeliveryAdress
-		return returnedEvent
+		return generateResponseEvent("Your request has been accepted, your " + order.Meal + " will be picked up at " + order.RestaurantAdress + " and delivered to " + order.DeliveryAdress)
 	} else if event.Action == "List_request" {
-		var returnedEvent Event
-		returnedEvent.Action = "Response"
-		returnedEvent.Message = strings.Join(Read_to_delivers(), ", ")
-		return returnedEvent
+		return generateResponseEvent(strings.Join(Read_to_delivers(), ", "))
 	}
+	return generateErrorEvent("The submitted action is unknown")
+}
+
+func generateErrorEvent(msg string) Event {
 	var errorEvent Event
 	errorEvent.Action = "Error"
-	errorEvent.Message = "The submitted action is unknown"
+	errorEvent.Message = msg
 	return errorEvent
+}
+
+func generateResponseEvent(msg string) Event {
+	var returnedEvent Event
+	returnedEvent.Action = "Response"
+	returnedEvent.Message = msg
+	return returnedEvent
 }

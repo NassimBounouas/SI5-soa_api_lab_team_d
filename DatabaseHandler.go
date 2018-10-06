@@ -27,6 +27,7 @@ func Read_to_delivers() []string {
 		err = rows.Scan(&id, &meal_name, &pickup_address, &delivery_address)
 		if err != nil {
 			fmt.Println(err)
+			return delivers
 		}
 		fmt.Println("Delivery : ", id, " meal : ", meal_name, " from : ", pickup_address, " to : ", delivery_address)
 		deliver := "Delivery : " + strconv.Itoa(id) + " meal : " + meal_name + " from : " + pickup_address + " to : " + delivery_address
