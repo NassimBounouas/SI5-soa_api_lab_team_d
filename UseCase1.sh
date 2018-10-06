@@ -23,6 +23,16 @@ curl -s -X POST http://localhost:4001/receive_event --data '{
     }
 }' | json_pp
 
+echo -e " \n\n### COMPUTE ETA FOR THE ORDER\n"
+curl -X POST -H 'Content-Type: application/json' -i http://localhost:4002/receive_event --data '{	
+	"Action": "compute_eta",
+    	"Message": {
+	"Meal": "Ramen",
+	"Restaurant": "Lyianhg Restaurant",
+	"Delivery_Address": "Polytech Nice Sophia"
+	}
+}'
+
 echo -e " \n\n### VALIDATE THE RAMEN MEAL ORDER\n"
 curl -s -X POST http://localhost:4001/receive_event --data '{
     "action" : "validate_order",
@@ -30,7 +40,7 @@ curl -s -X POST http://localhost:4001/receive_event --data '{
     {
         "meal": "Ramen",
         "restaurant": "Lyianhg Restaurant",
-        "delivery_address": "Templier",
+        "delivery_address": "Polytech Nice Sophia",
         "pick_up_date": "40",
         "delivery_date": "60",
         "price" : "15.00€"
