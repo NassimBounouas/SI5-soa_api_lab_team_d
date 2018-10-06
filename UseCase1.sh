@@ -1,29 +1,36 @@
 #!/bin/bash
 
-echo -e " \n\n### REQUEST MENU TO MENU SERVICE\n"
-curl -s -X POST --header "Content-Type: application/json" http://localhost:4000/receive_event --data '{
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+ORANGE='\033[0;33m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo -e " \n\n${RED}### REQUEST MENU TO MENU SERVICE${NC}\n"
+curl -s -X POST --header "Content-Type: application/json" -i http://localhost:4000/receive_event --data '{
 	"Action": "READ_CATEGORIES",
 	"Message": {}
-}' | json_pp
+}'
 
-echo -e " \n\n### REQUEST MENU WITH JAPANASE CATEGORY\n"
-curl -s -X POST --header "Content-Type: application/json" http://localhost:4000/receive_event --data '{
+echo -e " \n\n${RED}### REQUEST MENU WITH JAPANASE CATEGORY${NC}\n"
+curl -s -X POST --header "Content-Type: application/json" -i http://localhost:4000/receive_event --data '{
 	"Action": "READ_MEALS_BY_CATEGORY",
 	"Message": {
 		"Category": "Japonais"
 	}
-}' | json_pp
+}'
 
-echo -e " \n\n### ORDER A RAMEN MEAL\n"
-curl -s -X POST http://localhost:4001/receive_event --data '{
+echo -e " \n\n${GREEN}### ORDER A RAMEN MEAL${NC}\n"
+curl -s -X POST -i http://localhost:4001/receive_event --data '{
     "action" : "order_meal",
     "message" :
     {
         "meal": "Ramen"
     }
-}' | json_pp
+}'
 
-echo -e " \n\n### COMPUTE ETA FOR THE ORDER\n"
+echo -e " \n\n${ORANGE}### COMPUTE ETA FOR THE ORDER${NC}\n"
 curl -X POST -H 'Content-Type: application/json' -i http://localhost:4002/receive_event --data '{	
 	"Action": "compute_eta",
     	"Message": {
@@ -33,8 +40,8 @@ curl -X POST -H 'Content-Type: application/json' -i http://localhost:4002/receiv
 	}
 }'
 
-echo -e " \n\n### VALIDATE THE RAMEN MEAL ORDER\n"
-curl -s -X POST http://localhost:4001/receive_event --data '{
+echo -e " \n\n${GREEN}### VALIDATE THE RAMEN MEAL ORDER${NC}\n"
+curl -s -X POST -i http://localhost:4001/receive_event --data '{
     "action" : "validate_order",
     "message" :
     {
@@ -45,16 +52,16 @@ curl -s -X POST http://localhost:4001/receive_event --data '{
         "delivery_date": "60",
         "price" : "15.00€"
     }
-}' | json_pp
-
-echo -e " \n\n### SENDING ORDER TO RESTAURANT SERVICE\n"
-curl -X POST http://localhost:4003/receive_event --data '{
-"Action":"Receive_order",
-"Message": "{\"Meal\":\"Ramen\",\"RestaurantAdress\":\"Lyangsrestaurant\",\"DeliveryAdress\":\"Polytech Nice Sophia\"}"
 }'
 
-echo -e "\n\n### SENDING DELIVERY REQUEST TO DELIVERY SERVICE\n"
-curl -X POST http://localhost:4004/receive_event --data '{
+echo -e " \n\n${BLUE}### SENDING ORDER TO RESTAURANT SERVICE${NC}\n"
+curl -s -X POST -i http://localhost:4003/receive_event --data '{
+"Action":"Receive_order",
+"Message": "{\"Meal\":\"Ramen\",\"Client\":\"Philippe C.\",\"PickUpDate\":\"2018-10-10T12:00:00+02:00\"}"
+}'
+
+echo -e "\n\n${YELLOW}### SENDING DELIVERY REQUEST TO DELIVERY SERVICE${NC}\n"
+curl -s -X POST -i http://localhost:4004/receive_event --data '{
 "Action":"Delivery_request",
 "Message": "{\"Meal\":\"Ramen\",\"RestaurantAdress\":\"Lyangsrestaurant\",\"DeliveryAdress\":\"Polytech Nice Sophia\"}"
 }'

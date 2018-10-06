@@ -1,35 +1,56 @@
 version: '3'
 services:
+
   menu:
     image: uberoolab/team-d-menu-service
     depends_on:
      - menu-database
     ports:
      - "4000:5000"
+
   menu-database:
     image: uberoolab/team-d-menu-database
     ports:
      - "4010:3306"
+
+
   order:
     image: uberoolab/team-d-ordering-service
     ports:
      - "4001:5000"
+
+
+
   eta:
     image: uberoolab/team-d-eta-computer-service
     ports:
      - "4002:5000"
+
+
   chinese-restaurant:
-    image: uberoolab/team-d-chinese-restaurant-service:1.0 
+    image: uberoolab/team-d-chinese-restaurant-service
+    environment:
+      - DATABASE=chinese-restaurant-database:3306
+    depends_on:
+      - chinese-restaurant-database
     ports:
      - "4003:8080"
+
+  chinese-restaurant-database:
+    image: uberoolab/team-d-chinese-restaurant-database
+    ports:
+     - "4013:3306"
+
+
   delivery:
-    image: uberoolab/team-d-delivery-service:latest
+    image: uberoolab/team-d-delivery-service
     environment:
       - DATABASE=delivery-database:3306
     depends_on:
       - delivery-database
     ports:
      - "4004:8080"
+
   delivery-database:
     image: uberoolab/team-d-delivery-database
     ports:
