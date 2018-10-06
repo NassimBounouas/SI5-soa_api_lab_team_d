@@ -4,8 +4,6 @@ import "time"
 
 type Order struct {
 	Meal string
-	RestaurantAdress string
-	DeliveryAdress string
+	Client string
 	PickUpDate time.Time
-	DeliveryDate time.Time
 }
