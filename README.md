@@ -29,6 +29,29 @@ flask run --host 0.0.0.0 --port 5000
 # * Serving Flask application
 ```
 
+## Database Configuration
+
+You can configure database connection in `db.ini`
+
+```ini
+# Database Configuration File
+# Loaded on-the-fly regarding ENVIRONEMENT VARIABLE "FLASK_ENV" (production|development)
+
+[development]
+host=localhost
+port=3306
+user=root
+pass=
+db=soa
+
+[production]
+host=menu-database
+port=3306
+user=root
+pass=
+db=soa
+```
+
 ## Docker
 
 ### Build
