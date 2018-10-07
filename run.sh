@@ -23,10 +23,10 @@ curl -s -X POST --header "Content-Type: application/json" -i http://localhost:40
 
 echo -e " \n\n${GREEN}### ORDER A RAMEN MEAL${NC}\n"
 curl -s -X POST -i http://localhost:4001/receive_event --data '{
-    "action" : "order_meal",
-    "message" :
+    "Action" : "order_meal",
+    "Message" :
     {
-        "meal": "Ramen"
+        "Meal": "Ramen"
     }
 }'
 
@@ -42,15 +42,15 @@ curl -X POST -H 'Content-Type: application/json' -i http://localhost:4002/receiv
 
 echo -e " \n\n${GREEN}### VALIDATE THE RAMEN MEAL ORDER${NC}\n"
 curl -s -X POST -i http://localhost:4001/receive_event --data '{
-    "action" : "validate_order",
-    "message" :
+    "Action" : "validate_order",
+    "Message" :
     {
-        "meal": "Ramen",
-        "restaurant": "Lyianhg Restaurant",
-        "delivery_address": "Polytech Nice Sophia",
-        "pick_up_date": "40",
-        "delivery_date": "60",
-        "price" : "15.00€"
+        "Meal": "Ramen",
+        "Restaurant": "Lyianhg Restaurant",
+        "Delivery_Address": "Polytech Nice Sophia",
+        "Pick_Up_Date": "40",
+        "Delivery_Date": "60",
+        "Price" : "15.00€"
     }
 }'
 
