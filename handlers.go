@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func ReceiveEvents(w http.ResponseWriter, r *http.Request) {
@@ -34,8 +35,8 @@ func ProcessEvent(event Event) Event {
 			fmt.Println("Error while unmarshalling order", err)
 			return generateErrorEvent("The submitted Order is malformed")
 		}
-		Add_to_deliver(order.Meal, order.RestaurantAdress, order.DeliveryAdress)
-		return generateResponseEvent("Your request has been accepted, your " + order.Meal + " will be picked up at " + order.RestaurantAdress + " and delivered to " + order.DeliveryAdress)
+		Add_to_deliver(order)
+		return generateResponseEvent("Your request has been accepted, your " + order.Meal + " will be picked up from " + order.PickupAddress + " at " + order.PickUpDate.Format(time.RFC3339) + " and delivered to " + order.DeliveryAdress)
 	} else if event.Action == "List_request" {
 		return generateResponseEvent(strings.Join(Read_to_delivers(), ", "))
 	}

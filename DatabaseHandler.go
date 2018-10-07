@@ -38,18 +38,19 @@ func Read_to_delivers() []string {
 	return delivers
 }
 
-func Add_to_deliver(meal, pickup, delivery string) {
+func Add_to_deliver(order Order) {
 
 	db, err := sql.Open("mysql", "root:root@tcp(" + Database + ")/delivery_db")
 	if err != nil {
 		fmt.Println(err)
 	}
-	stmt, err := db.Prepare("INSERT INTO to_deliver_table (meal_name, pickup_address, delivery_address) VALUES (?,?,?)")
+	stmt, err := db.Prepare("INSERT INTO to_deliver_table (meal_name, pickup_address, pickup_date, client, delivery_address) VALUES (?,?,?,?,?)")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	res, err := stmt.Exec(meal, pickup, delivery)
+	const MySQLTimeFormat = "2006-01-02 15:04:05"
+	res, err := stmt.Exec(order.Meal, order.PickupAddress, order.PickUpDate.Format(MySQLTimeFormat), order.Client, order.DeliveryAdress)
 	if err != nil {
 		fmt.Println(err)
 	}
