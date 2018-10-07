@@ -1,8 +1,10 @@
+
 from flask import Flask, request, jsonify,g
 import random
 import pymysql
 import configparser
 import os
+
 app = Flask(__name__)
 
 
@@ -68,7 +70,7 @@ def validateOrder(jsonRecv):
 
 def databaseAddRecipe(jsonRecv):
     cursor = g.db.cursor()
-    sql = "INSERT INTO to_get_recipe(meal_name,restaurant_name,delivery_date,delivery_address,price) VALUES('%s','%s','%d','%s','%d')" %(jsonRecv["Meal"],jsonRecv["Restaurant"],jsonRecv["Delivery_Date"],jsonRecv["Delivery_Address"],jsonRecv["Price"])
+    sql = "INSERT INTO to_get_recipe(meal_name,restaurant_name,delivery_date,delivery_address,price) VALUES('%s','%s','%s','%s','%d')" %(jsonRecv["Meal"],jsonRecv["Restaurant"],jsonRecv["Delivery_Date"],jsonRecv["Delivery_Address"],jsonRecv["Price"])
     try:
         cursor.execute(sql)
         g.db.commit()
@@ -131,4 +133,4 @@ def main():
         )
 
 if __name__ == '__main__':
-    app.run(debug=True, host=
+app.run(debug=False, host='0.0.0.0')
