@@ -13,6 +13,3 @@
 [submodule "SI5-soa_api_lab_team_d_chinese_restaurant_service"]
 	path = SI5-soa_api_lab_team_d_chinese_restaurant_service
 	url = https://github.com/NassimBounouas/SI5-soa_api_lab_team_d_chinese_restaurant_service.git
-[submodule "SI5-soa_api_lab_team_d_ordering_database"]
-	path = SI5-soa_api_lab_team_d_ordering_database
-	url = https://github.com/NassimBounouas/SI5-soa_api_lab_team_d_ordering_database.git 
