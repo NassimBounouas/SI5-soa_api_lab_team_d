@@ -16,9 +16,15 @@ services:
 
   order:
     image: uberoolab/team-d-ordering-service
+    depends_on:
+     - ordering-database
     ports:
      - "4001:5000"
 
+  ordering-database:
+    image: uberoolab/team-d-ordering-database
+    ports:
+     - "4011:3306"
 
 
   eta:
