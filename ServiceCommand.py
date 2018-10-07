@@ -30,7 +30,7 @@ def before_request():
         g.connected = True
         print("Connected to Database.")
     except  pymysql.err.OperationalError:
-        connected = False
+        g.connected = False
         print("Cannot process request : unable to connect to the database. Maybe the `docker-compose` is not ready...")
         return jsonify({
             'status': 'KO',
