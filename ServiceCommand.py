@@ -1,26 +1,34 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify,g
 import random
 import pymysql
+import configparser
 import os
-
 app = Flask(__name__)
+
+
+def load_config():
+    config_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "db.ini")
+    if not os.path.exists(config_file):
+        raise FileNotFoundError(config_file)
+    app_config = configparser.ConfigParser()
+    app_config.read(config_file)
+    return app_config
 
 @app.before_request
 def before_request():
-    global db
-    global connected
+    configuration = load_config()["development"]
     try:
-        db = pymysql.connect(host='localhost',
-                             port=3306,
-                             user='root',
-                             password='',
-                             db='ordering_db',
+        g.db = pymysql.connect(host=configuration['host'],
+                             port=int(configuration['port']),
+                             user=configuration['user'],
+                             password=configuration['pass'],
+                             db=configuration['db'],
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor,
                              autocommit=True,
                              connect_timeout=60)
-        connected = True
-        print("Connected to Database")
+        g.connected = True
+        print("Connected to Database.")
     except  pymysql.err.OperationalError:
         connected = False
         print("Cannot process request : unable to connect to the database. Maybe the `docker-compose` is not ready...")
@@ -31,8 +39,10 @@ def before_request():
 
 @app.after_request
 def after_request(response):
-    db.close()
-    connected = False
+    if g.connected:
+        g.db.close()
+        print("Database closed.")
+    g.connected = False
     return response
 
 def orderMeal(jsonRecv):
@@ -52,28 +62,27 @@ def validateOrder(jsonRecv):
         'Delivery_Date' : jsonRecv["Delivery_Date"]
     }
     databaseAddRecipe(jsonRecv)
-    db.close()
     return jsonify(
         Message = data,
         Status = "Accepted")
 
 def databaseAddRecipe(jsonRecv):
-    cursor = db.cursor()
-    sql = "INSERT INTO to_get_recipe(meal_name,restaurant_name,delivery_date,delivery_address) VALUES('%s','%s','%d','%s')" %(jsonRecv["Meal"],jsonRecv["Restaurant"],jsonRecv["Delivery_Date"],jsonRecv["Delivery_Address"])
+    cursor = g.db.cursor()
+    sql = "INSERT INTO to_get_recipe(meal_name,restaurant_name,delivery_date,delivery_address,price) VALUES('%s','%s','%d','%s','%d')" %(jsonRecv["Meal"],jsonRecv["Restaurant"],jsonRecv["Delivery_Date"],jsonRecv["Delivery_Address"],jsonRecv["Price"])
     try:
         cursor.execute(sql)
-        db.commit()
+        g.db.commit()
     except:
-        db.rollback()
+        g.db.rollback()
     return
 
 def databaseReadRecipe(identifier):
-    cursor = db.cursor()
-    sql = "SELECT * FROM to_get_recipe WHERE id=1"
+    cursor = g.db.cursor()
+    sql = ("SELECT * FROM to_get_recipe WHERE id=" + str(identifier))
     try:
         cursor.execute(sql)
     except:
-        db.rollback()
+        g.db.rollback()
     res = cursor.fetchall()
     if len(res) > 0:
         data = {
@@ -94,12 +103,12 @@ def databaseReadRecipe(identifier):
         Status = "Accepted")
 
 def databaseReadRestaurant(meal):
-    cursor = db.cursor()
+    cursor = g.db.cursor()
     sql = "SELECT * FROM to_get_restaurant WHERE meal_name=%s"
     try:
         cursor.execute(sql,meal)
     except:
-        db.rollback()
+        g.db.rollback()
     res = cursor.fetchall()
     return {
         'Restaurant' : res[0]['restaurant_name'],
@@ -122,4 +131,4 @@ def main():
         )
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host=
