@@ -1,9 +1,6 @@
 [submodule "SI5-soa_api_lab_team_d_delivery_service"]
 	path = SI5-soa_api_lab_team_d_delivery_service
 	url = https://github.com/NassimBounouas/SI5-soa_api_lab_team_d_delivery_service.git
-[submodule "SI5-soa_api_lab_team_d_eta_computer_service"]
-	path = SI5-soa_api_lab_team_d_eta_computer_service
-	url = https://github.com/NassimBounouas/SI5-soa_api_lab_team_d_eta_computer_service.git
 [submodule "SI5-soa_api_lab_team_d_ordering_service"]
 	path = SI5-soa_api_lab_team_d_ordering_service
 	url = https://github.com/NassimBounouas/SI5-soa_api_lab_team_d_ordering_service.git
