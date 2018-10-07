@@ -36,7 +36,7 @@ services:
   chinese-restaurant:
     image: uberoolab/team-d-chinese-restaurant-service
     environment:
-      - DATABASE=chinese-restaurant-database:3306
+      - DATABASE_CHINESE_RESTAURANT=chinese-restaurant-database:3306
     depends_on:
       - chinese-restaurant-database
     ports:
@@ -51,7 +51,7 @@ services:
   delivery:
     image: uberoolab/team-d-delivery-service
     environment:
-      - DATABASE=delivery-database:3306
+      - DATABASE_DELIVERY=delivery-database:3306
     depends_on:
       - delivery-database
     ports:

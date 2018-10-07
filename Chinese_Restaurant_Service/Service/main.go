@@ -9,8 +9,8 @@ import (
 
 var Database string
 func main() {
-	if(len(os.Getenv("DATABASE")) != 0) {
-		Database = os.Getenv("DATABASE")
+	if(len(os.Getenv("DATABASE_CHINESE_RESTAURANT")) != 0) {
+		Database = os.Getenv("DATABASE_CHINESE_RESTAURANT")
 	} else {
 		fmt.Println("Impossible to read database environment variable")
 		os.Exit(1);
