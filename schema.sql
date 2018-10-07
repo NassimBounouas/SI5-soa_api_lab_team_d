@@ -16,5 +16,5 @@ delivery_date DATETIME,
 delivery_adress varchar(255)
 );
 
- INSERT INTO to_get_restaurant(meal_name,restaurant_name) VALUES ("Ramen","Lyianhg Restaurant");
- INSERT INTO to_get_restaurant(meal_name,restaurant_name) VALUES ("Pizza","Bar Roger");
+ INSERT INTO to_get_restaurant(meal_name,restaurant_name,price) VALUES ("Ramen","Lyianhg Restaurant",5);
+ INSERT INTO to_get_restaurant(meal_name,restaurant_name,price) VALUES ("Pizza","Bar Roger",7);
