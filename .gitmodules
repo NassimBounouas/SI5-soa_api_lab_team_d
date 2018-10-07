@@ -1,27 +1,27 @@
 [submodule "SI5-soa_api_lab_team_d_delivery_service"]
 	path = SI5-soa_api_lab_team_d_delivery_service
-	url = git@github.com:NassimBounouas/SI5-soa_api_lab_team_d_delivery_service.git
+	url = https://github.com/NassimBounouas/SI5-soa_api_lab_team_d_delivery_service.git
 [submodule "SI5-soa_api_lab_team_d_eta_computer_service"]
 	path = SI5-soa_api_lab_team_d_eta_computer_service
-	url = git@github.com:NassimBounouas/SI5-soa_api_lab_team_d_eta_computer_service.git
+	url = https://github.com/NassimBounouas/SI5-soa_api_lab_team_d_eta_computer_service.git
 [submodule "SI5-soa_api_lab_team_d_ordering_service"]
 	path = SI5-soa_api_lab_team_d_ordering_service
-	url = git@github.com:NassimBounouas/SI5-soa_api_lab_team_d_ordering_service.git
+	url = https://github.com/NassimBounouas/SI5-soa_api_lab_team_d_ordering_service.git
 [submodule "SI5-soa_api_lab_team_d_menu_service"]
 	path = SI5-soa_api_lab_team_d_menu_service
-	url = git@github.com:NassimBounouas/SI5-soa_api_lab_team_d_menu_service.git
+	url = https://github.com/NassimBounouas/SI5-soa_api_lab_team_d_menu_service.git
 [submodule "SI5-soa_api_lab_team_d_chinese_restaurant_service"]
 	path = SI5-soa_api_lab_team_d_chinese_restaurant_service
-	url = git@github.com:NassimBounouas/SI5-soa_api_lab_team_d_chinese_restaurant_service.git
+	url = https://github.com/NassimBounouas/SI5-soa_api_lab_team_d_chinese_restaurant_service.git
 [submodule "SI5-soa_api_lab_team_d_delivery_database"]
 	path = SI5-soa_api_lab_team_d_delivery_database
-	url = git@github.com:NassimBounouas/SI5-soa_api_lab_team_d_delivery_database.git
+	url = https://github.com/NassimBounouas/SI5-soa_api_lab_team_d_delivery_database.git
 [submodule "SI5-soa_api_lab_team_d_menu_database"]
 	path = SI5-soa_api_lab_team_d_menu_database
-	url = git@github.com:NassimBounouas/SI5-soa_api_lab_team_d_menu_database.git
+	url = https://github.com/NassimBounouas/SI5-soa_api_lab_team_d_menu_database.git
 [submodule "SI5-soa_api_lab_team_d_ordering_database"]
 	path = SI5-soa_api_lab_team_d_ordering_database
-	url = git@github.com:NassimBounouas/SI5-soa_api_lab_team_d_ordering_database.git
+	url = https://github.com/NassimBounouas/SI5-soa_api_lab_team_d_ordering_database.git 
 [submodule "SI5-soa_api_lab_team_d_chinese_restaurant_database"]
 	path = SI5-soa_api_lab_team_d_chinese_restaurant_database
-	url = git@github.com:NassimBounouas/SI5-soa_api_lab_team_d_chinese_restaurant_database.git
+	url = https://github.com/NassimBounouas/SI5-soa_api_lab_team_d_chinese_restaurant_database.git
