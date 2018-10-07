@@ -3,7 +3,7 @@ USE ordering_db;
 
 CREATE TABLE to_get_restaurant (
 `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-meal_name varchar(255)
+meal_name varchar(255),
 restaurant_name varchar(255)
 );
 
