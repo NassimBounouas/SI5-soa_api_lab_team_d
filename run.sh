@@ -48,9 +48,7 @@ curl -s -X POST -i http://localhost:4001/receive_event --data '{
         "Meal": "Ramen",
         "Restaurant": "Lyianhg Restaurant",
         "Delivery_Address": "Polytech Nice Sophia",
-        "Pick_Up_Date": "40",
-        "Delivery_Date": "60",
-        "Price" : "15.00€"
+        "Delivery_Date": "60"
     }
 }'
 
