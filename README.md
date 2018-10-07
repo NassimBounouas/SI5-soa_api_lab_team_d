@@ -3,13 +3,7 @@
 ### Author
 __Nassim BOUNOUAS__
 ### Updated
-__15:26 30/09/2018__
-
-## Remarks
-
-The database is mocked before each request.
-
-Only `Read` operations are available.
+__02:14 07/10/2018__
 
 ## Requirements
 
