@@ -18,7 +18,7 @@ def load_config():
 
 @app.before_request
 def before_request():
-    configuration = load_config()["development"]
+    configuration = load_config()["production"]
     try:
         g.db = pymysql.connect(host=configuration['host'],
                              port=int(configuration['port']),
