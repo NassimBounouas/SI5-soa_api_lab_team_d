@@ -12,6 +12,8 @@ func Read_to_delivers() []string {
 	db, err := sql.Open("mysql", "root:root@tcp("+ Database +")/delivery_db?readTimeout=60s")
 	if err != nil {
 		fmt.Println(err)
+		var string []string
+		return strings
 	}
 	rows, err := db.Query("SELECT * FROM to_deliver_table")
 	if err != nil {
@@ -43,6 +45,7 @@ func Add_to_deliver(order Order) {
 	db, err := sql.Open("mysql", "root:root@tcp(" + Database + ")/delivery_db?readTimeout=60s")
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 	stmt, err := db.Prepare("INSERT INTO to_deliver_table (meal_name, pickup_address, pickup_date, client, delivery_address) VALUES (?,?,?,?,?)")
 	if err != nil {
