@@ -14,6 +14,3 @@ restaurant_name varchar(255),
 delivery_date integer,
 delivery_adress varchar(255)
 );
-
-INSERT INTO to_get_restaurant (meal_name) VALUES ("test_meal");
-INSERT INTO to_get_recipe (meal_name,restaurant_name,pickup_address,delivery_address) VALUES ("test_meal",test_restaurant","test_pickup","test_delivery");
