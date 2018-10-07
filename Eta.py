@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import random
+import random, datetime
 app = Flask(__name__)
 
 __product__ = "Eta Service"
@@ -7,7 +7,7 @@ __author__ = "Duminy Gaetan"
 __copyright__ = "Copyright 2018, Polytech Nice Sophia"
 __credits__ = ["Duminy Gaetan"]
 __license__ = "MIT"
-__version__ = "1.0.2"
+__version__ = "1.0"
 __maintainer__ = "Duminy Gaetan"
 __email__ = "gaetan.duminy@etu.unice.fr"
 __status__ = "development"
@@ -21,11 +21,12 @@ def computeEta():
             message = jsonFile["Message"]
             time1 = random.randint(10, 20)
             time2 = time1 + random.randint(5, 15)
+            date = datetime.datetime.now()
             data = { "Restaurant": message['Restaurant'],
                      "Meal": message['Meal'],
                      "Delivery_Address": message['Delivery_Address'],
-                     "Pick_Up_Date": time1,
-                     "Delivery_Date": time2
+                     "Pick_Up_Date": date + datetime.timedelta(minutes=time1),
+                     "Delivery_Date": date + datetime.timedelta(minutes=time2)
                 }
             return jsonify( Action = "validate_order",
                             Message = data), 200
