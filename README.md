@@ -37,9 +37,9 @@ With Postman:
 
 Post a Json with [POST] http://127.0.0.1:4002/receive_event and the server will return a Json including Eta.
 
-The **delivery date** is the time estimated by the system for the customer to receive his order.
+The **delivery date** is the date estimated by the system for the customer to receive his order.
 
-The **pick up date** is the time estimated by the system for the delivery person to pick up the order from the restaurant.
+The **pick up date** is the date estimated by the system for the delivery person to pick up the order from the restaurant.
 
 **Examples:**
 
@@ -59,14 +59,14 @@ Example of request:
 Example of answer:
 ```
 {
-   	"Action": "validate_order",
-	"Message": {
+    "Action": "validate_order",
+    "Message": {
         "Delivery_Address": "Campus Templier",
-        "Delivery_Date": 31,
+        "Delivery_Date": "Sun, 07 Oct 2018 14:54:31 GMT",
         "Meal": "Sushi",
-        "Pick_Up_Date": 20,
+        "Pick_Up_Date": "Sun, 07 Oct 2018 14:41:31 GMT",
         "Restaurant": "Le soleil de l'est"
-	}
+    }
 }
 ```
 
