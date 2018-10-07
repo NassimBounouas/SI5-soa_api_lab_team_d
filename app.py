@@ -70,15 +70,23 @@ def before_request():
 
     db_config = load_config()[os.environ['FLASK_ENV']]
 
-    # Connect to the database
-    g.database_handle = pymysql.connect(host=db_config['host'],
-                                        port=int(db_config['port']),
-                                        user=db_config['user'],
-                                        password=db_config['pass'],
-                                        db=db_config['db'],
-                                        charset='utf8mb4',
-                                        cursorclass=pymysql.cursors.DictCursor,
-                                        autocommit=True)
+    try:
+        # Connect to the database
+        g.database_handle = pymysql.connect(host=db_config['host'],
+                                            port=int(db_config['port']),
+                                            user=db_config['user'],
+                                            password=db_config['pass'],
+                                            db=db_config['db'],
+                                            charset='utf8mb4',
+                                            cursorclass=pymysql.cursors.DictCursor,
+                                            autocommit=True,
+                                            connect_timeout=60)
+    except pymysql.err.OperationalError:
+        print("Cannot process request : unable to connect to the database. Maybe the `docker-compose` is not ready...")
+        return jsonify({
+            'status': 'KO',
+            'message': "Cannot process request : unable to connect to the database. Maybe the `docker-compose` is not ready..."
+        }), 500
 
     if not hasattr(g, 'database_is_ready'):
         __populate_db()
@@ -87,7 +95,8 @@ def before_request():
 @app.after_request
 def after_request(response):
     # DISCONNECT FROM THE DATABASE
-    g.database_handle.close()
+    if g.database_handle:
+        g.database_handle.close()
     return response
 
 
