@@ -13,7 +13,8 @@ CREATE TABLE to_get_recipe(
 meal_name varchar(255),
 restaurant_name varchar(255),
 delivery_date DATETIME,
-delivery_adress varchar(255)
+delivery_adress varchar(255),
+price integer
 );
 
  INSERT INTO to_get_restaurant(meal_name,restaurant_name,price) VALUES ("Ramen","Lyianhg Restaurant",5);
