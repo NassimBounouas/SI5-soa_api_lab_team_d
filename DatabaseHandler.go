@@ -9,7 +9,7 @@ import (
 )
 
 func Read_to_delivers() []string {
-	db, err := sql.Open("mysql", "root:root@tcp("+ Database +")/delivery_db")
+	db, err := sql.Open("mysql", "root:root@tcp("+ Database +")/delivery_db?readTimeout=60s")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -40,7 +40,7 @@ func Read_to_delivers() []string {
 
 func Add_to_deliver(order Order) {
 
-	db, err := sql.Open("mysql", "root:root@tcp(" + Database + ")/delivery_db")
+	db, err := sql.Open("mysql", "root:root@tcp(" + Database + ")/delivery_db?readTimeout=60s")
 	if err != nil {
 		fmt.Println(err)
 	}
