@@ -51,21 +51,14 @@ Example :
 
 >response
 ```json
-{
-    
-     "Action": "compute_eta",
-   
+{ 
+     "Action": "compute_eta",  
      "Message": 
      {
-        
 	"Meal": "Ramen",
-
         "Price": 5,
-
         "Restaurant": "Lyianhg Restaurant"
-    
      }
-
 }
 ```
 
@@ -83,7 +76,7 @@ Example :
         "Meal": "Ramen",
         "Restaurant": "Lyianhg Restaurant",
         "Delivery_Address": "Templier",
-        "Delivery_Date": date,
+        "Delivery_Date": "date",
         "Price": 5
     }
 }
@@ -123,7 +116,7 @@ Example :
     {
         "Command_Id": 4,
         "Delivery_Address": "Les Templiers",
-        "Delivery_Date": 45,
+        "Delivery_Date": "Sun, 07 Oct 2018 14:41:31 GMT",
         "Meal": "Ramen",
         "Restaurant": "Lyianhg Restaurant"
     },
