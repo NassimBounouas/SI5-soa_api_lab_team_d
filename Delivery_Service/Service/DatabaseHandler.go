@@ -12,7 +12,7 @@ func Read_to_delivers() []string {
 	db, err := sql.Open("mysql", "root:root@tcp("+ Database +")/delivery_db?readTimeout=60s")
 	if err != nil {
 		fmt.Println(err)
-		var string []string
+		var strings []string
 		return strings
 	}
 	rows, err := db.Query("SELECT * FROM to_deliver_table")
