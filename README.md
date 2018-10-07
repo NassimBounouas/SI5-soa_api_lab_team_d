@@ -6,27 +6,11 @@ __Rudy MEERSMAN__
 __30/09/2018__
 
 ## Remarks
-The Database is a json file named "Restaurant.json" where there's meals with theirs Restaurant
-```json
-{
-  "Plat" : [
-    {
-      "Id": 1,
-      "Name": "Ramen",
-      "Restaurant": "Lyianhg Restaurant"
-    },
-    {
-      "Id": 2,
-      "Name": "Pizza",
-      "Restaurant": "Bar Roger"
-    }
-  ]
-}
-```
 
 ## Requirements
 ```
 pip install flask
+pip3 install PyMySQL
 ```
 
 ## API Usage
@@ -57,20 +41,40 @@ Example :
 
 ```json
 {
-    "Action": "compute_eta",
-    "Message": {
-        "Meal": "Ramen",
-        "Restaurant": "Lyianhg Restaurant"
+    "Action" : "order_meal",
+    "Message" :
+    {
+        "Meal" : "Ramen"
     }
+}
+```
+
+>response
+```json
+{
+    
+     "Action": "compute_eta",
+   
+     "Message": 
+     {
+        
+	"Meal": "Ramen",
+
+        "Price": 5,
+
+        "Restaurant": "Lyianhg Restaurant"
+    
+     }
+
 }
 ```
 
 ### Validation
 
-* Return json of Order with unique ID for command
+* Return json of Order with unique ID for command or the command done
 
 > Request Body 
-
+>> validation
 ```json
 {
     "Action" : "validate_order",
@@ -79,8 +83,18 @@ Example :
         "Meal": "Ramen",
         "Restaurant": "Lyianhg Restaurant",
         "Delivery_Address": "Templier",
-        "Pick_Up_Date": "40",
-        "Delivery_Date": "60"
+        "Delivery_Date": date,
+        "Price": 5
+    }
+}
+```
+>> request
+```json
+{
+    "Action" : "validation_request",
+    "Message" :
+    {
+        "Id" : 1
     }
 }
 ```
@@ -90,16 +104,31 @@ Example :
 
 ```json
 {
-    "Action": {
-        "Command_Id": 47,
-        "Delivery_Address": "Templier",
-        "Delivery_Date": "60",
+    "Action" : "validate_order",
+    "Message" :
+    {
+        "Meal" : "Ramen",
+        "Restaurant" : "Lyianhg Restaurant",
+        "Delivery_Address" : "Les Templiers",
+        "Delivery_Date" : "Sun, 07 Oct 2018 14:41:31 GMT",
+        "Price" : 5
+    }
+}
+```
+
+>response
+```json
+{  
+    "Message": 
+    {
+        "Command_Id": 4,
+        "Delivery_Address": "Les Templiers",
+        "Delivery_Date": 45,
         "Meal": "Ramen",
         "Restaurant": "Lyianhg Restaurant"
     },
     "Status": "Accepted"
 }
 ```
-
 
   
