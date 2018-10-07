@@ -63,7 +63,7 @@ curl -s -X POST -i http://localhost:4003/receive_event --data '{
 echo -e "\n\n${YELLOW}### SENDING DELIVERY REQUEST TO DELIVERY SERVICE${NC}\n"
 curl -s -X POST -i http://localhost:4004/receive_event --data '{
 "Action":"Delivery_request",
-"Message": "{\"Meal\":\"Ramen\",\"RestaurantAdress\":\"Lyangsrestaurant\",\"DeliveryAdress\":\"Polytech Nice Sophia\"}"
+"Message": "{\"Meal\":\"Ramen\",\"PickupAddress\":\"Lyangs restaurant\",\"PickUpDate\":\"2018-10-10T12:00:00+02:00\",\"Client\":\"Philippe C.\",\"DeliveryAdress\":\"Polytech Nice Sophia\"}"
 }'
 
 echo -e "\n\n"
