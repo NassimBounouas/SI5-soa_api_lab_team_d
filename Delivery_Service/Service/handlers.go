@@ -10,7 +10,7 @@ import (
 
 func ReceiveEvents(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
-	var event Event
+	var event MessageEvent
 	err := decoder.Decode(&event)
 	if err != nil {
 		http.Error(w,err.Error(), http.StatusInternalServerError)
@@ -27,7 +27,7 @@ func ReceiveEvents(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(marshalledEvent))
 }
 
-func ProcessEvent(event Event) Event {
+func ProcessEvent(event MessageEvent) MessageEvent {
 	if event.Action == "Delivery_request" {
 		var order Order
 		err := json.Unmarshal([]byte(event.Message), &order)
@@ -43,15 +43,15 @@ func ProcessEvent(event Event) Event {
 	return generateErrorEvent("The submitted action is unknown")
 }
 
-func generateErrorEvent(msg string) Event {
-	var errorEvent Event
+func generateErrorEvent(msg string) MessageEvent {
+	var errorEvent MessageEvent
 	errorEvent.Action = "Error"
 	errorEvent.Message = msg
 	return errorEvent
 }
 
-func generateResponseEvent(msg string) Event {
-	var returnedEvent Event
+func generateResponseEvent(msg string) MessageEvent {
+	var returnedEvent MessageEvent
 	returnedEvent.Action = "Response"
 	returnedEvent.Message = msg
 	return returnedEvent
