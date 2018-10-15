@@ -1,0 +1,1 @@
+{"Action" : "Delivery_request","Message" : "{\"Meal\":\"Ramen\",\"PickupAddress\":\"Lyangs restaurant\",\"PickUpDate\":\"2018-10-10T12:00:00+02:00\",\"Client\":\"Philippe C.\",\"DeliveryAdress\":\"Polytech Nice Sophia\"}"}
