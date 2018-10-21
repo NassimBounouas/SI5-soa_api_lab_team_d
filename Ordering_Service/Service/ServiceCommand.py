@@ -25,7 +25,7 @@ def load_config():
 
 #@app.before_request
 def before_request():
-    configuration = load_config()["development"]
+    configuration = load_config()["production"]
     print("Will connect to : " + configuration['host'] + " on port : " + configuration['port'])
     global db
     global connected
