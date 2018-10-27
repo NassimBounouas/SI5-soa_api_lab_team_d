@@ -10,13 +10,17 @@ class MealCollection(PersistentObject):
 
     collection = []
 
-    def __init__(self, dbh, category_name=""):
+    def __init__(self, dbh, category):
         super().__init__(dbh)
 
         self.collection = []
 
         with self.database_handle.cursor() as cursor:
-            category = Category.get_by_name(category_name, self.database_handle)
+            if str(category).isnumeric():
+                category = Category.get_by_id(int(category), self.database_handle)
+            else:
+                category = Category.get_by_name(category, self.database_handle)
+
             if category.identifier > 0:
                 sql = "SELECT * FROM meal WHERE idcategory=%s"
                 cursor.execute(sql, category.identifier)

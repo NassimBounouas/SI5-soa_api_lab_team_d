@@ -91,11 +91,7 @@ The push refers to repository [docker.io/uberoolab/team-d-menu-service]
 ### Run From Hub (Detached)
 `docker run -d -p 5000:5000 -t uberoolab/team-d-menu-service`
 
-## API Usage
-
-### Endpoint as Event listener
-
-> [POST] http://127.0.0.1:5000/receive_event
+## Service Usage
 
 ### List categories
 
@@ -132,7 +128,7 @@ Response :
 }
 ```
 
-### List meals by category name
+### List meals by category <name|id>
 
 Usage :
 
@@ -239,15 +235,13 @@ Response :
 }
 ```
 
-> Note :
-> The category must be passed by `category_name`
+## Examples
 
-## Example with cURL
-
-Read categories with `kafka-console-producer.sh`
+Using `kafka-console-producer.sh`
 
 ```bash
 $ ./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic restaurant
 >{"Action":"CATEGORY_LIST_REQUEST","Request":42,"Message":{}}
 >{"Action":"FOOD_LIST_REQUEST","Request":42,"Message":{"Category":"Japonais"}}
+>{"Action":"FOOD_LIST_REQUEST","Request":42,"Message":{"Category":12}}
 ```

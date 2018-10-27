@@ -159,7 +159,7 @@ def get_meals_by_category(dbh, request_id, params: dict):
         }
     category = params["Category"]
 
-    meals = MealCollection(dbh=dbh, category_name=category)
+    meals = MealCollection(dbh=dbh, category=category)
 
     return {
         'Action': 'FOOD_LIST_RESPONSE',
@@ -213,6 +213,8 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
             # Client
             consumer = KafkaConsumer('restaurant',
                                      bootstrap_servers=app_config['bootstrap_servers'],
+                                     max_poll_interval_ms=100,
+                                     session_timeout_ms=3000,
                                      auto_offset_reset='earliest',
                                      value_deserializer=lambda item: json.loads(item.decode('utf-8')))
 
