@@ -1,6 +1,5 @@
-package kafka;
+package teamd.uberoo.kafka;
 
-import hello.KafkaMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;

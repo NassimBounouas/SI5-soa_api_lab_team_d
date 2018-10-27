@@ -1,6 +1,5 @@
-package kafka;
+package teamd.uberoo.kafka;
 
-import hello.KafkaMessage;
 import org.springframework.kafka.annotation.KafkaListener;
 
 import java.util.concurrent.CountDownLatch;

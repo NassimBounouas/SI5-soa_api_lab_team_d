@@ -1,4 +1,4 @@
-package hello;
+package teamd.uberoo.kafka;
 
 public class KafkaMessage {
     private String action;

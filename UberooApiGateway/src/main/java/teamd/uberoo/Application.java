@@ -1,7 +1,8 @@
-package hello;
+package teamd.uberoo;
 
-import kafka.MessageListener;
-import kafka.MessageProducer;
+import teamd.uberoo.kafka.KafkaMessage;
+import teamd.uberoo.kafka.MessageListener;
+import teamd.uberoo.kafka.MessageProducer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;

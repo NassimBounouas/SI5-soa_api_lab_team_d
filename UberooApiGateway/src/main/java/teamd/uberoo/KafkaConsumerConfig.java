@@ -1,6 +1,7 @@
-package hello;
+package teamd.uberoo;
 
-import kafka.customserializer.KafkaMessageDeserializer;
+import teamd.uberoo.kafka.KafkaMessage;
+import teamd.uberoo.kafka.customserializer.KafkaMessageDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;

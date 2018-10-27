@@ -1,7 +1,7 @@
-package kafka.customserializer;
+package teamd.uberoo.kafka.customserializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hello.KafkaMessage;
+import teamd.uberoo.kafka.KafkaMessage;
 import org.apache.kafka.common.serialization.Deserializer;
 
 import java.nio.charset.StandardCharsets;

@@ -1,7 +1,8 @@
-package hello;
+package teamd.uberoo;
 
 
-import kafka.MessageProducer;
+import teamd.uberoo.kafka.KafkaMessage;
+import teamd.uberoo.kafka.MessageProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

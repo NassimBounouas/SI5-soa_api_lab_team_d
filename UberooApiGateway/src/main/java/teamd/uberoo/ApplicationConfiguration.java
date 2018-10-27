@@ -1,7 +1,7 @@
-package hello;
+package teamd.uberoo;
 
-import kafka.MessageListener;
-import kafka.MessageProducer;
+import teamd.uberoo.kafka.MessageListener;
+import teamd.uberoo.kafka.MessageProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
