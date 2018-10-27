@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 import configparser
+import json
 import os
 import signal
 import sys
 import threading
-import time
+import queue
 import logging
-
 import pymysql
-from jsonify.convert import jsonify
 
 from kafka import KafkaProducer
+from kafka import KafkaConsumer
 
 __product__ = "Menu Service"
 __author__ = "Nikita ROUSSEAU"
@@ -26,12 +27,12 @@ __status__ = "development"
 # APPLICATION RUNTIME ENVIRONMENT
 # (production|development)
 env = 'development'
-
-# GLOBAL VARIABLE
-g = None
+# GLOBAL APPLICATION CONFIGURATION
+app_config = []
+bootstrap_servers = ()
 # GLOBAL THREAD REGISTRY
 threads = []
-# CLEAN EXIT FUNCTION
+# CLEAN EXIT EVENT
 t_stop_event = threading.Event()
 
 
@@ -50,87 +51,111 @@ signal.signal(signal.SIGINT, __sigint_handler)
 signal.signal(signal.SIGTERM, __sigint_handler)
 
 
-def __load_config():
+def __load_config(env):
     """
     Parse database configuration file
+    :string env: (production|development)
     """
-    config_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "db.ini")
+    config_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "config.ini")
     if not os.path.exists(config_file):
         raise FileNotFoundError(config_file)
     app_config = configparser.ConfigParser()
     app_config.read(config_file)
+
+    # Evaluate
+    app_config = app_config[env]
     return app_config
 
 
-def before_request():
-    # DATABASE CONNECTION
-    g.database_handle = None
+def __mysql_connect():
+    global app_config
 
-    # LOAD CONFIGURATION
-    db_config = __load_config()[env]
-
-    try:
-        # Connect to the database
-        g.database_handle = pymysql.connect(host=db_config['host'],
-                                            port=int(db_config['port']),
-                                            user=db_config['user'],
-                                            password=db_config['pass'],
-                                            db=db_config['db'],
-                                            charset='utf8mb4',
-                                            cursorclass=pymysql.cursors.DictCursor,
-                                            autocommit=True,
-                                            connect_timeout=60)
-    except pymysql.err.OperationalError:
-        logging.debug('Cannot process request : unable to connect to the database !')
-        logging.debug('Maybe the `docker-compose` is not ready ?')
-        print("Cannot process request : unable to connect to the database. Maybe the `docker-compose` is not ready ?")
-        return jsonify({
-            'status': 'KO',
-            'message': "Unable to connect to the database. Maybe the `docker-compose` is not ready ?"
-        }), 500
+    return pymysql.connect(host=app_config['host'],
+                           port=int(app_config['port']),
+                           user=app_config['user'],
+                           password=app_config['pass'],
+                           db=app_config['db'],
+                           charset='utf8mb4',
+                           cursorclass=pymysql.cursors.DictCursor,
+                           autocommit=True,
+                           connect_timeout=60)
 
 
-def after_request():
-    # DISCONNECT FROM THE DATABASE
-    if g.database_handle:
-        g.database_handle.close()
+def __mysql_close(database_handle=None):
+    if database_handle:
+        database_handle.close()
 
 
 # THREAD WORKERS
 
-def kafka_producer_worker(topic):
+def kafka_restaurant_producer_worker(mq: queue.Queue):
+    """
+    Kafka Restaurant Topic Producer
+    as thread worker
+    Get messages from a shared mq queue.Queue
+    :param mq: queue.Queue
+    :return:
+    """
+    global app_config
+
     while not t_stop_event.is_set():
-        print("produce " + topic)
-        time.sleep(10)
-        print("loop0")
+        # Client
+        producer = KafkaProducer(bootstrap_servers=app_config['bootstrap_servers'],
+                                 value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+        while True:
+            if mq.qsize() > 0:
+                # Topic + Message
+                producer.send('restaurant', mq.get())
+                # Force buffer flush in order to send the message
+                producer.flush()
     return
 
 
-def kafka_consumer_worker(topic):
+def kafka_restaurant_consumer_worker(mq: queue.Queue):
+    """
+    Kafka Restaurant Topic Consumer
+    as thread worker
+    :param mq: queue.Queue
+    :return:
+    """
+    global app_config
+
     while not t_stop_event.is_set():
-        print("consume " + topic)
-        time.sleep(15)
-        print("loop1")
+        # Client
+        consumer = KafkaConsumer(bootstrap_servers=app_config['bootstrap_servers'],
+                                 value_deserializer=lambda m: json.loads(m.decode('utf-8')))
+        # Topic
+        consumer.subscribe(['restaurant'])
+
+        # Message loop
+        for message in consumer:
+            logging.debug("READING MESSAGE %s:%d:%d: key=%s value=%s" % (
+                message.topic,
+                message.partition,
+                message.offset,
+                message.key,
+                message.value)
+            )
+            try:
+                dbh = __mysql_connect()
+
+                """"
+                # Action switch
+                if message.value["Action"] == "validate_order":
+                    mq.put(validateOrder(jsonMessage.value["Message"]))
+                elif message.value["Action"] == "order_meal":
+                    mq.put(orderMeal(jsonMessage.value["Message"]))
+                elif message["Action"] == "validation_request":
+                    return databaseReadRecipe(jsonMessage.value["Message"]["Id"])
+                else:
+                    mq.put(json.loads('{error = "404 Not Found")}'))
+                """
+
+                __mysql_close(dbh)
+            except pymysql.err.OperationalError:
+                logging.debug('Cannot process request : unable to connect to the database !')
+                logging.debug('Maybe the `docker-compose` is not ready ?')
     return
-
-
-"""
-# To consume latest messages and auto-commit offsets
-consumer = KafkaConsumer('test',
-                         bootstrap_servers=['mint-virtual-machine:9092'])
-for message in consumer:
-    # message value and key are raw bytes -- decode if necessary!
-    # e.g., for unicode: `message.value.decode('utf-8')`
-    print ("%s:%d:%d: key=%s value=%s" % (message.topic, message.partition,
-                                          message.offset, message.key,
-                                          message.value))
-
-producer = KafkaProducer(bootstrap_servers='mint-virtual-machine:9092', acks='all')
-for _ in range(10):
-    producer.send('test', b'some_message_bytes')
-
-producer.flush()
-"""
 
 
 # MAIN
@@ -151,23 +176,29 @@ if __name__ == "__main__":
             level=logging.DEBUG
         )
 
+    # CONFIGURATION
+    app_config = __load_config(env)
+    bootstrap_servers = str(app_config['bootstrap_servers']).split(',')
+
+    # RESTAURANT CONSUMER
+    restaurant_mq = queue.Queue()  # Shared queue between consumer / producer threads
+
+    t_kafka_restaurant_consumer_worker = threading.Thread(
+        name='kafka_consumer_worker',
+        daemon=True,
+        target=kafka_restaurant_consumer_worker,
+        args=(restaurant_mq,)
+    )
+    threads.append(t_kafka_restaurant_consumer_worker)
+
     # PRODUCER
     t_producer_worker = threading.Thread(
         name='kafka_producer_worker',
         daemon=True,
-        target=kafka_producer_worker,
-        args=('toto',)
+        target=kafka_restaurant_producer_worker,
+        args=(restaurant_mq,)
     )
     threads.append(t_producer_worker)
-
-    # CONSUMER
-    t_kafka_consumer_worker = threading.Thread(
-        name='kafka_consumer_worker',
-        daemon=True,
-        target=kafka_consumer_worker,
-        args=('titi',)
-    )
-    threads.append(t_kafka_consumer_worker)
 
     # Start
     logging.info('Starting...')

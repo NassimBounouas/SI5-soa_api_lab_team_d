@@ -27,7 +27,7 @@ def load_config():
     """
     Parse database configuration file
     """
-    config_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "db.ini")
+    config_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "config.ini")
     if not os.path.exists(config_file):
         raise FileNotFoundError(config_file)
     app_config = configparser.ConfigParser()
