@@ -24,12 +24,10 @@ pip install jsonify
 ## Server Startup
 
 ```bash
-export FLASK_APP=app.py
-export FLASK_ENV=development
-
-flask run --host 0.0.0.0 --port 5000
-
-# * Serving Flask application
+python3 app.py <production|development>
+INFO:root:Starting...
+INFO:root:Ready !
+INFO:root:Serving application in `development` environment
 ```
 
 ## Database Configuration
@@ -37,22 +35,28 @@ flask run --host 0.0.0.0 --port 5000
 You can configure database connection in `db.ini`
 
 ```ini
-# Database Configuration File
-# Loaded on-the-fly regarding ENVIRONEMENT VARIABLE "FLASK_ENV" (production|development)
+# Application Configuration File
+# Loaded on-the-fly regarding the first passed argument (production|development)
 
 [development]
+# DATABASE
 host=localhost
 port=3306
 user=root
 pass=
 db=soa
+# KAFKA
+bootstrap_servers=mint-virtual-machine:9092,
 
 [production]
+# DATABASE
 host=menu-database
 port=3306
 user=root
-pass=
+pass=root
 db=soa
+# KAFKA
+bootstrap_servers=0.0.0.0:9092,
 ```
 
 ## Docker
@@ -100,7 +104,7 @@ Usage :
 > [POST] http://127.0.0.1:5000/receive_event
 ```json
 {
-	"Action": "READ_CATEGORIES",
+	"Action": "CATEGORY_LIST_REQUEST",
 	"Message": {}
 }
 ```
