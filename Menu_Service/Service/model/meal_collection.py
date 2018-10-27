@@ -1,19 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from flask import g
 from model.category import Category
 from model.meal import Meal
+from model.persistent_object import PersistentObject
 
 
-class MealCollection:
+class MealCollection(PersistentObject):
 
     collection = []
 
-    def __init__(self, category_name=""):
+    def __init__(self, dbh, category_name=""):
+        super().__init__(dbh)
+
         self.collection = []
 
-        with g.database_handle.cursor() as cursor:
-            category = Category.get_by_name(category_name)
+        with self.database_handle.cursor() as cursor:
+            category = Category.get_by_name(category_name, self.database_handle)
             if category.identifier > 0:
                 sql = "SELECT * FROM meal WHERE idcategory=%s"
                 cursor.execute(sql, category.identifier)
@@ -25,6 +27,7 @@ class MealCollection:
                 for meal in meals:
                     self.collection.append(
                         Meal(
+                            dbh=dbh,
                             parent_category=category,
                             name=meal["name"],
                             price=meal["price"],

@@ -10,8 +10,8 @@ class Category(PersistentObject):
     region = ""
     image = ""
 
-    def __init__(self, name="", region="", image=""):
-        PersistentObject.__init__(self)
+    def __init__(self, dbh=None, name="", region="", image=""):
+        super().__init__(dbh)
 
         self.name = name
         self.region = region
@@ -63,8 +63,8 @@ class Category(PersistentObject):
         }
 
     @staticmethod
-    def get_by_name(name):
-        category = Category(name=name)
+    def get_by_name(name, dbh):
+        category = Category(dbh=dbh, name=name)
         if category.identifier == 0:
             return None
         return category

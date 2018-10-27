@@ -10,7 +10,7 @@ import threading
 import queue
 import logging
 import pymysql
-
+from jsonify.convert import jsonify
 from kafka import KafkaProducer
 from kafka import KafkaConsumer
 
@@ -23,6 +23,8 @@ __version__ = "2.0"
 __maintainer__ = "Nikita ROUSSEAU"
 __email__ = "nikita.rousseau@etu.unice.fr"
 __status__ = "development"
+
+# TODO : implement factory / database service in order to reduce coupling with database handle
 
 # APPLICATION RUNTIME ENVIRONMENT
 # (production|development)
@@ -44,7 +46,7 @@ def __sigint_handler(signal, frame):
     logging.debug("SIGINT or SIGTERM catched")
     logging.debug("Raise t_stop_event")
     t_stop_event.set()  # Set stop flag to true for all launched threads
-    logging.debug("Stopping daemons...")
+    logging.info("Stopping daemons...")
 
 
 signal.signal(signal.SIGINT, __sigint_handler)
@@ -67,6 +69,9 @@ def __load_config(env):
     return app_config
 
 
+# DATABASE HELPERS
+
+
 def __mysql_connect():
     global app_config
 
@@ -84,6 +89,67 @@ def __mysql_connect():
 def __mysql_close(database_handle=None):
     if database_handle:
         database_handle.close()
+
+
+def __populate_db(dbh=None):
+    from model.category import Category
+    from model.meal import Meal
+
+    # Categories
+    asie_japon = Category(dbh=dbh, name="Japonais", region="Asie")
+    asie_chine = Category(dbh=dbh, name="Chinois", region="Asie")
+
+    # Meals
+    Meal(dbh=dbh, parent_category=asie_japon, name="Sushis saumon", price=3.90)
+    Meal(dbh=dbh, parent_category=asie_japon, name="Sushis saumon épicé", price=4.50)
+    Meal(dbh=dbh, parent_category=asie_japon, name="Sushis saumon mariné au jus de yuzu et ses herbes", price=4.80)
+    Meal(dbh=dbh, parent_category=asie_japon, name="Ramen nature", price=7.0)
+    Meal(dbh=dbh, parent_category=asie_chine, name="Brochette de viande au fromage", price=13.90)
+
+    # Meals as Menus
+    Meal(dbh=dbh, parent_category=asie_japon, name="Plateau 1 - 8 pièces", price=13.90, is_menu=True)
+
+
+# BUSINESS FUNCTIONS
+
+
+def get_categories(dbh):
+    """
+    List available categories
+    :return:
+    """
+    from model.category_collection import CategoryCollection
+
+    categories = CategoryCollection(dbh=dbh)
+
+    data = {
+        'status': 'OK',
+        'categories': categories.to_json()
+    }
+
+    return jsonify(data)
+
+
+def get_meals_by_category(dbh, params: dict):
+    """
+    List food by category
+    :param params: dict
+    :return:
+    """
+    from model.meal_collection import MealCollection
+
+    if not params["Category"]:
+        jsonify([])
+    category = params["Category"]
+
+    meals = MealCollection(dbh=dbh, category_name=category)
+
+    data = {
+        'status': 'OK',
+        'meals': meals.to_json()
+    }
+
+    return jsonify(data)
 
 
 # THREAD WORKERS
@@ -129,7 +195,7 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
 
         # Message loop
         for message in consumer:
-            logging.debug("READING MESSAGE %s:%d:%d: key=%s value=%s" % (
+            logging.info("READING MESSAGE %s:%d:%d: key=%s value=%s" % (
                 message.topic,
                 message.partition,
                 message.offset,
@@ -137,24 +203,25 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
                 message.value)
             )
             try:
+                # Pre routine
                 dbh = __mysql_connect()
 
-                """"
                 # Action switch
-                if message.value["Action"] == "validate_order":
-                    mq.put(validateOrder(jsonMessage.value["Message"]))
-                elif message.value["Action"] == "order_meal":
-                    mq.put(orderMeal(jsonMessage.value["Message"]))
-                elif message["Action"] == "validation_request":
-                    return databaseReadRecipe(jsonMessage.value["Message"]["Id"])
-                else:
-                    mq.put(json.loads('{error = "404 Not Found")}'))
-                """
+                if str(message.value["Action"]).upper() == "CATEGORY_LIST_REQUEST":
+                    mq.put(
+                        get_categories(dbh)
+                    )
+                elif str(message.value["Action"]).upper() == "FOOD_LIST_REQUEST":
+                    mq.put(
+                        get_meals_by_category(message.value["Message"],
+                                              dbh)
+                    )
 
+                # Post routine
                 __mysql_close(dbh)
             except pymysql.err.OperationalError:
-                logging.debug('Cannot process request : unable to connect to the database !')
-                logging.debug('Maybe the `docker-compose` is not ready ?')
+                logging.error('Cannot process request : unable to connect to the database !')
+                logging.error('Maybe the `docker-compose` is not ready ?')
     return
 
 
@@ -168,17 +235,22 @@ if __name__ == "__main__":
     if env == 'production':
         logging.basicConfig(
             filename='app-production.log',
-            level=logging.INFO
+            level=logging.WARNING
         )
     else:
         logging.basicConfig(
             filename='app-development.log',
-            level=logging.DEBUG
+            level=logging.INFO
         )
 
     # CONFIGURATION
     app_config = __load_config(env)
     bootstrap_servers = str(app_config['bootstrap_servers']).split(',')
+
+    # Init DB
+    dbh = __mysql_connect()
+    __populate_db(dbh)
+    __mysql_close(dbh)
 
     # RESTAURANT CONSUMER
     restaurant_mq = queue.Queue()  # Shared queue between consumer / producer threads
