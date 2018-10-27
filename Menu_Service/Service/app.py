@@ -10,7 +10,6 @@ import threading
 import queue
 import logging
 import pymysql
-from jsonify.convert import jsonify
 from kafka import KafkaProducer
 from kafka import KafkaConsumer
 
@@ -53,20 +52,20 @@ signal.signal(signal.SIGINT, __sigint_handler)
 signal.signal(signal.SIGTERM, __sigint_handler)
 
 
-def __load_config(env):
+def __load_config(runtime_env):
     """
     Parse database configuration file
-    :string env: (production|development)
+    :string runtime_env: (production|development)
     """
     config_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "config.ini")
     if not os.path.exists(config_file):
         raise FileNotFoundError(config_file)
-    app_config = configparser.ConfigParser()
-    app_config.read(config_file)
+    _app_config = configparser.ConfigParser()
+    _app_config.read(config_file)
 
     # Evaluate
-    app_config = app_config[env]
-    return app_config
+    _app_config = _app_config[runtime_env]
+    return _app_config
 
 
 # DATABASE HELPERS
@@ -91,9 +90,11 @@ def __mysql_close(database_handle=None):
         database_handle.close()
 
 
-def __populate_db(dbh=None):
+def __populate_db():
     from model.category import Category
     from model.meal import Meal
+
+    dbh = __mysql_connect()
 
     # Categories
     asie_japon = Category(dbh=dbh, name="Japonais", region="Asie")
@@ -109,6 +110,8 @@ def __populate_db(dbh=None):
     # Meals as Menus
     Meal(dbh=dbh, parent_category=asie_japon, name="Plateau 1 - 8 pièces", price=13.90, is_menu=True)
 
+    __mysql_close(dbh)
+
 
 # BUSINESS FUNCTIONS
 
@@ -122,34 +125,37 @@ def get_categories(dbh):
 
     categories = CategoryCollection(dbh=dbh)
 
-    data = {
-        'status': 'OK',
-        'categories': categories.to_json()
+    return {
+        'Action': 'CATEGORY_LIST_RESPONSE',
+        'Status': 'OK',
+        'Categories': categories.to_json()
     }
-
-    return jsonify(data)
 
 
 def get_meals_by_category(dbh, params: dict):
     """
     List food by category
+    :param dbh: database_handle
     :param params: dict
     :return:
     """
     from model.meal_collection import MealCollection
 
     if not params["Category"]:
-        jsonify([])
+        return {
+            'Action': 'FOOD_LIST_RESPONSE',
+            'Status': 'KO',
+            'Meals': []
+        }
     category = params["Category"]
 
     meals = MealCollection(dbh=dbh, category_name=category)
 
-    data = {
-        'status': 'OK',
-        'meals': meals.to_json()
+    return {
+        'Action': 'FOOD_LIST_RESPONSE',
+        'Status': 'OK',
+        'Meals': meals.to_json()
     }
-
-    return jsonify(data)
 
 
 # THREAD WORKERS
@@ -171,8 +177,10 @@ def kafka_restaurant_producer_worker(mq: queue.Queue):
         while True:
             if mq.qsize() > 0:
                 # Topic + Message
+                logging.info("DEQUEUE MESSAGE FROM QUEUE")
                 producer.send('restaurant', mq.get())
                 # Force buffer flush in order to send the message
+                logging.info("MESSAGE SENT !")
                 producer.flush()
     return
 
@@ -188,10 +196,10 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
 
     while not t_stop_event.is_set():
         # Client
-        consumer = KafkaConsumer(bootstrap_servers=app_config['bootstrap_servers'],
+        consumer = KafkaConsumer('restaurant',
+                                 bootstrap_servers=app_config['bootstrap_servers'],
+                                 auto_offset_reset='earliest',
                                  value_deserializer=lambda m: json.loads(m.decode('utf-8')))
-        # Topic
-        consumer.subscribe(['restaurant'])
 
         # Message loop
         for message in consumer:
@@ -208,10 +216,12 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
 
                 # Action switch
                 if str(message.value["Action"]).upper() == "CATEGORY_LIST_REQUEST":
+                    logging.info("PUT get_categories MESSAGE in QUEUE")
                     mq.put(
                         get_categories(dbh)
                     )
                 elif str(message.value["Action"]).upper() == "FOOD_LIST_REQUEST":
+                    logging.info("PUT get_meals_by_category MESSAGE in QUEUE")
                     mq.put(
                         get_meals_by_category(message.value["Message"],
                                               dbh)
@@ -234,12 +244,10 @@ if __name__ == "__main__":
     # LOGGING
     if env == 'production':
         logging.basicConfig(
-            filename='app-production.log',
             level=logging.WARNING
         )
     else:
         logging.basicConfig(
-            filename='app-development.log',
             level=logging.INFO
         )
 
@@ -248,9 +256,7 @@ if __name__ == "__main__":
     bootstrap_servers = str(app_config['bootstrap_servers']).split(',')
 
     # Init DB
-    dbh = __mysql_connect()
-    __populate_db(dbh)
-    __mysql_close(dbh)
+    __populate_db()
 
     # RESTAURANT CONSUMER
     restaurant_mq = queue.Queue()  # Shared queue between consumer / producer threads
