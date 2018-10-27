@@ -121,10 +121,12 @@ def __populate_db():
 # BUSINESS FUNCTIONS
 
 
-def get_categories(dbh):
+def get_categories(dbh, request_id):
     """
     List available categories
-    :return:
+    :param dbh: database_handle
+    :param request_id: int
+    :return: json
     """
     from model.category_collection import CategoryCollection
 
@@ -133,16 +135,18 @@ def get_categories(dbh):
     return {
         'Action': 'CATEGORY_LIST_RESPONSE',
         'Status': 'OK',
+        'Request': int(request_id),
         'Categories': categories.to_json()
     }
 
 
-def get_meals_by_category(dbh, params: dict):
+def get_meals_by_category(dbh, request_id, params: dict):
     """
     List food by category
     :param dbh: database_handle
+    :param request_id: int
     :param params: dict
-    :return:
+    :return: json
     """
     from model.meal_collection import MealCollection
 
@@ -150,6 +154,7 @@ def get_meals_by_category(dbh, params: dict):
         return {
             'Action': 'FOOD_LIST_RESPONSE',
             'Status': 'KO',
+            'Request': int(request_id),
             'Meals': []
         }
     category = params["Category"]
@@ -159,6 +164,7 @@ def get_meals_by_category(dbh, params: dict):
     return {
         'Action': 'FOOD_LIST_RESPONSE',
         'Status': 'OK',
+        'Request': int(request_id),
         'Meals': meals.to_json()
     }
 
@@ -219,6 +225,7 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
                     message.key,
                     message.value)
                 )
+
                 # Pre routine
                 dbh = __mysql_connect()
 
@@ -226,12 +233,14 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
                 if str(message.value["Action"]).upper() == "CATEGORY_LIST_REQUEST":
                     logging.info("PUT get_categories MESSAGE in QUEUE")
                     mq.put(
-                        get_categories(dbh)
+                        get_categories(dbh,
+                                       str(message.value["Request"]))
                     )
                 elif str(message.value["Action"]).upper() == "FOOD_LIST_REQUEST":
                     logging.info("PUT get_meals_by_category MESSAGE in QUEUE")
                     mq.put(
                         get_meals_by_category(dbh,
+                                              str(message.value["Request"]),
                                               message.value["Message"])
                     )
 

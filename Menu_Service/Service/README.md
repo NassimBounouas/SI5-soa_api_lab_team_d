@@ -105,6 +105,7 @@ Usage :
 ```json
 {
   "Action": "CATEGORY_LIST_REQUEST",
+  "Request": 42,
   "Message": {}
 }
 ```
@@ -115,6 +116,7 @@ Response :
 {
   "Action": "CATEGORY_LIST_RESPONSE",
   "Status": "OK",
+  "Request": 42,
   "Categories": [
     {
       "id": 11,
@@ -138,6 +140,7 @@ Usage :
 ```json
 {
   "Action": "FOOD_LIST_REQUEST",
+  "Request": 42,
   "Message": {
     "Category": "Japonais"
   }
@@ -150,6 +153,7 @@ Response :
 {
   "Action": "FOOD_LIST_RESPONSE",
   "Status": "OK",
+  "Request": 42,
   "Meals": [
     {
       "id": 33,
@@ -244,6 +248,6 @@ Read categories with `kafka-console-producer.sh`
 
 ```bash
 $ ./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic restaurant
->{"Action":"CATEGORY_LIST_REQUEST","Message":{}}
->{"Action":"FOOD_LIST_REQUEST","Message":{"Category":"Japonais"}}
+>{"Action":"CATEGORY_LIST_REQUEST","Request":42,"Message":{}}
+>{"Action":"FOOD_LIST_REQUEST","Request":42,"Message":{"Category":"Japonais"}}
 ```
