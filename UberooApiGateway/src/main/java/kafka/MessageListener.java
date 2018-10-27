@@ -11,7 +11,9 @@ public class MessageListener {
 
     @KafkaListener(topics = "${message.topic.name}", containerFactory = "kafkaMessageKafkaListenerContainerFactory")
     public void greetingListener(KafkaMessage message) {
-        System.out.println("Received kafka message: " + message);
+        if (message.getAction() != null && message.getName() != null) {
+            System.out.println("Received kafka message: " + message);
+        }
         this.messageLatch.countDown();
     }
 
