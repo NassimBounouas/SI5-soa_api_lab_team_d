@@ -101,11 +101,11 @@ The push refers to repository [docker.io/uberoolab/team-d-menu-service]
 
 Usage :
 
-> [POST] http://127.0.0.1:5000/receive_event
+> [KAFKA] `restaurant` topic
 ```json
 {
-	"Action": "CATEGORY_LIST_REQUEST",
-	"Message": {}
+  "Action": "CATEGORY_LIST_REQUEST",
+  "Message": {}
 }
 ```
 
@@ -113,19 +113,20 @@ Response :
 
 ```json
 {
-    "categories": [
-        {
-            "id": 10,
-            "name": "Chinois",
-            "region": "Asie"
-        },
-        {
-            "id": 9,
-            "name": "Japonais",
-            "region": "Asie"
-        }
-    ],
-    "status": "OK"
+  "Action": "CATEGORY_LIST_RESPONSE",
+  "Status": "OK",
+  "Categories": [
+    {
+      "id": 11,
+      "name": "Japonais",
+      "region": "Asie"
+    },
+    {
+      "id": 12,
+      "name": "Chinois",
+      "region": "Asie"
+    }
+  ]
 }
 ```
 
@@ -133,84 +134,15 @@ Response :
 
 Usage :
 
-> [POST] http://127.0.0.1:5000/receive_event
+> [KAFKA] `restaurant` topic
 ```json
-{
-	"Action": "READ_MEALS_BY_CATEGORY",
-	"Message": {
-		"Category": "Japonais"
-	}
-}
+
 ```
 
 Response :
 
 ```json
-{
-    "meals": [
-        {
-            "category": {
-                "id": 9,
-                "name": "Japonais",
-                "region": ""
-            },
-            "id": 28,
-            "image": "",
-            "is_menu": false,
-            "name": "Sushis saumon",
-            "price": 3.9
-        },
-        {
-            "category": {
-                "id": 9,
-                "name": "Japonais",
-                "region": ""
-            },
-            "id": 27,
-            "image": "",
-            "is_menu": true,
-            "name": "Plateau 1 - 8 pièces",
-            "price": 13.9
-        },
-        {
-            "category": {
-                "id": 9,
-                "name": "Japonais",
-                "region": ""
-            },
-            "id": 29,
-            "image": "",
-            "is_menu": false,
-            "name": "Sushis saumon épicé",
-            "price": 4.5
-        },
-        {
-            "category": {
-                "id": 9,
-                "name": "Japonais",
-                "region": ""
-            },
-            "id": 30,
-            "image": "",
-            "is_menu": false,
-            "name": "Sushis saumon mariné au jus de yuzu et ses herbes",
-            "price": 4.8
-        },
-        {
-            "category": {
-                "id": 9,
-                "name": "Japonais",
-                "region": ""
-            },
-            "id": 31,
-            "image": "",
-            "is_menu": false,
-            "name": "Ramen nature",
-            "price": 7
-        }
-    ],
-    "status": "OK"
-}
+
 ```
 
 > Note :
@@ -218,11 +150,9 @@ Response :
 
 ## Example with cURL
 
-Read categories with cURL
+Read categories with `kafka-console-producer.sh`
 
 ```bash
-curl -X POST http://localhost:5000/receive_event -H "Content-Type: application/json" --data '{
-    "Action": "READ_CATEGORIES",
-    "Message": {}
-}'
+$ ./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic restaurant
+>{"Action":"CATEGORY_LIST_REQUEST","Message":{}}
 ```
