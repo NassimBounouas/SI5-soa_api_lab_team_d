@@ -93,22 +93,27 @@ def __mysql_close(database_handle=None):
 def __populate_db():
     from model.category import Category
     from model.meal import Meal
+    from model.restaurant import Restaurant
 
     dbh = __mysql_connect()
+
+    # Restaurants
+    dragon_or = Restaurant(dbh=dbh, name="Dragon d'Or")
+    yakuzas = Restaurant(dbh=dbh, name="Le cercle des Yakuzas")
 
     # Categories
     asie_japon = Category(dbh=dbh, name="Japonais", region="Asie")
     asie_chine = Category(dbh=dbh, name="Chinois", region="Asie")
 
     # Meals
-    Meal(dbh=dbh, parent_category=asie_japon, name="Sushis saumon", price=3.90)
-    Meal(dbh=dbh, parent_category=asie_japon, name="Sushis saumon épicé", price=4.50)
-    Meal(dbh=dbh, parent_category=asie_japon, name="Sushis saumon mariné au jus de yuzu et ses herbes", price=4.80)
-    Meal(dbh=dbh, parent_category=asie_japon, name="Ramen nature", price=7.0)
-    Meal(dbh=dbh, parent_category=asie_chine, name="Brochette de viande au fromage", price=13.90)
+    Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon, name="Sushis saumon", price=3.90)
+    Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon, name="Sushis saumon épicé", price=4.50)
+    Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon, name="Sushis saumon mariné au jus de yuzu et ses herbes", price=4.80)
+    Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon, name="Ramen nature", price=7.0)
+    Meal(dbh=dbh, parent_restaurant=yakuzas, parent_category=asie_chine, name="Brochette de viande au fromage", price=13.90)
 
     # Meals as Menus
-    Meal(dbh=dbh, parent_category=asie_japon, name="Plateau 1 - 8 pièces", price=13.90, is_menu=True)
+    Meal(dbh=dbh, parent_restaurant=yakuzas, parent_category=asie_japon, name="Plateau 1 - 8 pièces", price=13.90, is_menu=True)
 
     __mysql_close(dbh)
 

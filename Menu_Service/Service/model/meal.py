@@ -6,18 +6,22 @@ from model.persistent_object import PersistentObject
 class Meal(PersistentObject):
     identifier = 0
     parent_category = None
+    parent_restaurant = None
 
     name = ""
     price = 0.0
     is_menu = False
     image = ""
 
-    def __init__(self, dbh=None, parent_category=None, name="", price=0.0, is_menu=False, image=""):
+    def __init__(self, dbh=None, parent_category=None, parent_restaurant=None, name="", price=0.0, is_menu=False, image=""):
         super().__init__(dbh)
 
         if parent_category is None:
             raise ValueError('A meal must be bound to a category !')
+        if parent_restaurant is None:
+            raise ValueError('A meal must be bound to a restaurant !')
         self.parent_category = parent_category
+        self.parent_restaurant = parent_restaurant
 
         self.name = name
         self.price = price
@@ -42,12 +46,12 @@ class Meal(PersistentObject):
         with self.database_handle.cursor() as cursor:
             if self.identifier > 0:
                 # Update
-                sql = "UPDATE meal SET idcategory=%s, name=%s, price=%s, is_menu=%s, image=%s WHERE idmeal=%s"
-                cursor.execute(sql, (self.parent_category.identifier, self.name, self.price, (0, 1)[self.is_menu], self.image, self.identifier))
+                sql = "UPDATE meal SET idcategory=%s, idrestaurant=%s, name=%s, price=%s, is_menu=%s, image=%s WHERE idmeal=%s"
+                cursor.execute(sql, (self.parent_category.identifier, self.parent_restaurant.identifier, self.name, self.price, (0, 1)[self.is_menu], self.image, self.identifier))
             else:
                 # Create
-                sql = "INSERT INTO meal (idcategory, name, price, is_menu, image) VALUES (%s, %s, %s, %s, %s)"
-                cursor.execute(sql, (self.parent_category.identifier, self.name, self.price, (0, 1)[self.is_menu], self.image))
+                sql = "INSERT INTO meal (idcategory, idrestaurant, name, price, is_menu, image) VALUES (%s, %s, %s, %s, %s, %s)"
+                cursor.execute(sql, (self.parent_category.identifier, self.parent_restaurant.identifier, self.name, self.price, (0, 1)[self.is_menu], self.image))
                 # Fetch identifier
                 self.identifier = cursor.lastrowid
 
@@ -66,6 +70,7 @@ class Meal(PersistentObject):
         return {
             "id": self.identifier,
             "category": self.parent_category.to_json(),
+            "restaurant": self.parent_restaurant.to_json(),
             "name": self.name,
             "price": self.price,
             "is_menu": self.is_menu,

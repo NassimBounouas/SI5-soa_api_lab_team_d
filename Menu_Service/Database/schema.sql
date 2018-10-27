@@ -31,6 +31,7 @@ DROP TABLE IF EXISTS `meal`;
 CREATE TABLE `meal` (
   `idmeal` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `idcategory` int(10) unsigned NOT NULL,
+  `idrestaurant` int(10) unsigned NOT NULL,
   `name` varchar(255) NOT NULL,
   `price` float unsigned DEFAULT '0',
   `is_menu` int(10) unsigned DEFAULT '0',
