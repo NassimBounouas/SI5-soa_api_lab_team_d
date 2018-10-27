@@ -3,6 +3,7 @@
 from model.category import Category
 from model.meal import Meal
 from model.persistent_object import PersistentObject
+from model.restaurant import Restaurant
 
 
 class MealCollection(PersistentObject):
@@ -25,9 +26,11 @@ class MealCollection(PersistentObject):
             if cursor.rowcount > 0:
                 meals = cursor.fetchall()
                 for meal in meals:
+                    restaurant = Restaurant.get_by_id(meal["idrestaurant"], self.database_handle)
                     self.collection.append(
                         Meal(
                             dbh=dbh,
+                            parent_restaurant=restaurant,
                             parent_category=category,
                             name=meal["name"],
                             price=meal["price"],

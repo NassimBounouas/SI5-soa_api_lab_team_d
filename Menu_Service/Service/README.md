@@ -136,17 +136,107 @@ Usage :
 
 > [KAFKA] `restaurant` topic
 ```json
-
+{
+  "Action": "FOOD_LIST_REQUEST",
+  "Message": {
+    "Category": "Japonais"
+  }
+}
 ```
 
 Response :
 
 ```json
-
+{
+  "Action": "FOOD_LIST_RESPONSE",
+  "Status": "OK",
+  "Meals": [
+    {
+      "id": 33,
+      "category": {
+        "id": 11,
+        "name": "Japonais",
+        "region": ""
+      },
+      "restaurant": {
+        "id": 11,
+        "name": "Dragon d'Or"
+      },
+      "name": "Sushis saumon",
+      "price": 3.9,
+      "is_menu": false,
+      "image": ""
+    },
+    {
+      "id": 34,
+      "category": {
+        "id": 11,
+        "name": "Japonais",
+        "region": ""
+      },
+      "restaurant": {
+        "id": 11,
+        "name": "Dragon d'Or"
+      },
+      "name": "Sushis saumon épicé",
+      "price": 4.5,
+      "is_menu": false,
+      "image": ""
+    },
+    {
+      "id": 35,
+      "category": {
+        "id": 11,
+        "name": "Japonais",
+        "region": ""
+      },
+      "restaurant": {
+        "id": 11,
+        "name": "Dragon d'Or"
+      },
+      "name": "Sushis saumon mariné au jus de yuzu et ses herbes",
+      "price": 4.8,
+      "is_menu": false,
+      "image": ""
+    },
+    {
+      "id": 36,
+      "category": {
+        "id": 11,
+        "name": "Japonais",
+        "region": ""
+      },
+      "restaurant": {
+        "id": 11,
+        "name": "Dragon d'Or"
+      },
+      "name": "Ramen nature",
+      "price": 7,
+      "is_menu": false,
+      "image": ""
+    },
+    {
+      "id": 38,
+      "category": {
+        "id": 11,
+        "name": "Japonais",
+        "region": ""
+      },
+      "restaurant": {
+        "id": 12,
+        "name": "Le cercle des Yakuzas"
+      },
+      "name": "Plateau 1 - 8 pièces",
+      "price": 13.9,
+      "is_menu": true,
+      "image": ""
+    }
+  ]
+}
 ```
 
 > Note :
-> The category must be passed by the category name
+> The category must be passed by `category_name`
 
 ## Example with cURL
 
@@ -155,4 +245,5 @@ Read categories with `kafka-console-producer.sh`
 ```bash
 $ ./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic restaurant
 >{"Action":"CATEGORY_LIST_REQUEST","Message":{}}
+>{"Action":"FOOD_LIST_REQUEST","Message":{"Category":"Japonais"}}
 ```

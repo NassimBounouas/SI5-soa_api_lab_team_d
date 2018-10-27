@@ -13,3 +13,6 @@ class PersistentObject:
 
     def delete(self):
         pass
+
+    def hash_id(self):
+        pass

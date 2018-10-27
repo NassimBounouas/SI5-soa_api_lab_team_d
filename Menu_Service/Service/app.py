@@ -178,15 +178,18 @@ def kafka_restaurant_producer_worker(mq: queue.Queue):
     while not t_stop_event.is_set():
         # Client
         producer = KafkaProducer(bootstrap_servers=app_config['bootstrap_servers'],
-                                 value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+                                 value_serializer=lambda item: json.dumps(item).encode('utf-8'))
         while True:
-            if mq.qsize() > 0:
-                # Topic + Message
-                logging.info("DEQUEUE MESSAGE FROM QUEUE")
-                producer.send('restaurant', mq.get())
-                # Force buffer flush in order to send the message
-                logging.info("MESSAGE SENT !")
-                producer.flush()
+            try:
+                if mq.qsize() > 0:
+                    # Topic + Message
+                    logging.info("DEQUEUE MESSAGE FROM QUEUE AND SENDING TO %s" % ('restaurant',))
+                    producer.send('restaurant', mq.get())
+                    # Force buffer flush in order to send the message
+                    logging.info("MESSAGE SENT !")
+                    producer.flush()
+            except Exception as e:
+                logging.fatal(e, exc_info=True)
     return
 
 
@@ -200,22 +203,22 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
     global app_config
 
     while not t_stop_event.is_set():
-        # Client
-        consumer = KafkaConsumer('restaurant',
-                                 bootstrap_servers=app_config['bootstrap_servers'],
-                                 auto_offset_reset='earliest',
-                                 value_deserializer=lambda m: json.loads(m.decode('utf-8')))
+        try:
+            # Client
+            consumer = KafkaConsumer('restaurant',
+                                     bootstrap_servers=app_config['bootstrap_servers'],
+                                     auto_offset_reset='earliest',
+                                     value_deserializer=lambda item: json.loads(item.decode('utf-8')))
 
-        # Message loop
-        for message in consumer:
-            logging.info("READING MESSAGE %s:%d:%d: key=%s value=%s" % (
-                message.topic,
-                message.partition,
-                message.offset,
-                message.key,
-                message.value)
-            )
-            try:
+            # Message loop
+            for message in consumer:
+                logging.info("READING MESSAGE %s:%d:%d: key=%s value=%s" % (
+                    message.topic,
+                    message.partition,
+                    message.offset,
+                    message.key,
+                    message.value)
+                )
                 # Pre routine
                 dbh = __mysql_connect()
 
@@ -228,15 +231,17 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
                 elif str(message.value["Action"]).upper() == "FOOD_LIST_REQUEST":
                     logging.info("PUT get_meals_by_category MESSAGE in QUEUE")
                     mq.put(
-                        get_meals_by_category(message.value["Message"],
-                                              dbh)
+                        get_meals_by_category(dbh,
+                                              message.value["Message"])
                     )
 
                 # Post routine
                 __mysql_close(dbh)
-            except pymysql.err.OperationalError:
-                logging.error('Cannot process request : unable to connect to the database !')
-                logging.error('Maybe the `docker-compose` is not ready ?')
+        except pymysql.err.OperationalError:
+            logging.error('Cannot process request : unable to connect to the database !')
+            logging.error('Maybe the `docker-compose` is not ready ?')
+        except Exception as e:
+            logging.fatal(e, exc_info=True)
     return
 
 
