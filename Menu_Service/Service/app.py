@@ -91,9 +91,11 @@ def __mysql_close(database_handle=None):
         database_handle.close()
 
 
-def __populate_db(dbh=None):
+def __populate_db():
     from model.category import Category
     from model.meal import Meal
+
+    dbh = __mysql_connect()
 
     # Categories
     asie_japon = Category(dbh=dbh, name="Japonais", region="Asie")
@@ -108,6 +110,8 @@ def __populate_db(dbh=None):
 
     # Meals as Menus
     Meal(dbh=dbh, parent_category=asie_japon, name="Plateau 1 - 8 pièces", price=13.90, is_menu=True)
+
+    __mysql_close(dbh)
 
 
 # BUSINESS FUNCTIONS
@@ -248,9 +252,7 @@ if __name__ == "__main__":
     bootstrap_servers = str(app_config['bootstrap_servers']).split(',')
 
     # Init DB
-    dbh = __mysql_connect()
-    __populate_db(dbh)
-    __mysql_close(dbh)
+    __populate_db()
 
     # RESTAURANT CONSUMER
     restaurant_mq = queue.Queue()  # Shared queue between consumer / producer threads
