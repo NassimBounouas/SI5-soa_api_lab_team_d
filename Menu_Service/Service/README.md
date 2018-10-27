@@ -16,6 +16,7 @@ Only `Read` operations are available.
 ```bash
 pip install flask
 pip install PyMySQL
+pip install kafka-python
 ```
 
 ## Server Startup
