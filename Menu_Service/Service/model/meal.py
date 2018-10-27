@@ -12,8 +12,8 @@ class Meal(PersistentObject):
     is_menu = False
     image = ""
 
-    def __init__(self, parent_category=None, name="", price=0.0, is_menu=False, image=""):
-        PersistentObject.__init__(self)
+    def __init__(self, dbh=None, parent_category=None, name="", price=0.0, is_menu=False, image=""):
+        super().__init__(dbh)
 
         if parent_category is None:
             raise ValueError('A meal must be bound to a category !')
@@ -73,8 +73,8 @@ class Meal(PersistentObject):
         }
 
     @staticmethod
-    def get_by_name(name):
-        meal = Meal(name=name)
+    def get_by_name(name, dbh):
+        meal = Meal(dbh=dbh, name=name)
         if meal.identifier == 0:
             return None
         return meal

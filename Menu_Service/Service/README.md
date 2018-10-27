@@ -3,7 +3,7 @@
 ### Author
 __Nikita ROUSSEAU__
 ### Updated
-__18:09 06/10/2018__
+__19:00 27/10/2018__
 
 ## Remarks
 
@@ -13,10 +13,12 @@ Only `Read` operations are available.
 
 ## Requirements
 
+- Python 3.6.x
+- Dependencies :
 ```bash
-pip install flask
 pip install PyMySQL
 pip install kafka-python
+pip install jsonify
 ```
 
 ## Server Startup

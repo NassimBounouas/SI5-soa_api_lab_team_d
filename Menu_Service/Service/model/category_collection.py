@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from flask import g
 from model.category import Category
+from model.persistent_object import PersistentObject
 
 
-class CategoryCollection:
+class CategoryCollection(PersistentObject):
 
-    def __init__(self):
+    def __init__(self, dbh):
+        super().__init__(dbh)
+
         self.collection = []
 
-        with g.database_handle.cursor() as cursor:
+        with self.database_handle.cursor() as cursor:
             sql = "SELECT * FROM category"
             cursor.execute(sql)
             if cursor.rowcount > 0:
@@ -17,6 +19,7 @@ class CategoryCollection:
                 for category in categories:
                     self.collection.append(
                         Category(
+                            dbh=dbh,
                             name=category["name"],
                             region=category["region"],
                             image=category["image"]
