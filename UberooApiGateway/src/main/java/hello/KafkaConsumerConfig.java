@@ -27,7 +27,7 @@ public class KafkaConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(KafkaMessage.class));
     }
 
-    //@Bean
+    @Bean
     public ConcurrentKafkaListenerContainerFactory<String, KafkaMessage> kafkaMessageKafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, KafkaMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(kafkaMessageConsumerFactory());

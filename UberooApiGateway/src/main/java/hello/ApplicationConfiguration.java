@@ -36,7 +36,7 @@ public class ApplicationConfiguration {
         return new MessageProducer();
     }
 
-    //@Bean
+    @Bean
     public MessageListener messageListener() {
         return new MessageListener();
     }

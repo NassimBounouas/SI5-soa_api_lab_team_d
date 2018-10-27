@@ -19,8 +19,8 @@ public class Application {
         ConfigurableApplicationContext context =  SpringApplication.run(Application.class, args);
 
         MessageProducer producer = context.getBean(MessageProducer.class);
-        //MessageListener listener = context.getBean(MessageListener.class);
+        MessageListener listener = context.getBean(MessageListener.class);
         producer.sendKafkaMessage(new KafkaMessage("HELLO_MESSAGE", "Coucou"));
-        //listener.messageLatch.await(3, TimeUnit.SECONDS);
+        listener.messageLatch.await(3, TimeUnit.SECONDS);
     }
 }
