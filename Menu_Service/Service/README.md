@@ -3,7 +3,7 @@
 ### Author
 __Nikita ROUSSEAU__
 ### Updated
-__19:00 27/10/2018__
+__01:47 28/10/2018__
 
 ## Remarks
 
@@ -18,7 +18,6 @@ Only `Read` operations are available.
 ```bash
 pip install PyMySQL
 pip install kafka-python
-pip install jsonify
 ```
 
 ## Server Startup
@@ -56,7 +55,7 @@ user=root
 pass=root
 db=soa
 # KAFKA
-bootstrap_servers=0.0.0.0:9092,
+bootstrap_servers=kafka:9092,
 ```
 
 ## Docker
