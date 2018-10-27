@@ -1,0 +1,47 @@
+version: "2.1"
+
+services:
+
+ # dashboardService:
+ #  container_name: al_dashboardService
+ #  image: "al/wb/orderservice"
+ #  ports:
+ #    - "9555:8080"
+ #  expose:
+ #    - "9555"
+ #  restart: always # if db is up too early, restart
+ #  links: # for the hostname mapping
+      #- orderService_database
+  #    - kafka
+    #depends_on:
+    #  orderService_database: # wait for db to be up
+    #    condition: service_healthy
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - 2181:2181
+
+  kafka:
+    image: wurstmeister/kafka
+    links:
+      - zookeeper:zk
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: "kafka"
+      KAFKA_ADVERTISED_PORT: "9092"
+      KAFKA_CREATE_TOPICS: "topic:1:1"
+      KAFKA_ZOOKEEPER_CONNECT: "zk:2181"
+
+# Add to containers talking to Kafka:
+# links:
+#     - kafka
+#
+# Test:
+# docker-compose up
+# docker exec -it <container_kafka_id> bash
+# kafka-console-producer.sh --broker-list localhost:9092 --topic topic
+# <Write some messages, then CTRL-C>
+# kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic topic --from-beginning
+# Your messages are being read WOW

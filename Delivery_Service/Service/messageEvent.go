@@ -1,6 +1,6 @@
 package main
 
-type Event struct {
+type MessageEvent struct {
 	Action string
 	Message string
 }
