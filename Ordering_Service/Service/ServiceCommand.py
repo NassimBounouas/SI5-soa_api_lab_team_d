@@ -1,4 +1,3 @@
-from flask import Flask, request, jsonify,g
 from kafka import KafkaConsumer,KafkaProducer
 import random
 import pymysql
@@ -12,7 +11,6 @@ import os
 global db
 global connected
 queue =[]
-#app = Flask(__name__)
 
 
 def load_config():
@@ -23,7 +21,6 @@ def load_config():
     app_config.read(config_file)
     return app_config
 
-#@app.before_request
 def before_request():
     configuration = load_config()["production"]
     print("Will connect to : " + configuration['host'] + " on port : " + configuration['port'])
@@ -49,7 +46,6 @@ def before_request():
             'message': "Cannot process request : unable to connect to the database. Maybe the `docker-compose` is not ready..."
         }), 500
 
-#@app.after_request
 def after_request():
     global connected
     global db
@@ -59,28 +55,34 @@ def after_request():
     connected = False
     return
 
-def orderMeal(jsonRecv):
-    data = {"Action" : "compute_eta",
-            "Message" : databaseReadRestaurant(jsonRecv["Meal"]) }
-    return json.loads(json.dumps(data, indent=4, sort_keys=True,default=str))
-
 def validateOrder(jsonRecv):
     ID = random.randint(0,100)
-    data =  { "Message" : {
-                'Command_Id' : ID,
-                'Restaurant' : jsonRecv["Restaurant"],
-                'Meal' : jsonRecv["Meal"],
-                'Delivery_Address' : jsonRecv["Delivery_Address"],
-                'Delivery_Date' : jsonRecv["Delivery_Date"]
-                },
-                "Status" : "Accepted" }
-    databaseAddRecipe(jsonRecv)
+    data =  {
+        "Action" : "PREPARE_COMMANDE",
+        "Message" : {
+            'id request' : ID,
+            'id restaurant' : jsonRecv["id restaurant"],
+            'id meal' : jsonRecv["id meal"]
+                }
+    }
+    databaseAddRecipe(jsonRecv,ID)
     return json.loads(json.dumps(data, indent=4, sort_keys=True,default=str))
 
-def databaseAddRecipe(jsonRecv):
+def databaseAddRecipe(jsonRecv,ID):
     global db
     cursor = db.cursor()
-    sql = "INSERT INTO to_get_recipe(meal_name,restaurant_name,delivery_date,delivery_address,price) VALUES('%s','%s','%s','%s','%d')" %(jsonRecv["Meal"],jsonRecv["Restaurant"],jsonRecv["Delivery_Date"],jsonRecv["Delivery_Address"],jsonRecv["Price"])
+    sql = "INSERT INTO to_get_recipe(id_request,id_meal,id_restaurant,client_name,client_address,command_statut) VALUES('%d','%s','%s','%s','%s','%s')" %(ID,jsonRecv["id meal"],jsonRecv["id restaurant"],jsonRecv["client name"],jsonRecv["client address"],'Waiting')
+    try:
+        cursor.execute(sql)
+        db.commit()
+    except:
+        db.rollback()
+    return
+
+def databaseChangeStatueOrder(identifier):
+    global db
+    cursor = db.cursor()
+    sql = "UPDATE to_get_recipe SET command_statut = %s  WHERE id_request=%s" %("Accepted",str(identifier))
     try:
         cursor.execute(sql)
         db.commit()
@@ -91,44 +93,27 @@ def databaseAddRecipe(jsonRecv):
 def databaseReadRecipe(identifier):
     global db
     cursor = db.cursor()
-    sql = ("SELECT * FROM to_get_recipe WHERE id=" + str(identifier))
+    sql = ("SELECT * FROM to_get_recipe WHERE id_request =" + str(identifier))
     try:
         cursor.execute(sql)
     except:
         db.rollback()
     res = cursor.fetchall()
     if len(res) > 0:
-        data = { "Message" :
+        data = {
+            "Action" : "PREPARE_COMMAND",
+            "Message" :
                 {
-                    'Command_Id' : res[0]['id'],
-                    'Restaurant' : res[0]['restaurant_name'],
-                    'Meal' : res[0]['meal_name'],
-                    'Delivery_Address' : res[0]['delivery_address'],
-                    'Delivery_Date' : res[0]['delivery_date'],
-                    'Price' : res[0]['price']
-                },
-                "Status" : "Accepted"
+                    'id_request' : res[0]['id_request'],
+                    'id_restaurant' : res[0]['id_restaurant'],
+                    'id_meal' : res[0]['id_meal']
+                }
         }
     else:
         return json.loads('{Message = "No Command in the database",Status = "Refused"}')
 
-    return json.loads('{ Message = ' +data+ ',Status = "Accepted"}')
+    return json.loads(data)
     return json.loads(json.dumps(data, indent=4, sort_keys=True,default=str))
-
-def databaseReadRestaurant(meal):
-    global db
-    cursor = db.cursor()
-    sql = "SELECT * FROM to_get_restaurant WHERE meal_name=%s"
-    try:
-        cursor.execute(sql,meal)
-    except:
-        db.rollback()
-    res = cursor.fetchall()
-    return {
-        'Restaurant' : res[0]['restaurant_name'],
-        'Meal' : meal,
-        'Price': res[0]['price']
-    }
 
 class connect_kafka_producer(threading.Thread):
     daemon = True
@@ -140,7 +125,7 @@ class connect_kafka_producer(threading.Thread):
         global queue
         while True:
             if len(queue) > 0:
-                producer.send('ordering_send', queue.pop())
+                producer.send('restaurant', queue.pop())
                 time.sleep(1)
 
 class connect_kafka_consumer(threading.Thread):
@@ -151,21 +136,18 @@ class connect_kafka_consumer(threading.Thread):
             bootstrap_servers = 'localhost:9092',
             auto_offset_reset='earliest',
             value_deserializer=lambda m: json.loads(m.decode('utf-8')))
-        consumer.subscribe(['ordering_recv'])
+        consumer.subscribe(['ordering'])
         for jsonMessage in consumer:
             before_request()
-            if jsonMessage.value["Action"] == "validate_order":
+            if jsonMessage.value["Action"] == "ORDER_REQUEST":
                 queue.append(validateOrder(jsonMessage.value["Message"]))
-            elif jsonMessage.value["Action"] == "order_meal":
-                queue.append(orderMeal(jsonMessage.value["Message"]))
-            elif jsonMessage["Action"] == "validation_request":
-                return databaseReadRecipe(jsonMessage.value["Message"]["Id"])
+            elif jsonMessage.value["Action"] == "VALIDATE_ORDER":
+                queue.append(databaseReadRecipe(jsonMessage.value["Message"]["Id"]))
             else:
                 queue.append(json.loads('{error = "404 Not Found")}'))
-
             after_request()
 
-#@app.route('/receive_event',methods = ['POST'])
+
 def main():
     threads = [
         connect_kafka_producer(),
@@ -175,5 +157,4 @@ def main():
     time.sleep(10)
 
 if __name__ == '__main__':
-    #app.run(debug=False, host='0.0.0.0')
     main()
