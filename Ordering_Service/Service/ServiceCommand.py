@@ -57,16 +57,8 @@ def after_request():
 
 def validateOrder(jsonRecv):
     ID = random.randint(0,100)
-    data =  {
-        "Action" : "PREPARE_COMMANDE",
-        "Message" : {
-            'id request' : ID,
-            'id restaurant' : jsonRecv["id restaurant"],
-            'id meal' : jsonRecv["id meal"]
-                }
-    }
     databaseAddRecipe(jsonRecv,ID)
-    return json.loads(json.dumps(data, indent=4, sort_keys=True,default=str))
+    return
 
 def databaseAddRecipe(jsonRecv,ID):
     global db
@@ -101,8 +93,8 @@ def databaseReadRecipe(identifier):
     res = cursor.fetchall()
     if len(res) > 0:
         data = {
-            "Action" : "PREPARE_COMMAND",
-            "Message" :
+            "action" : "prepare_commande",
+            "message" :
                 {
                     'id_request' : res[0]['id_request'],
                     'id_restaurant' : res[0]['id_restaurant'],
@@ -138,10 +130,10 @@ class connect_kafka_consumer(threading.Thread):
         consumer.subscribe(['ordering'])
         for jsonMessage in consumer:
             before_request()
-            if jsonMessage.value["Action"] == "ORDER_REQUEST":
-                queue.append(validateOrder(jsonMessage.value["Message"]))
-            elif jsonMessage.value["Action"] == "VALIDATE_ORDER":
-                queue.append(databaseReadRecipe(jsonMessage.value["Message"]["Id"]))
+            if jsonMessage.value["action"] == "order_request":
+                validateOrder(jsonMessage.value["message"])
+            elif jsonMessage.value["action"] == "validate_order":
+                queue.append(databaseReadRecipe(jsonMessage.value["message"]["id"]))
             else:
                 print("404 Action Not Found")
             after_request()

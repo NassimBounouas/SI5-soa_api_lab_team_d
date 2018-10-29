@@ -3,13 +3,13 @@
 ### Author
 __Rudy MEERSMAN__
 ### Updated
-__07/10/2018__
+__29/10/2018__
 
 ## Remarks
 
 ## Requirements
 ```
-pip install kafka-python
+pip3 install kafka-python
 pip3 install PyMySQL
 ```
 
@@ -19,13 +19,13 @@ pip3 install PyMySQL
 
 ### Validation
 
-* Return json of Order with unique ID for command or the command done
+* Save in database the order and create an ID for this command
 
 > Request Body 
 >> validation
 ```json
-{	"Action" : "ORDER_REQUEST"
-	,"Message" :
+{	"action" : "order_request",
+	"message" :
 	{
 		"id meal" : 46,
 		"id restaurant" : "Lyianhg Restaurant",
@@ -34,12 +34,11 @@ pip3 install PyMySQL
 	}
 }
 ```
-Example :
 
-
+* Get the order with his id from database and return a "PREPARE_COMMAND" action:
 ```json
-{	"Action" : "VALIDATE_ORDER",
-	"Message" :
+{	"action" : "validate_order",
+	"message" :
 	{	
 		"Id": 85
 	}
@@ -48,8 +47,8 @@ Example :
 
 >response
 ```json
-{	"Action": "PREPARE_COMMAND", 
-	"Message": 
+{	"action": "prepare_command", 
+	"message": 
 	{
 		"id_request": 85,
 		"id_restaurant": "Lyianhg Restaurant",
