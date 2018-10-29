@@ -181,21 +181,23 @@ def kafka_restaurant_producer_worker(mq: queue.Queue):
     """
     global app_config
 
+    # Client
+    producer = KafkaProducer(bootstrap_servers=app_config['bootstrap_servers'],
+                             value_serializer=lambda item: json.dumps(item).encode('utf-8'))
+
     while not t_stop_event.is_set():
-        # Client
-        producer = KafkaProducer(bootstrap_servers=app_config['bootstrap_servers'],
-                                 value_serializer=lambda item: json.dumps(item).encode('utf-8'))
-        while True:
-            try:
-                if mq.qsize() > 0:
-                    # Topic + Message
-                    logging.info("DEQUEUE MESSAGE FROM QUEUE AND SENDING TO %s" % ('restaurant',))
-                    producer.send('restaurant', mq.get())
-                    # Force buffer flush in order to send the message
-                    logging.info("MESSAGE SENT !")
-                    producer.flush()
-            except Exception as e:
-                logging.fatal(e, exc_info=True)
+        try:
+            if mq.qsize() > 0:
+                # Topic + Message
+                logging.info("DEQUEUE MESSAGE FROM QUEUE AND SENDING TO %s" % ('restaurant',))
+                producer.send('restaurant', mq.get())
+                # Force buffer flush in order to send the message
+                logging.info("MESSAGE SENT !")
+                producer.flush()
+        except Exception as e:
+            logging.fatal(e, exc_info=True)
+
+    producer.close()
     return
 
 
@@ -208,16 +210,15 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
     """
     global app_config
 
+    # Client
+    consumer = KafkaConsumer('restaurant',
+                             bootstrap_servers=app_config['bootstrap_servers'],
+                             max_poll_interval_ms=100,
+                             session_timeout_ms=3000,
+                             value_deserializer=lambda item: json.loads(item.decode('utf-8')))
+
     while not t_stop_event.is_set():
         try:
-            # Client
-            consumer = KafkaConsumer('restaurant',
-                                     bootstrap_servers=app_config['bootstrap_servers'],
-                                     max_poll_interval_ms=100,
-                                     session_timeout_ms=3000,
-                                     auto_offset_reset='earliest',
-                                     value_deserializer=lambda item: json.loads(item.decode('utf-8')))
-
             # Message loop
             for message in consumer:
                 logging.info("READING MESSAGE %s:%d:%d: key=%s value=%s" % (
@@ -253,6 +254,8 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
             logging.error('Maybe the `docker-compose` is not ready ?')
         except Exception as e:
             logging.fatal(e, exc_info=True)
+
+    consumer.close()
     return
 
 
