@@ -9,58 +9,13 @@ __07/10/2018__
 
 ## Requirements
 ```
-pip install flask
+pip install kafka-python
 pip3 install PyMySQL
 ```
 
 ## API Usage
 
 * Request type :: [POST] http://127.0.0.1:4001/receive_event
-
-### Restaurant
-
-* Get Restaurant who make the meal ::
-
-> Request Body 
-
-```json
-{
-    "Action" : "order_meal",
-    "Message" :
-    {
-        "Meal": "Ramen"
-    }
-}
-```
-
-
-Example :
-
->with "Meal" : "Ramen"
-> [POST] http://127.0.0.1:4001/receive_event
-
-```json
-{
-    "Action" : "order_meal",
-    "Message" :
-    {
-        "Meal" : "Ramen"
-    }
-}
-```
-
->response
-```json
-{ 
-     "Action": "compute_eta",  
-     "Message": 
-     {
-	"Meal": "Ramen",
-        "Price": 5,
-        "Restaurant": "Lyianhg Restaurant"
-     }
-}
-```
 
 ### Validation
 
@@ -69,58 +24,37 @@ Example :
 > Request Body 
 >> validation
 ```json
-{
-    "Action" : "validate_order",
-    "Message" :
-    {
-        "Meal": "Ramen",
-        "Restaurant": "Lyianhg Restaurant",
-        "Delivery_Address": "Templier",
-        "Delivery_Date": "date",
-        "Price": 5
-    }
+{	"Action" : "ORDER_REQUEST"
+	,"Message" :
+	{
+		"id meal" : 46,
+		"id restaurant" : "Lyianhg Restaurant",
+		"client name" : "Victor",
+		"client address" : "les Templier"
+	}
 }
 ```
->> request
-```json
-{
-    "Action" : "validation_request",
-    "Message" :
-    {
-        "Id" : 1
-    }
-}
-```
-
 Example :
 
 
 ```json
-{
-    "Action" : "validate_order",
-    "Message" :
-    {
-        "Meal" : "Ramen",
-        "Restaurant" : "Lyianhg Restaurant",
-        "Delivery_Address" : "Les Templiers",
-        "Delivery_Date" : "Sun, 07 Oct 2018 14:41:31 GMT",
-        "Price" : 5
-    }
+{	"Action" : "VALIDATE_ORDER",
+	"Message" :
+	{	
+		"Id": 85
+	}
 }
 ```
 
 >response
 ```json
-{  
-    "Message": 
-    {
-        "Command_Id": 4,
-        "Delivery_Address": "Les Templiers",
-        "Delivery_Date": "Sun, 07 Oct 2018 14:41:31 GMT",
-        "Meal": "Ramen",
-        "Restaurant": "Lyianhg Restaurant"
-    },
-    "Status": "Accepted"
+{	"Action": "PREPARE_COMMAND", 
+	"Message": 
+	{
+		"id_request": 85,
+		"id_restaurant": "Lyianhg Restaurant",
+		"id_meal": "46"
+	}
 }
 ```
 
