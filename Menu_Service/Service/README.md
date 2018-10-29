@@ -3,7 +3,7 @@
 ### Author
 __Nikita ROUSSEAU__
 ### Updated
-__17:15 29/10/2018__
+__23:00 29/10/2018__
 
 ## Remarks
 
@@ -64,7 +64,7 @@ bootstrap_servers=kafka:9092,
 `docker build -t menuapp .`
 
 ### Run
-`docker run -p 5000:5000 menuapp`
+`docker run menuapp`
 
 ### Publish
 ```bash
@@ -85,10 +85,10 @@ The push refers to repository [docker.io/uberoolab/team-d-menu-service]
 `docker pull uberoolab/team-d-menu-service`
 
 ### Run From Hub (Interactive)
-`docker run -i -p 5000:5000 -t uberoolab/team-d-menu-service`
+`docker run -i -t uberoolab/team-d-menu-service`
 
 ### Run From Hub (Detached)
-`docker run -d -p 5000:5000 -t uberoolab/team-d-menu-service`
+`docker run -d -t uberoolab/team-d-menu-service`
 
 ## Service Usage
 
