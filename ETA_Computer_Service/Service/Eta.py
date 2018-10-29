@@ -25,19 +25,18 @@ class Consumer(threading.Thread):
         
         for message in consumer:
             jsonFile = message.value
-            print(type(jsonFile))
-            if jsonFile['Action'] == "ETA_REQUESTED":
-                body = jsonFile['Message']
+            if jsonFile['action'] == "eta_requested":
+                body = jsonFile['message']
                 time1 = random.randint(10, 20)
                 time2 = time1 + random.randint(5, 15)
                 date = datetime.datetime.now()
-                data = {"Action": "ETA_RESPONSE", "Message":
-                {    "ID_Request": body['ID_Request'],
-                     "Restaurant": body['Restaurant'],
-                     "Meal": body['Meal'],
-                     "Delivery_Address": body['Delivery_Address'],
-                     "Pick_Up_Date": str(date + datetime.timedelta(minutes=time1)),
-                     "Delivery_Date": str(date + datetime.timedelta(minutes=time2))
+                data = {"action": "eta_response", "message":
+                {    "id_request": body['id_request'],
+                     "restaurant": body['restaurant'],
+                     "meal": body['meal'],
+                     "delivery_address": body['delivery_address'],
+                     "pick_up_date": str(date + datetime.timedelta(minutes=time1)),
+                     "delivery_date": str(date + datetime.timedelta(minutes=time2))
                 }}
                 queue.append(data)
             
@@ -50,9 +49,7 @@ class Producer(threading.Thread):
         global queue
         while True:
             if len(queue) > 0:
-                test= queue.pop();
-                print(type(test))
-                producer.send('eta', test)
+                producer.send('eta', queue.pop())
 
 def main():
     threads = [
