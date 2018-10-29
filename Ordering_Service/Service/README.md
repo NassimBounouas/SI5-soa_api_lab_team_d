@@ -9,7 +9,7 @@ __07/10/2018__
 
 ## Requirements
 ```
-pip install flask
+pip install kafka-python
 pip3 install PyMySQL
 ```
 
