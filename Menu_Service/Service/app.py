@@ -191,7 +191,7 @@ def kafka_restaurant_producer_worker(mq: queue.Queue):
     global app_config
 
     # Client
-    producer = KafkaProducer(bootstrap_servers=app_config['bootstrap_servers'],
+    producer = KafkaProducer(bootstrap_servers=bootstrap_servers,
                              value_serializer=lambda item: json.dumps(item).encode('utf-8'))
 
     while not t_stop_event.is_set():
@@ -222,9 +222,7 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
 
     # Client
     consumer = KafkaConsumer('restaurant',
-                             bootstrap_servers=app_config['bootstrap_servers'],
-                             max_poll_interval_ms=50,
-                             session_timeout_ms=1000,
+                             bootstrap_servers=bootstrap_servers,
                              value_deserializer=lambda item: json.loads(item.decode('utf-8')))
 
     while not t_stop_event.is_set():
@@ -240,11 +238,10 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
                 )
 
                 # simple sanitizer
-                if 'action' not in message.value:
-                    continue
-                if 'message' not in message.value:
-                    continue
-                if 'request' not in message.value['message']:
+                if ('action' not in message.value) \
+                        or ('message' not in message.value) \
+                        or ('request' not in message.value['message']):
+                    logging.info("MALFORMED MESSAGE value=%s SKIPPING" % (message.value,))
                     continue
 
                 # Pre routine
@@ -299,7 +296,10 @@ if __name__ == "__main__":
 
     # CONFIGURATION
     app_config = __load_config(env)
-    bootstrap_servers = str(app_config['bootstrap_servers']).split(',')
+    if ',' in str(app_config['bootstrap_servers']):
+        bootstrap_servers = list(filter(None, str(app_config['bootstrap_servers']).split(',')))
+    else:
+        bootstrap_servers = str(app_config['bootstrap_servers'])
 
     # Init DB
     __populate_db()
