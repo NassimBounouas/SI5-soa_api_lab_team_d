@@ -15,7 +15,8 @@ id_meal varchar(255),
 id_restaurant varchar(255),
 client_name varchar(255),
 client_address varchar(255),
-command_statut varchar(255)
+command_statut varchar(255),
+id_code integer
 );
 
  INSERT INTO to_get_restaurant(meal_name,restaurant_name,price) VALUES ("Ramen","Lyianhg Restaurant",5);

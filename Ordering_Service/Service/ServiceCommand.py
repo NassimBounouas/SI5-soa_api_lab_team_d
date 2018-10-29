@@ -63,7 +63,7 @@ def validateOrder(jsonRecv):
 def databaseAddRecipe(jsonRecv,ID):
     global db
     cursor = db.cursor()
-    sql = "INSERT INTO to_get_recipe(id_request,id_meal,id_restaurant,client_name,client_address,command_statut) VALUES('%d','%s','%s','%s','%s','%s')" %(ID,jsonRecv["id meal"],jsonRecv["id restaurant"],jsonRecv["client name"],jsonRecv["client address"],'Waiting')
+    sql = "INSERT INTO to_get_recipe(id_request,id_meal,id_restaurant,client_name,client_address,command_statut,id_code) VALUES('%d','%s','%s','%s','%s','%s','%d')" %(ID,jsonRecv["id meal"],jsonRecv["id restaurant"],jsonRecv["client name"],jsonRecv["client address"],'Waiting',0)
     try:
         cursor.execute(sql)
         db.commit()
