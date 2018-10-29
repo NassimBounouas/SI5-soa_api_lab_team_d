@@ -143,7 +143,7 @@ class connect_kafka_consumer(threading.Thread):
             elif jsonMessage.value["Action"] == "VALIDATE_ORDER":
                 queue.append(databaseReadRecipe(jsonMessage.value["Message"]["Id"]))
             else:
-                queue.append(json.loads('{error = "404 Not Found")}'))
+                print("404 Action Not Found")
             after_request()
 
 
