@@ -237,7 +237,7 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
                     message.offset,
                     message.key,
                     message.value)
-                             )
+                )
 
                 # simple sanitizer
                 if 'action' not in message.value:
