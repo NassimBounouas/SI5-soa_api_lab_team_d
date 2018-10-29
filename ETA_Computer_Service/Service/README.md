@@ -3,7 +3,7 @@
 ### Author
 __Duminy Gaétan__
 ### Updated
-__16:20 01/10/2018__
+__15:27 29/10/2018__
 
 ## Remarks
 
@@ -12,7 +12,7 @@ The application was developed under Windows 10 with Eclipse and the PyDev module
 ## Requirements
 
 ```
-pip install flask
+pip install kafka-python
 ```
 
 ## Server Startup
@@ -21,21 +21,19 @@ pip install flask
 With Eclipse: Eta.py > right-click > Run As > Python Run
 ```
 
-## Communicate with the server
+## Communicate with the kafka topic
 
 ```
-With Postman: 
-  -Post a Json: -Select POST then enter the following URL, http://127.0.0.1:4002/receive_event
-                -Go on Body, select raw and then choose JSON (application/json) from the drop-down menu
-                -Write your Json and click on Send
-		-The server return a Json
+-Open Zookeeper
+-Open Kafka
+-Create the topic "eta"
 ```
 
 ## API Usage
 
 ### Compute Eta
 
-Post a Json with [POST] http://127.0.0.1:4002/receive_event and the server will return a Json including Eta.
+Send a Json on the kafka topic "eta" and give a response on the same topic.
 
 The **delivery date** is the date estimated by the system for the customer to receive his order.
 
@@ -47,8 +45,9 @@ Example of request:
 
 ```
 {	
-	"Action": "compute_eta",
+	"Action": "ETA_REQUESTED",
     	"Message": {
+	"ID_Request": 1001,
 	"Meal": "Sushi",
 	"Restaurant": "Le soleil de l'est",
 	"Delivery_Address": "Campus Templier"
@@ -59,8 +58,9 @@ Example of request:
 Example of answer:
 ```
 {
-    "Action": "validate_order",
+    "Action": "ETA_RESPONSE",
     "Message": {
+    	"ID_Request": 1001,
         "Delivery_Address": "Campus Templier",
         "Delivery_Date": "Sun, 07 Oct 2018 14:54:31 GMT",
         "Meal": "Sushi",
@@ -72,3 +72,4 @@ Example of answer:
 
 > Note :
 > The times indicated by ETA are currently simple random integers
+> Data type is now a String
