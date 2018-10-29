@@ -45,12 +45,12 @@ Example of request:
 
 ```
 {	
-	"Action": "ETA_REQUESTED",
-    	"Message": {
-	"ID_Request": 1001,
-	"Meal": "Sushi",
-	"Restaurant": "Le soleil de l'est",
-	"Delivery_Address": "Campus Templier"
+	"action": "eta_requested",
+    	"message": {
+	"id_request": 1001,
+	"meal": "Sushi",
+	"restaurant": "Le soleil de l'est",
+	"delivery_address": "Campus Templier"
 	}
 }
 ```
@@ -58,14 +58,14 @@ Example of request:
 Example of answer:
 ```
 {
-    "Action": "ETA_RESPONSE",
-    "Message": {
-    	"ID_Request": 1001,
-        "Delivery_Address": "Campus Templier",
-        "Delivery_Date": "Sun, 07 Oct 2018 14:54:31 GMT",
-        "Meal": "Sushi",
-        "Pick_Up_Date": "Sun, 07 Oct 2018 14:41:31 GMT",
-        "Restaurant": "Le soleil de l'est"
+    "action": "eta_response",
+    "message": {
+    	"id_request": 1001,
+        "delivery_address": "Campus Templier",
+        "delivery_date": "Sun, 07 Oct 2018 14:54:31 GMT",
+        "meal": "Sushi",
+        "pick_up_date": "Sun, 07 Oct 2018 14:41:31 GMT",
+        "restaurant": "Le soleil de l'est"
     }
 }
 ```
