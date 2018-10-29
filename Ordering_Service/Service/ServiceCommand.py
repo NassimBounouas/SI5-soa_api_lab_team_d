@@ -111,8 +111,7 @@ def databaseReadRecipe(identifier):
         }
     else:
         return json.loads('{Message = "No Command in the database",Status = "Refused"}')
-
-    return json.loads(data)
+    
     return json.loads(json.dumps(data, indent=4, sort_keys=True,default=str))
 
 class connect_kafka_producer(threading.Thread):
