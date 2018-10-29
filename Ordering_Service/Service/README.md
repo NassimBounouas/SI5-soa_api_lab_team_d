@@ -34,17 +34,6 @@ pip3 install PyMySQL
 	}
 }
 ```
->> request
-```json
-{
-    "Action" : "validation_request",
-    "Message" :
-    {
-        "Id" : 1
-    }
-}
-```
-
 Example :
 
 
@@ -59,7 +48,7 @@ Example :
 
 >response
 ```json
-{	"Action": "PREPARE_COMMAND", "
+{	"Action": "PREPARE_COMMAND", 
 	"Message": 
 	{
 		"id_request": 85,
