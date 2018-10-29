@@ -108,12 +108,15 @@ def __populate_db():
     # Meals
     Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon, name="Sushis saumon", price=3.90)
     Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon, name="Sushis saumon épicé", price=4.50)
-    Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon, name="Sushis saumon mariné au jus de yuzu et ses herbes", price=4.80)
+    Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon,
+         name="Sushis saumon mariné au jus de yuzu et ses herbes", price=4.80)
     Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon, name="Ramen nature", price=7.0)
-    Meal(dbh=dbh, parent_restaurant=yakuzas, parent_category=asie_chine, name="Brochette de viande au fromage", price=13.90)
+    Meal(dbh=dbh, parent_restaurant=yakuzas, parent_category=asie_chine, name="Brochette de viande au fromage",
+         price=13.90)
 
     # Meals as Menus
-    Meal(dbh=dbh, parent_restaurant=yakuzas, parent_category=asie_japon, name="Plateau 1 - 8 pièces", price=13.90, is_menu=True)
+    Meal(dbh=dbh, parent_restaurant=yakuzas, parent_category=asie_japon, name="Plateau 1 - 8 pièces", price=13.90,
+         is_menu=True)
 
     __mysql_close(dbh)
 
@@ -133,10 +136,12 @@ def get_categories(dbh, request_id):
     categories = CategoryCollection(dbh=dbh)
 
     return {
-        'Action': 'CATEGORY_LIST_RESPONSE',
-        'Status': 'OK',
-        'Request': int(request_id),
-        'Categories': categories.to_json()
+        'action': 'CATEGORY_LIST_RESPONSE',
+        'message': {
+            'status': 'OK',
+            'request': int(request_id),
+            'categories': categories.to_json()
+        }
     }
 
 
@@ -150,22 +155,26 @@ def get_meals_by_category(dbh, request_id, params: dict):
     """
     from model.meal_collection import MealCollection
 
-    if not params["Category"]:
+    if not params["category"]:
         return {
-            'Action': 'FOOD_LIST_RESPONSE',
-            'Status': 'KO',
-            'Request': int(request_id),
-            'Meals': []
+            'action': 'FOOD_LIST_RESPONSE',
+            'message': {
+                'status': 'KO',
+                'request': int(request_id),
+                'meals': []
+            }
         }
-    category = params["Category"]
+    category = params["category"]
 
     meals = MealCollection(dbh=dbh, category=category)
 
     return {
-        'Action': 'FOOD_LIST_RESPONSE',
-        'Status': 'OK',
-        'Request': int(request_id),
-        'Meals': meals.to_json()
+        'action': 'FOOD_LIST_RESPONSE',
+        'message': {
+            'status': 'OK',
+            'request': int(request_id),
+            'meals': meals.to_json()
+        }
     }
 
 
@@ -189,8 +198,9 @@ def kafka_restaurant_producer_worker(mq: queue.Queue):
         try:
             if mq.qsize() > 0:
                 # Topic + Message
-                logging.info("DEQUEUE MESSAGE FROM QUEUE AND SENDING TO %s" % ('restaurant',))
-                producer.send('restaurant', mq.get())
+                msg = mq.get()
+                logging.info("GET %s FROM QUEUE AND SENDING TO %s" % (msg, 'restaurant'))
+                producer.send('restaurant', msg)
                 # Force buffer flush in order to send the message
                 logging.info("MESSAGE SENT !")
                 producer.flush()
@@ -213,8 +223,8 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
     # Client
     consumer = KafkaConsumer('restaurant',
                              bootstrap_servers=app_config['bootstrap_servers'],
-                             max_poll_interval_ms=100,
-                             session_timeout_ms=3000,
+                             max_poll_interval_ms=50,
+                             session_timeout_ms=1000,
                              value_deserializer=lambda item: json.loads(item.decode('utf-8')))
 
     while not t_stop_event.is_set():
@@ -227,24 +237,36 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
                     message.offset,
                     message.key,
                     message.value)
-                )
+                             )
+
+                # simple sanitizer
+                if 'action' not in message.value:
+                    continue
+                if 'message' not in message.value:
+                    continue
+                if 'request' not in message.value['message']:
+                    continue
 
                 # Pre routine
                 dbh = __mysql_connect()
 
                 # Action switch
-                if str(message.value["Action"]).upper() == "CATEGORY_LIST_REQUEST":
+                if str(message.value["action"]).upper() == "CATEGORY_LIST_REQUEST":
                     logging.info("PUT get_categories MESSAGE in QUEUE")
                     mq.put(
-                        get_categories(dbh,
-                                       str(message.value["Request"]))
+                        get_categories(
+                            dbh,
+                            int(message.value["message"]["request"])
+                        )
                     )
-                elif str(message.value["Action"]).upper() == "FOOD_LIST_REQUEST":
+                elif str(message.value["action"]).upper() == "FOOD_LIST_REQUEST":
                     logging.info("PUT get_meals_by_category MESSAGE in QUEUE")
                     mq.put(
-                        get_meals_by_category(dbh,
-                                              str(message.value["Request"]),
-                                              message.value["Message"])
+                        get_meals_by_category(
+                            dbh,
+                            int(message.value["message"]["request"]),
+                            message.value["message"]
+                        )
                     )
 
                 # Post routine

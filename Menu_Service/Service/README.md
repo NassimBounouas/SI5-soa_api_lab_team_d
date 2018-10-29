@@ -3,7 +3,7 @@
 ### Author
 __Nikita ROUSSEAU__
 ### Updated
-__01:47 28/10/2018__
+__17:15 29/10/2018__
 
 ## Remarks
 
@@ -99,9 +99,10 @@ Usage :
 > [KAFKA] `restaurant` topic
 ```json
 {
-  "Action": "CATEGORY_LIST_REQUEST",
-  "Request": 42,
-  "Message": {}
+  "action": "CATEGORY_LIST_REQUEST",
+  "message": {
+    "request": 42
+  }
 }
 ```
 
@@ -109,21 +110,23 @@ Response :
 
 ```json
 {
-  "Action": "CATEGORY_LIST_RESPONSE",
-  "Status": "OK",
-  "Request": 42,
-  "Categories": [
-    {
-      "id": 11,
-      "name": "Japonais",
-      "region": "Asie"
-    },
-    {
-      "id": 12,
-      "name": "Chinois",
-      "region": "Asie"
-    }
-  ]
+  "action": "CATEGORY_LIST_RESPONSE",
+  "message": {
+    "status": "OK",
+    "request": 42,
+    "categories": [
+      {
+        "id": 11,
+        "name": "Japonais",
+        "region": "Asie"
+      },
+      {
+        "id": 12,
+        "name": "Chinois",
+        "region": "Asie"
+      }
+    ]
+  }
 }
 ```
 
@@ -134,10 +137,10 @@ Usage :
 > [KAFKA] `restaurant` topic
 ```json
 {
-  "Action": "FOOD_LIST_REQUEST",
-  "Request": 42,
-  "Message": {
-    "Category": "Japonais"
+  "action": "FOOD_LIST_REQUEST",
+  "message": {
+    "request": 42,
+    "category": "Japonais"
   }
 }
 ```
@@ -146,91 +149,93 @@ Response :
 
 ```json
 {
-  "Action": "FOOD_LIST_RESPONSE",
-  "Status": "OK",
-  "Request": 42,
-  "Meals": [
-    {
-      "id": 33,
-      "category": {
-        "id": 11,
-        "name": "Japonais",
-        "region": ""
+  "action": "FOOD_LIST_RESPONSE",
+  "message": {
+    "status": "OK",
+    "request": 42,
+    "meals": [
+      {
+        "id": 33,
+        "category": {
+          "id": 11,
+          "name": "Japonais",
+          "region": ""
+        },
+        "restaurant": {
+          "id": 11,
+          "name": "Dragon d'Or"
+        },
+        "name": "Sushis saumon",
+        "price": 3.9,
+        "is_menu": false,
+        "image": ""
       },
-      "restaurant": {
-        "id": 11,
-        "name": "Dragon d'Or"
+      {
+        "id": 34,
+        "category": {
+          "id": 11,
+          "name": "Japonais",
+          "region": ""
+        },
+        "restaurant": {
+          "id": 11,
+          "name": "Dragon d'Or"
+        },
+        "name": "Sushis saumon épicé",
+        "price": 4.5,
+        "is_menu": false,
+        "image": ""
       },
-      "name": "Sushis saumon",
-      "price": 3.9,
-      "is_menu": false,
-      "image": ""
-    },
-    {
-      "id": 34,
-      "category": {
-        "id": 11,
-        "name": "Japonais",
-        "region": ""
+      {
+        "id": 35,
+        "category": {
+          "id": 11,
+          "name": "Japonais",
+          "region": ""
+        },
+        "restaurant": {
+          "id": 11,
+          "name": "Dragon d'Or"
+        },
+        "name": "Sushis saumon mariné au jus de yuzu et ses herbes",
+        "price": 4.8,
+        "is_menu": false,
+        "image": ""
       },
-      "restaurant": {
-        "id": 11,
-        "name": "Dragon d'Or"
+      {
+        "id": 36,
+        "category": {
+          "id": 11,
+          "name": "Japonais",
+          "region": ""
+        },
+        "restaurant": {
+          "id": 11,
+          "name": "Dragon d'Or"
+        },
+        "name": "Ramen nature",
+        "price": 7,
+        "is_menu": false,
+        "image": ""
       },
-      "name": "Sushis saumon épicé",
-      "price": 4.5,
-      "is_menu": false,
-      "image": ""
-    },
-    {
-      "id": 35,
-      "category": {
-        "id": 11,
-        "name": "Japonais",
-        "region": ""
-      },
-      "restaurant": {
-        "id": 11,
-        "name": "Dragon d'Or"
-      },
-      "name": "Sushis saumon mariné au jus de yuzu et ses herbes",
-      "price": 4.8,
-      "is_menu": false,
-      "image": ""
-    },
-    {
-      "id": 36,
-      "category": {
-        "id": 11,
-        "name": "Japonais",
-        "region": ""
-      },
-      "restaurant": {
-        "id": 11,
-        "name": "Dragon d'Or"
-      },
-      "name": "Ramen nature",
-      "price": 7,
-      "is_menu": false,
-      "image": ""
-    },
-    {
-      "id": 38,
-      "category": {
-        "id": 11,
-        "name": "Japonais",
-        "region": ""
-      },
-      "restaurant": {
-        "id": 12,
-        "name": "Le cercle des Yakuzas"
-      },
-      "name": "Plateau 1 - 8 pièces",
-      "price": 13.9,
-      "is_menu": true,
-      "image": ""
-    }
-  ]
+      {
+        "id": 38,
+        "category": {
+          "id": 11,
+          "name": "Japonais",
+          "region": ""
+        },
+        "restaurant": {
+          "id": 12,
+          "name": "Le cercle des Yakuzas"
+        },
+        "name": "Plateau 1 - 8 pièces",
+        "price": 13.9,
+        "is_menu": true,
+        "image": ""
+      }
+    ]
+  }
 }
 ```
 
@@ -240,7 +245,7 @@ Using `kafka-console-producer.sh`
 
 ```bash
 $ ./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic restaurant
->{"Action":"CATEGORY_LIST_REQUEST","Request":42,"Message":{}}
->{"Action":"FOOD_LIST_REQUEST","Request":42,"Message":{"Category":"Japonais"}}
->{"Action":"FOOD_LIST_REQUEST","Request":42,"Message":{"Category":12}}
+>{"action":"CATEGORY_LIST_REQUEST","message":{"request":42}}
+>{"action":"FOOD_LIST_REQUEST","message":{"request":42,"category":"Japonais"}}
+>{"action":"FOOD_LIST_REQUEST","message":{"request":42,"category":12}}
 ```
