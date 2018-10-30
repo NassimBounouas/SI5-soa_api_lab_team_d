@@ -66,3 +66,10 @@ The push refers to repository [docker.io/uberoolab/team-d-apigateway]
 ## Api Documentation
 
 // TODO
+
+## Notes
+http://y.tsutsumi.io/global-logging-with-flask.html
+
+http://flask.pocoo.org/docs/1.0/appcontext/
+https://github.com/miguelgrinberg/Flask-SocketIO/issues/372
+https://scotch.io/tutorials/build-a-distributed-streaming-system-with-apache-kafka-and-python
