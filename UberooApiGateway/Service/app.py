@@ -6,11 +6,12 @@ import sys
 import threading
 import queue
 import logging
+from time import sleep
 
 from flask.logging import default_handler
 from kafka import KafkaProducer
 from kafka import KafkaConsumer
-from flask import Flask, g, jsonify, request
+from flask import Flask, jsonify
 
 __product__ = "Uberoo Api Gateay"
 __author__ = "Nikita ROUSSEAU"
@@ -28,13 +29,17 @@ app = Flask(__name__)
 
 
 # GLOBAL APPLICATION CONFIGURATION
+env = 'development'
 app_config = []
 bootstrap_servers = ()
 topics = ()
 # GLOBAL THREAD REGISTRY
 threads = []
+threads_mq = {}
 # CLEAN EXIT EVENT
 t_stop_event = threading.Event()
+
+# CALLBACK REGISTRY
 
 
 def __sigint_handler(signal, frame):
@@ -66,16 +71,16 @@ def __load_config():
 
 @app.route('/')
 def root_route():
-    global mq
-
-    mq.put('TOTO')
-
-    return 'Hello World!'
+    mq = threads_mq['restaurant']
+    mq.put('Hello World')
+    return jsonify('Hello World'), 200
 
 
 @app.route('/status')
 def status_route():
-    return jsonify(''), 200
+    return jsonify(
+        {'status': 'online'}
+    ), 202
 
 
 def http_server_worker():
@@ -93,18 +98,18 @@ def kafka_producer_worker(topic: str, mq: queue.Queue):
     :param mq: queue.Queue
     :return:
     """
-    global app_config
-
     # Client
     producer = KafkaProducer(bootstrap_servers=bootstrap_servers,
                              value_serializer=lambda item: json.dumps(item).encode('utf-8'))
 
     while not t_stop_event.is_set():
+        # 10ms
+        sleep(0.01)
         try:
             if mq.qsize() > 0:
                 # Topic + Message
                 msg = mq.get()
-                logging.info("GET %s FROM QUEUE AND SENDING TO %s" % (msg, topic))
+                logging.info("GET %s AND SENDING TO %s" % (msg, topic))
                 producer.send(topic, msg)
                 # Force buffer flush in order to send the message
                 logging.info("MESSAGE SENT !")
@@ -118,8 +123,6 @@ def kafka_producer_worker(topic: str, mq: queue.Queue):
 
 if __name__ == '__main__':
     # ENVIRONMENT
-
-    env = 'development'
     if len(sys.argv) > 1 and str(sys.argv[1]) == 'production':
         env = 'production'
 
@@ -168,22 +171,25 @@ if __name__ == '__main__':
 
     ###########################################################
 
-    # PRODUCER
-    mq = queue.Queue()  # Shared message queue
+    # PRODUCERS
+    for topic in topics:
+        # I/O message queue
+        mq = queue.Queue()
+        threads_mq[topic] = mq
 
-    t_producer_worker = threading.Thread(
-        name='kafka_producer_worker',
-        daemon=True,
-        target=kafka_producer_worker,
-        args=('restaurant', mq,)
-    )
-    threads.append(t_producer_worker)
+        # Worker
+        t_producer_worker = threading.Thread(
+            name='kafka_producer_worker',
+            daemon=True,
+            target=kafka_producer_worker,
+            args=(topic, mq,)
+        )
+        threads.append(t_producer_worker)
 
     ###########################################################
 
     # Start
     logging.warning(__product__ + ' version ' + __version__ + ' (' + env + ') is starting...')
-    logging.warning('It may take up to 60 seconds before running !')
 
     # Starting threads
     for t in threads:
