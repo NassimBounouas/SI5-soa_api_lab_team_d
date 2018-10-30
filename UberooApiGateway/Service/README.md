@@ -23,12 +23,28 @@ pip install --trusted-host pypi.python.org -r requirements.txt
 You can start the server in (`development`|`production`) environment. Set `FLASK_ENV` according to your needs.
 
 ```bash
-export FLASK_APP=app.py
-export FLASK_ENV=development
+export FLASK_APP = app.py
+export FLASK_ENV = development
+export FLASK_DEBUG = 1
 
-flask run --host 0.0.0.0 --port 5000
+$ python3 app.py
 
-# * Serving Flask application
+WARNING:root:Uberoo Api Gateay version 1.0 (development) is starting...
+WARNING:root:It may take up to 60 seconds before running !
+INFO:kafka.client:Bootstrapping cluster metadata from [('mint-virtual-machine', 9092, <AddressFamily.AF_UNSPEC: 0>)]
+ * Serving Flask app "app" (lazy loading)
+ * Environment: development
+ * Debug mode: on
+INFO:kafka.conn:<BrokerConnection node_id=bootstrap host=mint-virtual-machine:9092 <connecting> [IPv4 ('192.168.49.128', 9092)]>: connecting to mint-virtual-machine:9092 [('192.168.49.128', 9092) IPv4]
+INFO:kafka.conn:<BrokerConnection node_id=bootstrap host=mint-virtual-machine:9092 <connecting> [IPv4 ('192.168.49.128', 9092)]>: Connection complete.
+INFO:kafka.client:Bootstrap succeeded: found 1 brokers and 2 topics.
+INFO:kafka.conn:<BrokerConnection node_id=bootstrap host=mint-virtual-machine:9092 <connected> [IPv4 ('192.168.49.128', 9092)]>: Closing connection. 
+INFO:kafka.conn:<BrokerConnection node_id=0 host=mint-virtual-machine:9092 <connecting> [IPv4 ('192.168.49.128', 9092)]>: connecting to mint-virtual-machine:9092 [('192.168.49.128', 9092) IPv4]
+INFO:kafka.conn:Probing node 0 broker version
+INFO:kafka.conn:<BrokerConnection node_id=0 host=mint-virtual-machine:9092 <connecting> [IPv4 ('192.168.49.128', 9092)]>: Connection complete.
+INFO:kafka.conn:Broker version identifed as 1.0.0
+INFO:kafka.conn:Set configuration api_version=(1, 0, 0) to skip auto check_version requests on startup
+INFO:werkzeug: * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
 ```
 
 ## Docker
