@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import configparser
 import json
 import os
@@ -7,11 +9,12 @@ import threading
 import queue
 import logging
 from time import sleep
-
 from flask.logging import default_handler
 from kafka import KafkaProducer
 from kafka import KafkaConsumer
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+from werkzeug.exceptions import BadRequest, NotFound
+from message.factory import make_kafka_message
 
 __product__ = "Uberoo Api Gateay"
 __author__ = "Nikita ROUSSEAU"
@@ -23,10 +26,8 @@ __maintainer__ = "Nikita ROUSSEAU"
 __email__ = "nikita.rousseau@etu.unice.fr"
 __status__ = "development"
 
-
 # Flask Application
 app = Flask(__name__)
-
 
 # GLOBAL APPLICATION CONFIGURATION
 env = 'development'
@@ -40,6 +41,7 @@ threads_mq = {}
 t_stop_event = threading.Event()
 
 # CALLBACK REGISTRY
+callback_registry = {}
 
 
 def __sigint_handler(signal, frame):
@@ -69,23 +71,118 @@ def __load_config():
     return app_config
 
 
+########################################################################################################################
+# API GATEWAY ROUTES
+########################################################################################################################
+
+
 @app.route('/')
 def root_route():
-    mq = threads_mq['restaurant']
-    mq.put('Hello World')
-    return jsonify('Hello World'), 200
+    return jsonify(''), 200
 
 
 @app.route('/status')
 def status_route():
     return jsonify(
         {'status': 'online'}
-    ), 202
+    ), 200
+
+
+########################################################################################################################
+# MENU SERVICE
+########################################################################################################################
+
+@app.route("/list_categories",
+           methods=['GET', 'POST'])
+def list_categories_route():
+    if request.method == 'POST':
+        # Build message
+        message, request_id = make_kafka_message(
+            action='CATEGORY_LIST_REQUEST',
+            message={}
+        )
+
+        # Send
+        threads_mq['restaurant'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "callbackUrl": request.url + '?id=' + str(request_id)
+        }), 202
+    else:
+        # Response callback
+        if 'id' not in request.args:
+            raise BadRequest()
+
+        request_id = int(request.args.get("id"))
+
+        if request_id not in callback_registry:
+            raise NotFound()
+
+        # Response
+        return jsonify(
+            callback_registry[request_id]
+        ), 200
+
+
+########################################################################################################################
+# END: ROUTES
+########################################################################################################################
 
 
 def http_server_worker():
     # Http server
     app.run("0.0.0.0", port=5000, use_reloader=False, threaded=True)
+    return
+
+
+def kafka_consumer_worker(topic: str):
+    """
+    Kafka Generic Message Consumer
+    as thread worker
+    :param topic: str
+    :return:
+    """
+    # Client
+    consumer = KafkaConsumer(topic,
+                             bootstrap_servers=bootstrap_servers,
+                             value_deserializer=lambda item: json.loads(item.decode('utf-8')))
+
+    while not t_stop_event.is_set():
+        try:
+            # Message loop
+            for message in consumer:
+                logging.info("READING MESSAGE %s:%d:%d: key=%s value=%s" % (
+                    message.topic,
+                    message.partition,
+                    message.offset,
+                    message.key,
+                    message.value)
+                )
+
+                # simple sanitizer
+                if ('action' not in message.value) \
+                        or ('message' not in message.value) \
+                        or ('request' not in message.value['message']):
+                    logging.info("MALFORMED MESSAGE value=%s SKIPPING" % (message.value,))
+                    continue
+
+                request_id = int(message.value["message"]["request"])
+
+                # TODO : refactor whitelist handling
+                whitelist = ()
+                if topic == 'restaurant':
+                    whitelist = ("CATEGORY_LIST_RESPONSE", "FOOD_LIST_RESPONSE")
+
+                # Action switch
+                if str(message.value["action"]).upper() in whitelist:
+                    logging.info("RESPONSE " + str(request_id) + " (" + str(message.value["action"]).upper() + ")")
+                    if request_id not in callback_registry:
+                        callback_registry[request_id] = message.value["message"]
+        except Exception as e:
+            logging.fatal(e, exc_info=True)
+
+    consumer.close()
     return
 
 
@@ -171,20 +268,28 @@ if __name__ == '__main__':
 
     ###########################################################
 
-    # PRODUCERS
     for topic in topics:
         # I/O message queue
         mq = queue.Queue()
         threads_mq[topic] = mq
 
-        # Worker
+        # Producer Worker
         t_producer_worker = threading.Thread(
-            name='kafka_producer_worker',
+            name='kafka_' + topic + '_producer_worker',
             daemon=True,
             target=kafka_producer_worker,
             args=(topic, mq,)
         )
         threads.append(t_producer_worker)
+
+        # Consumer Worker
+        t_consumer_worker = threading.Thread(
+            name='kafka_' + topic + '_consumer_worker',
+            daemon=True,
+            target=kafka_consumer_worker,
+            args=(topic,)
+        )
+        threads.append(t_consumer_worker)
 
     ###########################################################
 
