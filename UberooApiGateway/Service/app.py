@@ -41,6 +41,7 @@ threads_mq = {}
 t_stop_event = threading.Event()
 
 # CALLBACK REGISTRY
+# TODO : periodic clean-up of the old callbacks
 callback_registry = {}
 
 
