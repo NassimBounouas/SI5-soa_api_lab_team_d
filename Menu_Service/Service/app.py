@@ -31,7 +31,7 @@ __status__ = "development"
 env = 'development'
 # GLOBAL APPLICATION CONFIGURATION
 app_config = []
-bootstrap_servers = ()
+bootstrap_servers = []
 # GLOBAL THREAD REGISTRY
 threads = []
 # CLEAN EXIT EVENT
@@ -301,7 +301,7 @@ if __name__ == "__main__":
     if ',' in str(app_config['bootstrap_servers']):
         bootstrap_servers = list(filter(None, str(app_config['bootstrap_servers']).split(',')))
     else:
-        bootstrap_servers = str(app_config['bootstrap_servers'])
+        bootstrap_servers.append(str(app_config['bootstrap_servers']))
 
     # Init DB
     __populate_db()
