@@ -11,4 +11,4 @@ ENV FLASK_ENV="production"
 EXPOSE 5000
 
 ENTRYPOINT ["python"]
-CMD ["app.py"]
+CMD ["app.py", "production"]
