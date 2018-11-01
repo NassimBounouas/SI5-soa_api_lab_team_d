@@ -1,10 +1,11 @@
-version: '3'
+version: '2.1'
 services:
 
   api-gateway:
     image: uberoolab/team-d-apigateway
     depends_on:
-     - kafka
+      kafka:
+        condition: service_healthy
     ports:
      - "8080:5000"
 
@@ -21,6 +22,8 @@ services:
       KAFKA_ADVERTISED_PORT: "9092"
       KAFKA_CREATE_TOPICS: "test:1:1,ordering:1:1,restaurant:1:1,eta:1:1,delivery:1:1"
       KAFKA_ZOOKEEPER_CONNECT: "zk:2181"
+    healthcheck:
+        test: "kafka-topics.sh --zookeeper zk:2181 --list 2>&1 | grep \"delivery\""
 
   zookeeper:
     image: wurstmeister/zookeeper
