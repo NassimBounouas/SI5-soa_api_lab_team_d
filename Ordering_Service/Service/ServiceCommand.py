@@ -4,22 +4,27 @@ import pymysql
 import configparser
 import threading
 import json
+import queue
+import logging
 import time
 import os
 
 
 global db
 global connected
-queue =[]
+queue_all =[]
+app_config = []
+threads = []
+t_stop_event = threading.Event()
 
 
 def load_config():
     config_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "db.ini")
     if not os.path.exists(config_file):
         raise FileNotFoundError(config_file)
-    app_config = configparser.ConfigParser()
-    app_config.read(config_file)
-    return app_config
+    _app_config = configparser.ConfigParser()
+    _app_config.read(config_file)
+    return _app_config
 
 def before_request():
     configuration = load_config()["production"]
@@ -58,12 +63,13 @@ def after_request():
 def validateOrder(jsonRecv):
     ID = random.randint(0,100)
     databaseAddRecipe(jsonRecv,ID)
+    #print(data)
     return
 
 def databaseAddRecipe(jsonRecv,ID):
     global db
     cursor = db.cursor()
-    sql = "INSERT INTO to_get_recipe(id_request,id_meal,id_restaurant,client_name,client_address,command_statut,id_code) VALUES('%d','%s','%s','%s','%s','%s','%d')" %(ID,jsonRecv["id meal"],jsonRecv["id restaurant"],jsonRecv["client name"],jsonRecv["client address"],'Waiting',0)
+    sql = "INSERT INTO to_get_recipe(id_request,id_meal,id_restaurant,client_name,client_address,command_statut) VALUES('%d','%s','%s','%s','%s','%s')" %(ID,jsonRecv["id meal"],jsonRecv["id restaurant"],jsonRecv["client name"],jsonRecv["client address"],'Waiting')
     try:
         cursor.execute(sql)
         db.commit()
@@ -101,51 +107,72 @@ def databaseReadRecipe(identifier):
                     'id_meal' : res[0]['id_meal']
                 }
         }
+        #print(data)
     else:
         return json.loads('{Message = "No Command in the database",Status = "Refused"}')
-    
+
     return json.loads(json.dumps(data, indent=4, sort_keys=True,default=str))
 
-class connect_kafka_producer(threading.Thread):
-    daemon = True
-
-    def run(self):
-        producer = KafkaProducer(bootstrap_servers='localhost:9092',
+def connect_kafka_producer(mq : queue.Queue):
+    global app_config
+    producer = KafkaProducer(bootstrap_servers='localhost:9092',
                                  value_serializer=lambda v:
                                  json.dumps(v).encode('utf-8'))
-        global queue
-        while True:
-            if len(queue) > 0:
-                producer.send('restaurant', queue.pop())
-                time.sleep(1)
+    while not t_stop_event.is_set():
+        try:
+            if mq.qsize() > 0:
+                msg = mq.get()
+                producer.send('restaurant', msg)
+                producer.flush()
+        except Exception as e:
+            logging.fatal(e,exc_info=True)
+    producer.close()
+    return
 
-class connect_kafka_consumer(threading.Thread):
-    daemon = True
-
-    def run(self):
-        consumer = KafkaConsumer(
+def connect_kafka_consumer(mq: queue.Queue):
+    global app_config
+    consumer = KafkaConsumer(
             bootstrap_servers = 'localhost:9092',
             auto_offset_reset='earliest',
             value_deserializer=lambda m: json.loads(m.decode('utf-8')))
-        consumer.subscribe(['ordering'])
-        for jsonMessage in consumer:
-            before_request()
-            if jsonMessage.value["action"] == "order_request":
-                validateOrder(jsonMessage.value["message"])
-            elif jsonMessage.value["action"] == "validate_order":
-                queue.append(databaseReadRecipe(jsonMessage.value["message"]["id"]))
-            else:
-                print("404 Action Not Found")
-            after_request()
-
+    consumer.subscribe(['ordering'])
+    while not t_stop_event.is_set():
+        try:
+            for jsonMessage in consumer:
+                before_request()
+                #print(jsonMessage)
+                if jsonMessage.value["action"] == "order_request":
+                    validateOrder(jsonMessage.value["message"])
+                elif jsonMessage.value["action"] == "validate_order":
+                    mq.put(databaseReadRecipe(jsonMessage.value["message"]["id"]))
+                else:
+                    continue
+                after_request()
+        except Exception as e:
+            logging.fatal(e,exc_info=True)
 
 def main():
-    threads = [
-        connect_kafka_producer(),
-        connect_kafka_consumer()]
+    global threads
+    queue_order = queue.Queue()
+    t_producer_worker =  threading.Thread(
+        name='kafka_producer_server',
+        daemon = True,
+        target = connect_kafka_producer,
+        args = (queue_order,)
+    )
+    threads.append(t_producer_worker)
+    t_consumer_worker = threading.Thread(
+    name = 'kafka_consumer_server',
+    daemon = True,
+    target= connect_kafka_consumer,
+    args = (queue_order,))
+
+    threads.append(t_consumer_worker)
     for t in threads:
         t.start()
-    time.sleep(10)
+    for t in threads:
+        t.join()
 
 if __name__ == '__main__':
     main()
+
