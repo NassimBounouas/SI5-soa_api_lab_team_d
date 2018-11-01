@@ -1,12 +1,13 @@
-version: '3'
+version: '2.1'
 services:
 
   api-gateway:
     image: uberoolab/team-d-apigateway
     depends_on:
-     - kafka
+      kafka:
+        condition: service_healthy
     ports:
-     - "80:5000"
+     - "8080:5000"
 
   kafka:
     image: wurstmeister/kafka
@@ -21,18 +22,21 @@ services:
       KAFKA_ADVERTISED_PORT: "9092"
       KAFKA_CREATE_TOPICS: "test:1:1,ordering:1:1,restaurant:1:1,eta:1:1,delivery:1:1"
       KAFKA_ZOOKEEPER_CONNECT: "zk:2181"
+    healthcheck:
+        test: "kafka-topics.sh --zookeeper zk:2181 --list 2>&1 | grep \"delivery\""
 
   zookeeper:
     image: wurstmeister/zookeeper
     ports:
       - 2181:2181
-  
 
   menu:
     image: uberoolab/team-d-menu-service
     depends_on:
-     - menu-database
-     - kafka
+     menu-database:
+      condition: service_healthy
+     kafka:
+       condition: service_healthy
     ports:
      - "4000:5000"
 
@@ -40,6 +44,8 @@ services:
     image: uberoolab/team-d-menu-database
     ports:
      - "4010:3306"
+    healthcheck:
+      test: "mysqladmin ping --silent"
 
 
   order:
