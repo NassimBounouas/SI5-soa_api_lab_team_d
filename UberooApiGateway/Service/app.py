@@ -12,7 +12,7 @@ from time import sleep
 from flask.logging import default_handler
 from kafka import KafkaProducer
 from kafka import KafkaConsumer
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from werkzeug.exceptions import BadRequest, NotFound
 from message.factory import make_kafka_message
 
@@ -82,7 +82,8 @@ def __load_config():
 
 @app.route('/')
 def root_route():
-    return jsonify(''), 200
+    # API DOCUMENTATION ROOT
+    return render_template('swagger/index.html')
 
 
 @app.route('/status')

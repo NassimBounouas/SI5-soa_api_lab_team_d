@@ -73,13 +73,15 @@ The push refers to repository [docker.io/uberoolab/team-d-apigateway]
 ### Run From Hub (Detached)
 `docker run -d -p 5000:5000 -t uberoolab/team-d-apigateway`
 
-## Api Documentation
+## Api Documentation and Usage
 
-// TODO
+The API is self documented using a generated HTML document.
 
-## Notes
-http://y.tsutsumi.io/global-logging-with-flask.html
+This documentation is available at the root directory of the listening server.
 
-http://flask.pocoo.org/docs/1.0/appcontext/
-https://github.com/miguelgrinberg/Flask-SocketIO/issues/372
-https://scotch.io/tutorials/build-a-distributed-streaming-system-with-apache-kafka-and-python
+The swagger `YML` document *should* be packed with this project.
+
+By default:
+```
+http://127.0.0.1:5000/
+```
