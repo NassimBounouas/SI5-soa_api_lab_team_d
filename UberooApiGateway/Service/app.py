@@ -126,6 +126,48 @@ def list_categories_route():
         ), 200
 
 
+@app.route("/list_meals_by_category",
+           methods=['GET', 'POST'])
+def list_meals_by_category_route():
+    if request.method == 'POST':
+        # Verify user input
+        if 'category' not in request.form:
+            BadRequest()  # 400
+
+        # Extract params
+        category = request.form['category']
+
+        # Build message
+        message, request_id = make_kafka_message(
+            action='FOOD_LIST_REQUEST',
+            message={
+                "category": category
+            }
+        )
+
+        # Send
+        threads_mq['restaurant'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "callbackUrl": request.url + '?id=' + str(request_id)
+        }), 202
+    else:
+        # Response callback
+        if 'id' not in request.args:
+            raise BadRequest()
+
+        request_id = int(request.args.get("id"))
+
+        if request_id not in callback_registry:
+            raise NotFound()
+
+        # Response
+        return jsonify(
+            callback_registry[request_id]
+        ), 200
+
+
 ########################################################################################################################
 # END: ROUTES
 ########################################################################################################################
