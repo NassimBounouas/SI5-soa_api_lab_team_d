@@ -1,8 +1,9 @@
-FROM golang:latest 
-RUN mkdir /app 
-RUN go get github.com/gorilla/mux
-RUN go get github.com/go-sql-driver/mysql
-ADD event.go handlers.go logger.go main.go order.go router.go routes.go DatabaseHandler.go /app/
-WORKDIR /app 
-RUN go build -o main
-CMD ["/app/main"]
+FROM python:3.6.5-slim
+WORKDIR /app
+ADD . /app
+
+RUN python -m pip install --upgrade pip
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
+
+ENTRYPOINT ["python"]
+CMD ["app.py", "production"]
