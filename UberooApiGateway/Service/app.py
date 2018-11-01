@@ -55,6 +55,8 @@ def __sigint_handler(signal, frame):
     logging.debug("Raise t_stop_event")
     t_stop_event.set()  # Set stop flag to true for all launched threads
     logging.info("Stopping daemons...")
+    sleep(1)
+    sys.exit(1)
 
 
 signal.signal(signal.SIGINT, __sigint_handler)
