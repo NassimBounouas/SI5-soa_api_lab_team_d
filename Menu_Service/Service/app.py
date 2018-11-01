@@ -289,7 +289,7 @@ if __name__ == "__main__":
     # LOGGING
     if env == 'production':
         logging.basicConfig(
-            level=logging.WARNING
+            level=logging.INFO
         )
     else:
         logging.basicConfig(
