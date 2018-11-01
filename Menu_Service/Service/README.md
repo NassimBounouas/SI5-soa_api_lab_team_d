@@ -3,7 +3,7 @@
 ### Author
 __Nikita ROUSSEAU__
 ### Updated
-__23:00 29/10/2018__
+__17:00 01/11/2018__
 
 ## Remarks
 
@@ -15,9 +15,13 @@ Only `Read` operations are available.
 
 - Python 3.6.x
 - Dependencies :
+  * PyMySQL
+  * kafka-python
+
+### Install Dependencies
+
 ```bash
-pip install PyMySQL
-pip install kafka-python
+pip install --trusted-host pypi.python.org -r requirements.txt
 ```
 
 ## Server Startup
@@ -68,15 +72,15 @@ bootstrap_servers=kafka:9092,
 
 ### Publish
 ```bash
-mint-virtual-machine SI5_soa_api_lab_team_d_menu_service # docker login --username=nrousseauetu
+mint-virtual-machine # docker login --username=nrousseauetu
 Password: 
 Login Succeeded
-mint-virtual-machine SI5_soa_api_lab_team_d_menu_service # docker images
+mint-virtual-machine # docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 menuapp             latest              dea9321cc24c        7 minutes ago       155MB
 python              3.6.5-slim          b31cb11e68a1        3 months ago        138MB
-mint-virtual-machine SI5_soa_api_lab_team_d_menu_service # docker tag dea9321cc24c uberoolab/team-d-menu-service:latest
-mint-virtual-machine SI5_soa_api_lab_team_d_menu_service # docker push uberoolab/team-d-menu-service
+mint-virtual-machine # docker tag dea9321cc24c uberoolab/team-d-menu-service:latest
+mint-virtual-machine # docker push uberoolab/team-d-menu-service
 The push refers to repository [docker.io/uberoolab/team-d-menu-service]
 [...]
 ```

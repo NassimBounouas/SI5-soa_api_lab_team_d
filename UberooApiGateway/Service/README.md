@@ -3,7 +3,7 @@
 ### Author
 __Nikita ROUSSEAU__
 ### Updated
-__01:20 31/10/2018__
+__17:00 01/11/2018__
 
 ## Requirements
 
@@ -58,8 +58,8 @@ mint-virtual-machine # docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 uberooapigateway    latest              dea9321cc24c        7 minutes ago       155MB
 python              3.6.5-slim          b31cb11e68a1        3 months ago        138MB
-mint-virtual-machine SI5_soa_api_lab_team_d_menu_service # docker tag dea9321cc24c uberoolab/team-d-apigateway:latest
-mint-virtual-machine SI5_soa_api_lab_team_d_menu_service # docker push uberoolab/team-d-apigateway
+mint-virtual-machine # docker tag dea9321cc24c uberoolab/team-d-apigateway:latest
+mint-virtual-machine # docker push uberoolab/team-d-apigateway
 The push refers to repository [docker.io/uberoolab/team-d-apigateway]
 [...]
 ```
@@ -73,13 +73,15 @@ The push refers to repository [docker.io/uberoolab/team-d-apigateway]
 ### Run From Hub (Detached)
 `docker run -d -p 5000:5000 -t uberoolab/team-d-apigateway`
 
-## Api Documentation
+## Api Documentation and Usage
 
-// TODO
+The API is self documented using a generated HTML document.
 
-## Notes
-http://y.tsutsumi.io/global-logging-with-flask.html
+This documentation is available at the root directory of the listening server.
 
-http://flask.pocoo.org/docs/1.0/appcontext/
-https://github.com/miguelgrinberg/Flask-SocketIO/issues/372
-https://scotch.io/tutorials/build-a-distributed-streaming-system-with-apache-kafka-and-python
+The swagger `YML` document *should* be packed with this project.
+
+By default:
+```
+http://127.0.0.1:5000/
+```
