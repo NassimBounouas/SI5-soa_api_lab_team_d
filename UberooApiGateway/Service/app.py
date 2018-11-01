@@ -280,7 +280,7 @@ if __name__ == '__main__':
     app.logger.removeHandler(default_handler)
     if env == 'production':
         logging.basicConfig(
-            level=logging.WARNING
+            level=logging.INFO
         )
     else:
         logging.basicConfig(
