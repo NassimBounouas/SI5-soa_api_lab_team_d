@@ -6,7 +6,7 @@ services:
     depends_on:
      - kafka
     ports:
-     - "80:5000"
+     - "8080:5000"
 
   kafka:
     image: wurstmeister/kafka
