@@ -15,9 +15,13 @@ Only `Read` operations are available.
 
 - Python 3.6.x
 - Dependencies :
+  * PyMySQL
+  * kafka-python
+
+### Install Dependencies
+
 ```bash
-pip install PyMySQL
-pip install kafka-python
+pip install --trusted-host pypi.python.org -r requirements.txt
 ```
 
 ## Server Startup
