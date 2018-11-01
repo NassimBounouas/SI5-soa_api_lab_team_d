@@ -31,9 +31,10 @@ app = Flask(__name__)
 
 # GLOBAL APPLICATION CONFIGURATION
 env = 'development'
-app_config = []
-bootstrap_servers = ()
-topics = ()
+app_config = {}
+bootstrap_servers = []
+topics = []
+messages = {}
 # GLOBAL THREAD REGISTRY
 threads = []
 threads_mq = {}
@@ -179,11 +180,12 @@ def http_server_worker():
     return
 
 
-def kafka_consumer_worker(topic: str):
+def kafka_consumer_worker(topic: str, action_whitelist: list):
     """
     Kafka Generic Message Consumer
     as thread worker
     :param topic: str
+    :param action_whitelist: list
     :return:
     """
     # Client
@@ -212,13 +214,8 @@ def kafka_consumer_worker(topic: str):
 
                 request_id = int(message.value["message"]["request"])
 
-                # TODO : refactor whitelist handling
-                whitelist = ()
-                if topic == 'restaurant':
-                    whitelist = ("CATEGORY_LIST_RESPONSE", "FOOD_LIST_RESPONSE")
-
                 # Action switch
-                if str(message.value["action"]).upper() in whitelist:
+                if str(message.value["action"]).upper() in action_whitelist:
                     logging.info("RESPONSE " + str(request_id) + " (" + str(message.value["action"]).upper() + ")")
                     if request_id not in callback_registry:
                         callback_registry[request_id] = message.value["message"]
@@ -288,19 +285,21 @@ if __name__ == '__main__':
         )
 
     # CONFIGURATION
-    app_config = __load_config()[env]
+    app_config_raw = __load_config()
+    app_config = app_config_raw[env]
+    messages = app_config_raw['messages']
 
     # Bootstrap servers
     if ',' in str(app_config['bootstrap_servers']):
         bootstrap_servers = list(filter(None, str(app_config['bootstrap_servers']).split(',')))
     else:
-        bootstrap_servers = str(app_config['bootstrap_servers'])
+        bootstrap_servers.append(str(app_config['bootstrap_servers']))
 
     # Topics
     if ',' in str(app_config['topics']):
         topics = list(filter(None, str(app_config['topics']).split(',')))
     else:
-        topics = str(app_config['topics'])
+        topics.append(str(app_config['topics']))
 
     # WERKZEUG SERVER
     t_http_server_worker = threading.Thread(
@@ -316,6 +315,14 @@ if __name__ == '__main__':
         mq = queue.Queue()
         threads_mq[topic] = mq
 
+        # Messages action whitelist
+        action_whitelist = []
+        if topic in messages:
+            if ',' in str(messages[topic]):
+                action_whitelist = list(filter(None, str(messages[topic]).split(',')))
+            else:
+                action_whitelist.append(str(messages[topic]))
+
         # Producer Worker
         t_producer_worker = threading.Thread(
             name='kafka_' + topic + '_producer_worker',
@@ -330,7 +337,7 @@ if __name__ == '__main__':
             name='kafka_' + topic + '_consumer_worker',
             daemon=True,
             target=kafka_consumer_worker,
-            args=(topic,)
+            args=(topic, action_whitelist,)
         )
         threads.append(t_consumer_worker)
 
