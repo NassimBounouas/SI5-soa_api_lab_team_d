@@ -139,6 +139,9 @@ Response :
 Usage :
 
 > [KAFKA] `restaurant` topic
+
+Filter by `category`:
+
 ```json
 {
   "action": "FOOD_LIST_REQUEST",
@@ -173,52 +176,46 @@ Response :
         "price": 3.9,
         "is_menu": false,
         "image": ""
-      },
+      }
+    ]
+  }
+}
+```
+
+Filter by `restaurant`:
+
+```json
+{
+  "action": "FOOD_LIST_REQUEST",
+  "message": {
+    "request": 42,
+    "restaurant": 12
+  }
+}
+```
+
+Response :
+
+```json
+{
+  "action": "FOOD_LIST_RESPONSE",
+  "message": {
+    "status": "OK",
+    "request": 42,
+    "meals": [
       {
-        "id": 34,
+        "id": 37,
         "category": {
-          "id": 11,
-          "name": "Japonais",
+          "id": 12,
+          "name": "Chinois",
           "region": ""
         },
         "restaurant": {
-          "id": 11,
-          "name": "Dragon d'Or"
+          "id": 12,
+          "name": "Le cercle des Yakuzas"
         },
-        "name": "Sushis saumon épicé",
-        "price": 4.5,
-        "is_menu": false,
-        "image": ""
-      },
-      {
-        "id": 35,
-        "category": {
-          "id": 11,
-          "name": "Japonais",
-          "region": ""
-        },
-        "restaurant": {
-          "id": 11,
-          "name": "Dragon d'Or"
-        },
-        "name": "Sushis saumon mariné au jus de yuzu et ses herbes",
-        "price": 4.8,
-        "is_menu": false,
-        "image": ""
-      },
-      {
-        "id": 36,
-        "category": {
-          "id": 11,
-          "name": "Japonais",
-          "region": ""
-        },
-        "restaurant": {
-          "id": 11,
-          "name": "Dragon d'Or"
-        },
-        "name": "Ramen nature",
-        "price": 7,
+        "name": "Brochette de viande au fromage",
+        "price": 13.9,
         "is_menu": false,
         "image": ""
       },
@@ -252,4 +249,5 @@ $ ./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic restauran
 >{"action":"CATEGORY_LIST_REQUEST","message":{"request":42}}
 >{"action":"FOOD_LIST_REQUEST","message":{"request":42,"category":"Japonais"}}
 >{"action":"FOOD_LIST_REQUEST","message":{"request":42,"category":12}}
+>{"action":"FOOD_LIST_REQUEST","message":{"request":42,"restaurant":12}}
 ```

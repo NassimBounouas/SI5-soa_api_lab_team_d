@@ -147,9 +147,10 @@ def get_categories(dbh, request_id):
     }
 
 
-def get_meals_by_category(dbh, request_id, params: dict):
+def get_meals_by_filter(dbh, request_id, params: dict):
     """
-    List food by category
+    List food by filter
+    either (category|restaurant)
     :param dbh: database_handle
     :param request_id: int
     :param params: dict
@@ -157,7 +158,7 @@ def get_meals_by_category(dbh, request_id, params: dict):
     """
     from model.meal_collection import MealCollection
 
-    if not params["category"]:
+    if 'category' not in params and 'restaurant' not in params:
         return {
             'action': 'FOOD_LIST_RESPONSE',
             'message': {
@@ -166,9 +167,14 @@ def get_meals_by_category(dbh, request_id, params: dict):
                 'meals': []
             }
         }
-    category = params["category"]
 
-    meals = MealCollection(dbh=dbh, category=category)
+    meals = []
+    if 'category' in params:
+        category = params["category"]
+        meals = MealCollection(dbh=dbh, category=category)
+    elif 'restaurant' in params:
+        restaurant = params["restaurant"]
+        meals = MealCollection(dbh=dbh, restaurant=restaurant)
 
     return {
         'action': 'FOOD_LIST_RESPONSE',
@@ -259,9 +265,9 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
                         )
                     )
                 elif str(message.value["action"]).upper() == "FOOD_LIST_REQUEST":
-                    logging.info("PUT get_meals_by_category MESSAGE in QUEUE")
+                    logging.info("PUT get_meals_by_filter MESSAGE in QUEUE")
                     mq.put(
-                        get_meals_by_category(
+                        get_meals_by_filter(
                             dbh,
                             int(message.value["message"]["request"]),
                             message.value["message"]
