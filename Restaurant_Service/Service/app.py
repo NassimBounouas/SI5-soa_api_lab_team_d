@@ -14,17 +14,15 @@ from time import sleep
 from kafka import KafkaProducer
 from kafka import KafkaConsumer
 
-__product__ = "Menu Service"
+__product__ = "Restaurant Service"
 __author__ = "Nikita ROUSSEAU"
 __copyright__ = "Copyright 2018, Polytech Nice Sophia"
 __credits__ = ["Nikita Rousseau"]
 __license__ = "MIT"
-__version__ = "2.0"
+__version__ = "1.0"
 __maintainer__ = "Nikita ROUSSEAU"
 __email__ = "nikita.rousseau@etu.unice.fr"
 __status__ = "development"
-
-# TODO : implement factory / database service in order to reduce coupling with database handle
 
 # APPLICATION RUNTIME ENVIRONMENT
 # (production|development)
@@ -93,8 +91,6 @@ def __mysql_close(database_handle=None):
 
 
 def __populate_db():
-    from model.category import Category
-    from model.meal import Meal
     from model.restaurant import Restaurant
 
     dbh = __mysql_connect()
@@ -103,85 +99,29 @@ def __populate_db():
     dragon_or = Restaurant(dbh=dbh, name="Dragon d'Or")
     yakuzas = Restaurant(dbh=dbh, name="Le cercle des Yakuzas")
 
-    # Categories
-    asie_japon = Category(dbh=dbh, name="Japonais", region="Asie")
-    asie_chine = Category(dbh=dbh, name="Chinois", region="Asie")
-
-    # Meals
-    Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon, name="Sushis saumon", price=3.90)
-    Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon, name="Sushis saumon épicé", price=4.50)
-    Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon,
-         name="Sushis saumon mariné au jus de yuzu et ses herbes", price=4.80)
-    Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon, name="Ramen nature", price=7.0)
-    Meal(dbh=dbh, parent_restaurant=yakuzas, parent_category=asie_chine, name="Brochette de viande au fromage",
-         price=13.90)
-
-    # Meals as Menus
-    Meal(dbh=dbh, parent_restaurant=yakuzas, parent_category=asie_japon, name="Plateau 1 - 8 pièces", price=13.90,
-         is_menu=True)
-
     __mysql_close(dbh)
 
 
 # BUSINESS FUNCTIONS
 
 
-def get_categories(dbh, request_id):
+def get_restaurants(dbh, request_id):
     """
-    List available categories
+    List available restaurants
     :param dbh: database_handle
     :param request_id: int
     :return: json
     """
-    from model.category_collection import CategoryCollection
+    from model.restaurant_collection import RestaurantCollection
 
-    categories = CategoryCollection(dbh=dbh)
+    restaurants = RestaurantCollection(dbh=dbh)
 
     return {
-        'action': 'CATEGORY_LIST_RESPONSE',
+        'action': 'RESTAURANT_LIST_RESPONSE',
         'message': {
             'status': 'OK',
             'request': int(request_id),
-            'categories': categories.to_json()
-        }
-    }
-
-
-def get_meals_by_filter(dbh, request_id, params: dict):
-    """
-    List food by filter
-    either (category|restaurant)
-    :param dbh: database_handle
-    :param request_id: int
-    :param params: dict
-    :return: json
-    """
-    from model.meal_collection import MealCollection
-
-    if 'category' not in params and 'restaurant' not in params:
-        return {
-            'action': 'FOOD_LIST_RESPONSE',
-            'message': {
-                'status': 'KO',
-                'request': int(request_id),
-                'meals': []
-            }
-        }
-
-    meals = []
-    if 'category' in params:
-        category = params["category"]
-        meals = MealCollection(dbh=dbh, category=category)
-    elif 'restaurant' in params:
-        restaurant = params["restaurant"]
-        meals = MealCollection(dbh=dbh, restaurant=restaurant)
-
-    return {
-        'action': 'FOOD_LIST_RESPONSE',
-        'message': {
-            'status': 'OK',
-            'request': int(request_id),
-            'meals': meals.to_json()
+            'restaurants': restaurants.to_json()
         }
     }
 
@@ -256,21 +196,12 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
                 dbh = __mysql_connect()
 
                 # Action switch
-                if str(message.value["action"]).upper() == "CATEGORY_LIST_REQUEST":
-                    logging.info("PUT get_categories MESSAGE in QUEUE")
+                if str(message.value["action"]).upper() == "RESTAURANT_LIST_REQUEST":
+                    logging.info("PUT get_restaurants MESSAGE in QUEUE")
                     mq.put(
-                        get_categories(
+                        get_restaurants(
                             dbh,
                             int(message.value["message"]["request"])
-                        )
-                    )
-                elif str(message.value["action"]).upper() == "FOOD_LIST_REQUEST":
-                    logging.info("PUT get_meals_by_filter MESSAGE in QUEUE")
-                    mq.put(
-                        get_meals_by_filter(
-                            dbh,
-                            int(message.value["message"]["request"]),
-                            message.value["message"]
                         )
                     )
 

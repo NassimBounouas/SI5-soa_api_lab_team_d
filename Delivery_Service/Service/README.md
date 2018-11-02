@@ -86,170 +86,40 @@ The push refers to repository [docker.io/uberoolab/team-d-menu-service]
 ```
 
 ### Pull From Hub
-`docker pull uberoolab/team-d-menu-service`
+`docker pull uberoolab/team-d-delivery-service`
 
 ### Run From Hub (Interactive)
-`docker run -i -t uberoolab/team-d-menu-service`
+`docker run -i -t uberoolab/team-d-delivery-service`
 
 ### Run From Hub (Detached)
-`docker run -d -t uberoolab/team-d-menu-service`
+`docker run -d -t uberoolab/team-d-delivery-service`
 
 ## Service Usage
 
-### List categories
+### Request a delivery
 
 Usage :
 
-> [KAFKA] `restaurant` topic
+> [KAFKA] `delivery` topic
 ```json
 {
-  "action": "CATEGORY_LIST_REQUEST",
+  "action": "DELIVERY_REQUEST",
   "message": {
-    "request": 42
+    "request":42,
+    "meal_name": "Ramen",
+    "pickup_restaurant": "Tiberdor",
+    "pickup_date": "2018-11-02 12:00",
+    "delivery_address": "Chez moi"
   }
 }
 ```
-
-Response :
-
-```json
-{
-  "action": "CATEGORY_LIST_RESPONSE",
-  "message": {
-    "status": "OK",
-    "request": 42,
-    "categories": [
-      {
-        "id": 11,
-        "name": "Japonais",
-        "region": "Asie"
-      },
-      {
-        "id": 12,
-        "name": "Chinois",
-        "region": "Asie"
-      }
-    ]
-  }
-}
-```
-
-### List meals by category <name|id>
-
-Usage :
-
-> [KAFKA] `restaurant` topic
-```json
-{
-  "action": "FOOD_LIST_REQUEST",
-  "message": {
-    "request": 42,
-    "category": "Japonais"
-  }
-}
-```
-
-Response :
-
-```json
-{
-  "action": "FOOD_LIST_RESPONSE",
-  "message": {
-    "status": "OK",
-    "request": 42,
-    "meals": [
-      {
-        "id": 33,
-        "category": {
-          "id": 11,
-          "name": "Japonais",
-          "region": ""
-        },
-        "restaurant": {
-          "id": 11,
-          "name": "Dragon d'Or"
-        },
-        "name": "Sushis saumon",
-        "price": 3.9,
-        "is_menu": false,
-        "image": ""
-      },
-      {
-        "id": 34,
-        "category": {
-          "id": 11,
-          "name": "Japonais",
-          "region": ""
-        },
-        "restaurant": {
-          "id": 11,
-          "name": "Dragon d'Or"
-        },
-        "name": "Sushis saumon épicé",
-        "price": 4.5,
-        "is_menu": false,
-        "image": ""
-      },
-      {
-        "id": 35,
-        "category": {
-          "id": 11,
-          "name": "Japonais",
-          "region": ""
-        },
-        "restaurant": {
-          "id": 11,
-          "name": "Dragon d'Or"
-        },
-        "name": "Sushis saumon mariné au jus de yuzu et ses herbes",
-        "price": 4.8,
-        "is_menu": false,
-        "image": ""
-      },
-      {
-        "id": 36,
-        "category": {
-          "id": 11,
-          "name": "Japonais",
-          "region": ""
-        },
-        "restaurant": {
-          "id": 11,
-          "name": "Dragon d'Or"
-        },
-        "name": "Ramen nature",
-        "price": 7,
-        "is_menu": false,
-        "image": ""
-      },
-      {
-        "id": 38,
-        "category": {
-          "id": 11,
-          "name": "Japonais",
-          "region": ""
-        },
-        "restaurant": {
-          "id": 12,
-          "name": "Le cercle des Yakuzas"
-        },
-        "name": "Plateau 1 - 8 pièces",
-        "price": 13.9,
-        "is_menu": true,
-        "image": ""
-      }
-    ]
-  }
-}
-```
+Response : `Service is not generating any response` 
 
 ## Examples
 
 Using `kafka-console-producer.sh`
 
 ```bash
-$ ./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic restaurant
->{"action":"CATEGORY_LIST_REQUEST","message":{"request":42}}
->{"action":"FOOD_LIST_REQUEST","message":{"request":42,"category":"Japonais"}}
->{"action":"FOOD_LIST_REQUEST","message":{"request":42,"category":12}}
+$ ./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic delivery
+>{"action": "DELIVERY_REQUEST", "message": {"request":42, "meal_name": "Ramen", "pickup_restaurant": "Tiberdor", "pickup_date": "2018-11-02 12:00", "delivery_address": "Chez moi"}}
 ```
