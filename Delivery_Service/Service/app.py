@@ -93,32 +93,11 @@ def __mysql_close(database_handle=None):
 
 
 def __populate_db():
-    from model.category import Category
-    from model.meal import Meal
-    from model.restaurant import Restaurant
-
+    from model.order import Order
     dbh = __mysql_connect()
 
-    # Restaurants
-    dragon_or = Restaurant(dbh=dbh, name="Dragon d'Or")
-    yakuzas = Restaurant(dbh=dbh, name="Le cercle des Yakuzas")
-
-    # Categories
-    asie_japon = Category(dbh=dbh, name="Japonais", region="Asie")
-    asie_chine = Category(dbh=dbh, name="Chinois", region="Asie")
-
     # Meals
-    Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon, name="Sushis saumon", price=3.90)
-    Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon, name="Sushis saumon épicé", price=4.50)
-    Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon,
-         name="Sushis saumon mariné au jus de yuzu et ses herbes", price=4.80)
-    Meal(dbh=dbh, parent_restaurant=dragon_or, parent_category=asie_japon, name="Ramen nature", price=7.0)
-    Meal(dbh=dbh, parent_restaurant=yakuzas, parent_category=asie_chine, name="Brochette de viande au fromage",
-         price=13.90)
-
-    # Meals as Menus
-    Meal(dbh=dbh, parent_restaurant=yakuzas, parent_category=asie_japon, name="Plateau 1 - 8 pièces", price=13.90,
-         is_menu=True)
+    Order(dbh=dbh, meal_name="testmeal", pickup_restaurant="testrestaurant", pickup_date="2018-11-02 12:00", delivery_address="testdeliveryaddress")
 
     __mysql_close(dbh)
 
@@ -126,65 +105,16 @@ def __populate_db():
 # BUSINESS FUNCTIONS
 
 
-def get_categories(dbh, request_id):
-    """
-    List available categories
-    :param dbh: database_handle
-    :param request_id: int
-    :return: json
-    """
-    from model.category_collection import CategoryCollection
-
-    categories = CategoryCollection(dbh=dbh)
-
-    return {
-        'action': 'CATEGORY_LIST_RESPONSE',
-        'message': {
-            'status': 'OK',
-            'request': int(request_id),
-            'categories': categories.to_json()
-        }
-    }
-
-
-def get_meals_by_category(dbh, request_id, params: dict):
-    """
-    List food by category
-    :param dbh: database_handle
-    :param request_id: int
-    :param params: dict
-    :return: json
-    """
-    from model.meal_collection import MealCollection
-
-    if not params["category"]:
-        return {
-            'action': 'FOOD_LIST_RESPONSE',
-            'message': {
-                'status': 'KO',
-                'request': int(request_id),
-                'meals': []
-            }
-        }
-    category = params["category"]
-
-    meals = MealCollection(dbh=dbh, category=category)
-
-    return {
-        'action': 'FOOD_LIST_RESPONSE',
-        'message': {
-            'status': 'OK',
-            'request': int(request_id),
-            'meals': meals.to_json()
-        }
-    }
-
+def save_order(dbh,meal_name, pickup_restaurant, pickup_date, delivery_address):
+    from model.order import Order
+    Order(dbh=dbh, meal_name=meal_name, pickup_restaurant=pickup_restaurant, pickup_date=pickup_date,
+          delivery_address=delivery_address)
 
 # THREAD WORKERS
 
-def kafka_restaurant_producer_worker(mq: queue.Queue):
+def kafka_delivery_producer_worker(mq: queue.Queue):
     """
-    Kafka Restaurant Topic Producer
+    Kafka Delivery Topic Producer
     as thread worker
     Get messages from a shared mq queue.Queue
     :param mq: queue.Queue
@@ -201,8 +131,8 @@ def kafka_restaurant_producer_worker(mq: queue.Queue):
             if mq.qsize() > 0:
                 # Topic + Message
                 msg = mq.get()
-                logging.info("GET %s FROM QUEUE AND SENDING TO %s" % (msg, 'restaurant'))
-                producer.send('restaurant', msg)
+                logging.info("GET %s FROM QUEUE AND SENDING TO %s" % (msg, 'delivery'))
+                producer.send('delivery', msg)
                 # Force buffer flush in order to send the message
                 logging.info("MESSAGE SENT !")
                 producer.flush()
@@ -213,9 +143,9 @@ def kafka_restaurant_producer_worker(mq: queue.Queue):
     return
 
 
-def kafka_restaurant_consumer_worker(mq: queue.Queue):
+def kafka_delivery_consumer_worker(mq: queue.Queue):
     """
-    Kafka Restaurant Topic Consumer
+    Kafka Delivery Topic Consumer
     as thread worker
     :param mq: queue.Queue
     :return:
@@ -223,7 +153,7 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
     global app_config
 
     # Client
-    consumer = KafkaConsumer('restaurant',
+    consumer = KafkaConsumer('delivery',
                              bootstrap_servers=bootstrap_servers,
                              value_deserializer=lambda item: json.loads(item.decode('utf-8')))
 
@@ -250,22 +180,14 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
                 dbh = __mysql_connect()
 
                 # Action switch
-                if str(message.value["action"]).upper() == "CATEGORY_LIST_REQUEST":
-                    logging.info("PUT get_categories MESSAGE in QUEUE")
-                    mq.put(
-                        get_categories(
+                if str(message.value["action"]).upper() == "DELIVERY_REQUEST":
+                    logging.info("SAVING A NEW ORDER")
+                    save_order(
                             dbh,
-                            int(message.value["message"]["request"])
-                        )
-                    )
-                elif str(message.value["action"]).upper() == "FOOD_LIST_REQUEST":
-                    logging.info("PUT get_meals_by_category MESSAGE in QUEUE")
-                    mq.put(
-                        get_meals_by_category(
-                            dbh,
-                            int(message.value["message"]["request"]),
-                            message.value["message"]
-                        )
+                            message.value["message"]["meal_name"],
+                            message.value["message"]["pickup_restaurant"],
+                            message.value["message"]["pickup_date"],
+                            message.value["message"]["delivery_address"]
                     )
 
                 # Post routine
@@ -289,7 +211,7 @@ if __name__ == "__main__":
     # LOGGING
     if env == 'production':
         logging.basicConfig(
-            level=logging.WARNING
+            level=logging.INFO
         )
     else:
         logging.basicConfig(
@@ -306,23 +228,23 @@ if __name__ == "__main__":
     # Init DB
     __populate_db()
 
-    # RESTAURANT CONSUMER
-    restaurant_mq = queue.Queue()  # Shared queue between consumer / producer threads
+    # DELIVERY CONSUMER
+    delivery_mq = queue.Queue()  # Shared queue between consumer / producer threads
 
-    t_kafka_restaurant_consumer_worker = threading.Thread(
+    t_kafka_delivery_consumer_worker = threading.Thread(
         name='kafka_consumer_worker',
         daemon=True,
-        target=kafka_restaurant_consumer_worker,
-        args=(restaurant_mq,)
+        target=kafka_delivery_consumer_worker,
+        args=(delivery_mq,)
     )
-    threads.append(t_kafka_restaurant_consumer_worker)
+    threads.append(t_kafka_delivery_consumer_worker)
 
     # PRODUCER
     t_producer_worker = threading.Thread(
         name='kafka_producer_worker',
         daemon=True,
-        target=kafka_restaurant_producer_worker,
-        args=(restaurant_mq,)
+        target=kafka_delivery_producer_worker,
+        args=(delivery_mq,)
     )
     threads.append(t_producer_worker)
 

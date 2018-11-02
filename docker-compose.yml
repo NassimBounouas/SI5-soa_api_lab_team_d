@@ -87,7 +87,10 @@ services:
     environment:
       - DATABASE_DELIVERY=delivery-database:3306
     depends_on:
-      - delivery-database
+     delivery-database:
+      condition: service_healthy
+     kafka:
+      condition: service_healthy
     ports:
      - "4004:8080"
 
@@ -95,4 +98,6 @@ services:
     image: uberoolab/team-d-delivery-database
     ports:
      - "4014:3306"
+    healthcheck:
+      test: "mysqladmin ping --silent"
  
