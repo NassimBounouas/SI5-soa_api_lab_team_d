@@ -13,7 +13,7 @@ def validate_order(dbh, request_id, params: dict):
     # Fetch params
     id_order = 0
     if 'id_order' in params:
-        id_order = int(params["id_meal"])
+        id_order = int(params["id_order"])
 
     with dbh.cursor() as cursor:
         if id_order > 0:

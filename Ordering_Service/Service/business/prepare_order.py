@@ -12,7 +12,7 @@ def prepare_order(dbh, request_id, params: dict):
     """
     # Fetch params
     id_order = 0
-    if 'id_code' in params:
+    if 'id_order' in params:
         id_order = params["id_order"]
     id_meal = 0
     if 'id_meal' in params:

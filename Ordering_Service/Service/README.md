@@ -1,8 +1,8 @@
 # SI5-soa_api_lab_team_d_ordering_service
 
 ### Author
- * __Rudy MEERSMAN__
  * __Nikita ROUSSEAU__
+ * __Rudy MEERSMAN__
 ### Updated
 __04/11/2018__
 
@@ -27,3 +27,32 @@ INFO:root:Starting...
 INFO:root:Ready !
 INFO:root:Serving application in `development` environment
 ```
+
+## Service Usage
+
+### Create an order
+
+Usage :
+
+> Listening `ordering` topic
+```json
+{
+  "action": "RESTAURANT_ORDER_REQUEST",
+  "message": {
+    "request": 1664,
+    "id_meal": 33,
+    "id_code": 0,
+    "id_restaurant" : 11,
+    "client_name" : "Victor",
+    "client_address" : "les Templier"
+  }
+}
+```
+
+> Response on `ordering`:
+
+```json
+
+```
+
+### Validate an order
