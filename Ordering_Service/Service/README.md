@@ -44,7 +44,7 @@ Usage :
     "id_code": 0,
     "id_restaurant" : 11,
     "client_name" : "Victor",
-    "client_address" : "les Templier"
+    "client_address" : "les Templiers"
   }
 }
 ```
@@ -52,7 +52,23 @@ Usage :
 > Response on `ordering`:
 
 ```json
-
+{
+  "action": "ORDER_CREATED",
+  "message": {
+    "status": "OK",
+    "request": 1664,
+    "order": {
+      "id_order": 11,
+      "id_meal": 33,
+      "id_restaurant": 11,
+      "id_code": 0,
+      "client_name": "Victor",
+      "client_address": "les Templiers",
+      "status": "Created"
+    }
+  }
+}
 ```
 
 ### Validate an order
+

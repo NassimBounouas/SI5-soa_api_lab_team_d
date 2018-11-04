@@ -18,7 +18,7 @@ def validate_order(dbh, request_id, params: dict):
     with dbh.cursor() as cursor:
         if id_order > 0:
             # Accepted
-            sql = "UPDATE order SET status = %s  WHERE id_order=%s"
+            sql = "UPDATE `order` SET status = %s  WHERE id_order=%s"
             cursor.execute(sql, (
                 'Accepted',
                 id_order

@@ -31,7 +31,7 @@ def create_order(dbh, request_id, params: dict):
 
     with dbh.cursor() as cursor:
         # Create
-        sql = "INSERT INTO order (id_meal, id_restaurant, id_code, client_name, client_address, status) VALUES (%s, %s, %s, %s, %s, %s)"
+        sql = "INSERT INTO `order` (id_meal, id_restaurant, id_code, client_name, client_address, status) VALUES (%s, %s, %s, %s, %s, %s)"
         cursor.execute(sql, (
             id_meal,
             id_restaurant,

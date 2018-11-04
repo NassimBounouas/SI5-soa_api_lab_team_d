@@ -2,7 +2,7 @@
 /* @author: Nikita ROUSSEAU */
 /* @updated: 04/11/2018 */
 
-CREATE DATABASE  IF NOT EXISTS `soa`;
+CREATE DATABASE IF NOT EXISTS `soa`;
 USE `soa`;
 
 -- Host: localhost    Database: soa
