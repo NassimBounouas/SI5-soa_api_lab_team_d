@@ -1,14 +1,6 @@
 version: '2.1'
 services:
 
-  api-gateway:
-    image: uberoolab/team-d-apigateway
-    depends_on:
-      kafka:
-        condition: service_healthy
-    ports:
-     - "8080:5000"
-
   kafka:
     image: wurstmeister/kafka
     depends_on:
@@ -29,6 +21,14 @@ services:
     image: wurstmeister/zookeeper
     ports:
       - 2181:2181
+
+  api-gateway:
+    image: uberoolab/team-d-apigateway
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+     - "8080:5000"
 
   menu:
     image: uberoolab/team-d-menu-service
@@ -67,19 +67,19 @@ services:
      - "4002:5000"
 
 
-  chinese-restaurant:
-    image: uberoolab/team-d-chinese-restaurant-service
-    environment:
-      - DATABASE_CHINESE_RESTAURANT=chinese-restaurant-database:3306
-    depends_on:
-      - chinese-restaurant-database
-    ports:
-     - "4003:8080"
+#  chinese-restaurant:
+#    image: uberoolab/team-d-chinese-restaurant-service
+#    environment:
+#      - DATABASE_CHINESE_RESTAURANT=chinese-restaurant-database:3306
+#    depends_on:
+#      - chinese-restaurant-database
+#    ports:
+#     - "4003:8080"
 
-  chinese-restaurant-database:
-    image: uberoolab/team-d-chinese-restaurant-database
-    ports:
-     - "4013:3306"
+#  chinese-restaurant-database:
+#    image: uberoolab/team-d-chinese-restaurant-database
+#    ports:
+#     - "4013:3306"
 
 
   delivery:
