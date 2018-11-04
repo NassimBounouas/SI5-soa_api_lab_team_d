@@ -1,8 +1,9 @@
 FROM python:3.6.5-slim
 WORKDIR /app
-ADD db.ini ServiceCommand.py /app/
-RUN pip install flask
-RUN pip3 install PyMySQL
+ADD . /app
+
+RUN python -m pip install --upgrade pip
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
 ENTRYPOINT ["python"]
-CMD ["ServiceCommand.py"]
+CMD ["app.py", "production"]

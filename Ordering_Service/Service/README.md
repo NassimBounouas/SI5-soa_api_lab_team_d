@@ -1,60 +1,29 @@
 # SI5-soa_api_lab_team_d_ordering_service
 
 ### Author
-__Rudy MEERSMAN__
+ * __Rudy MEERSMAN__
+ * __Nikita ROUSSEAU__
 ### Updated
-__29/10/2018__
-
-## Remarks
+__04/11/2018__
 
 ## Requirements
-```
-pip3 install kafka-python
-pip3 install PyMySQL
-```
 
-## API Usage
+- Python 3.6.x
+- Dependencies :
+  * PyMySQL
+  * kafka-python
 
-* Request type :: [POST] http://127.0.0.1:4001/receive_event
+### Install Dependencies
 
-### Validation
-
-* Save in database the order and create an ID for this command
-
-> Request Body 
->> validation
-```json
-{	"action" : "order_request",
-	"message" :
-	{
-		"id meal" : 46,
-		"id restaurant" : "Lyianhg Restaurant",
-		"client name" : "Victor",
-		"client address" : "les Templier"
-	}
-}
+```bash
+pip install --trusted-host pypi.python.org -r requirements.txt
 ```
 
-* Get the order with his id from database and return a "PREPARE_COMMAND" action:
-```json
-{	"action" : "validate_order",
-	"message" :
-	{	
-		"Id": 85
-	}
-}
-```
+## Server Startup
 
->response
-```json
-{	"action": "prepare_command", 
-	"message": 
-	{
-		"id_request": 85,
-		"id_restaurant": "Lyianhg Restaurant",
-		"id_meal": "46"
-	}
-}
+```bash
+python3 app.py <production|development>
+INFO:root:Starting...
+INFO:root:Ready !
+INFO:root:Serving application in `development` environment
 ```
-
-  
