@@ -172,6 +172,579 @@ def list_meals_by_category_route():
         ), 200
 
 
+@app.route("/restaurants",
+           methods=['GET', 'POST'])
+def list_restaurants_route():
+    if request.method == 'POST':
+
+        # Build message
+        message, request_id = make_kafka_message(
+            action='RESTAURANT_LIST_REQUEST',
+            message={}
+        )
+
+        # Send
+        threads_mq['restaurant'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "callbackUrl": request.url + '?id=' + str(request_id)
+        }), 202
+    else:
+        # Response callback
+        if 'id' not in request.args:
+            raise BadRequest()
+
+        request_id = int(request.args.get("id"))
+
+        if request_id not in callback_registry:
+            raise NotFound()
+
+        # Response
+        return jsonify(
+            callback_registry[request_id]
+        ), 200
+
+
+@app.route("/restaurant-menu",
+           methods=['GET', 'POST'])
+def list_restaurant_menu_route():
+    if request.method == 'POST':
+        # Verify user input
+        if 'id_restaurant' not in request.form:
+            BadRequest()  # 400
+
+        # Extract params
+        restaurant = request.form['id_restaurant']
+
+        # Build message
+        message, request_id = make_kafka_message(
+            action='FOOD_MENU_REQUEST',
+            message={
+                "restaurant": restaurant
+            }
+        )
+
+        # Send
+        threads_mq['restaurant'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "callbackUrl": request.url + '?id=' + str(request_id)
+        }), 202
+    else:
+        # Response callback
+        if 'id' not in request.args:
+            raise BadRequest()
+
+        request_id = int(request.args.get("id"))
+
+        if request_id not in callback_registry:
+            raise NotFound()
+
+        # Response
+        return jsonify(
+            callback_registry[request_id]
+        ), 200
+
+
+@app.route("/meal_feedback",
+           methods=['POST'])
+def meal_feedback_route():
+    if request.method == 'POST':
+        # Verify user input
+        if 'id_meal' not in request.form or 'id_restaurant' not in request.form or 'comment' not in request.form:
+            BadRequest()  # 400
+
+        # Extract params
+        meal = request.form['id_meal']
+        restaurant = request.form['id_restaurant']
+        comment = request.form['comment']
+
+        # Build message
+        message, request_id = make_kafka_message(
+            action='FEEDBACK_REQUEST',
+            message={
+                "meal": meal,
+                "restaurant": restaurant,
+                "comment": comment
+            }
+        )
+
+        # Send
+        threads_mq['restaurant'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "callbackUrl": request.url + '?id=' + str(request_id)
+        }), 202
+
+
+@app.route("/create_promotional_code",
+           methods=['POST'])
+def create_promotional_route():
+    if request.method == 'POST':
+        # Verify user input
+        if 'code' not in request.form or 'reduction' not in request.form:
+            BadRequest()  # 400
+
+        # Extract params
+        code = request.form['code']
+        reduction = request.form['reduction']
+
+        # Build message
+        message, request_id = make_kafka_message(
+            action='CREATE_CODE_REQUEST',
+            message={
+                "code": code,
+                "reduction": reduction
+            }
+        )
+
+        # Send
+        threads_mq['restaurant'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "Promotional code created"
+        }), 200
+
+
+
+########################################################################################################################
+# ORDERING SERVICE
+########################################################################################################################
+
+
+@app.route("/order",
+           methods=['POST'])
+def order_route():
+    if request.method == 'POST':
+        # Verify user input
+        if 'id_restaurant' not in request.form or\
+                'id_meal' not in request.form or\
+                'client_name' not in request.form or\
+                'client_address' not in request.form:
+            BadRequest()  # 400
+
+        # Extract params
+        restaurant = request.form['id_restaurant']
+        meal = request.form['id_meal']
+        client_name = request.form['client_name']
+        client_address = request.form['client_address']
+
+        # Build message
+        message, request_id = make_kafka_message(
+            action='RESTAURANT_ORDER_REQUEST',
+            message={
+                "restaurant": restaurant,
+                "meal": meal,
+                "client_name": client_name,
+                "client_address": client_address
+            }
+        )
+
+        # Send
+        threads_mq['ordering'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "callbackUrl": request.url + '?id=' + str(request_id)
+        }), 202
+
+
+@app.route("/validate-order",
+           methods=['POST'])
+def validate_order_route():
+    if request.method == 'POST':
+        # Verify user input
+        if 'id_order' not in request.form:
+            BadRequest()  # 400
+
+        # Extract params
+        order = request.form['id_order']
+
+        # Build message
+        message, request_id = make_kafka_message(
+            action='VALIDATE_ORDER_REQUEST',
+            message={
+                "order": order,
+            }
+        )
+
+        # Send
+        threads_mq['ordering'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "callbackUrl": request.url + '?id=' + str(request_id)
+        }), 202
+
+
+@app.route("/order-status",
+           methods=['GET'])
+def order_status_route():
+    if request.method == 'GET':
+        # Response callback
+        if 'id' not in request.args:
+            raise BadRequest()
+
+        request_id = int(request.args.get("id"))
+
+        if request_id not in callback_registry:
+            raise NotFound()
+
+        # Response
+        return jsonify(
+            callback_registry[request_id]
+        ), 200
+
+
+@app.route("/order_list_by_restaurant",
+           methods=['GET', 'POST'])
+def order_list_by_restaurant_route():
+    if request.method == 'POST':
+        # Verify user input
+        if 'id_restaurant' not in request.form:
+            BadRequest()  # 400
+
+        # Extract params
+        restaurant = request.form['id_restaurant']
+
+        # Build message
+        message, request_id = make_kafka_message(
+            action='ORDER_LIST_REQUEST',
+            message={
+                "restaurant": restaurant
+            }
+        )
+
+        # Send
+        threads_mq['restaurant'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "callbackUrl": request.url + '?id=' + str(request_id)
+        }), 202
+    else:
+        # Response callback
+        if 'id' not in request.args:
+            raise BadRequest()
+
+        request_id = int(request.args.get("id"))
+
+        if request_id not in callback_registry:
+            raise NotFound()
+
+        # Response
+        return jsonify(
+            callback_registry[request_id]
+        ), 200
+
+########################################################################################################################
+# ETA SERVICE
+########################################################################################################################
+
+
+@app.route("/eta",
+           methods=['GET', 'POST'])
+def list_restaurant_menu_route():
+    if request.method == 'POST':
+        # Verify user input
+        if 'from' not in request.form or 'to' not in request.form:
+            BadRequest()  # 400
+
+        # Extract params
+        _from = request.form['from']
+        _to = request.form['to']
+
+        # Build message
+        message, request_id = make_kafka_message(
+            action='ETA_REQUEST',
+            message={
+                "from": _from,
+                "to": _to,
+            }
+        )
+
+        # Send
+        threads_mq['eta'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "callbackUrl": request.url + '?id=' + str(request_id)
+        }), 202
+    else:
+        # Response callback
+        if 'id' not in request.args:
+            raise BadRequest()
+
+        request_id = int(request.args.get("id"))
+
+        if request_id not in callback_registry:
+            raise NotFound()
+
+        # Response
+        return jsonify(
+            callback_registry[request_id]
+        ), 200
+
+
+########################################################################################################################
+# PAYWALL SERVICE
+########################################################################################################################
+
+
+@app.route("/paywall",
+           methods=['GET', 'POST'])
+def pay_order_route():
+    if request.method == 'POST':
+        # Verify user input
+        if 'id_order' not in request.form or 'card_number' not in request.form:
+            BadRequest()  # 400
+
+        # Extract params
+        order = request.form['id_order']
+        card_number = request.form['card_number']
+
+        # Build message
+        message, request_id = make_kafka_message(
+            action='PAYMENT_PLACED',
+            message={
+                "order": order,
+                "card_number": card_number
+            }
+        )
+
+        # Send
+        threads_mq['ordering'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "callbackUrl": request.url + '?id=' + str(request_id)
+        }), 202
+    else:
+        # Response callback
+        if 'id' not in request.args:
+            raise BadRequest()
+
+        request_id = int(request.args.get("id"))
+
+        if request_id not in callback_registry:
+            raise NotFound()
+
+        # Response
+        return jsonify(
+            callback_registry[request_id]
+        ), 200
+
+
+########################################################################################################################
+# DELIVERY SERVICE
+########################################################################################################################
+
+
+@app.route("/map",
+           methods=['GET', 'POST'])
+def map_route():
+    if request.method == 'POST':
+        # Verify user input
+        if 'long' not in request.form or 'lat' not in request.form:
+            BadRequest()  # 400
+
+        # Extract params
+        long = request.form['long']
+        lat = request.form['lat']
+
+        # Build message
+        message, request_id = make_kafka_message(
+            action='MAP_DELIVERY_PROBE',
+            message={
+                "long": long,
+                "lat": lat
+            }
+        )
+
+        # Send
+        threads_mq['delivery'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "callbackUrl": request.url + '?id=' + str(request_id)
+        }), 202
+    else:
+        # Response callback
+        if 'id' not in request.args:
+            raise BadRequest()
+
+        request_id = int(request.args.get("id"))
+
+        if request_id not in callback_registry:
+            raise NotFound()
+
+        # Response
+        return jsonify(
+            callback_registry[request_id]
+        ), 200
+
+
+@app.route("/notify_delivery",
+           methods=['GET', 'POST'])
+def notify_delivery_route():
+    if request.method == 'POST':
+        # Verify user input
+        if 'id_order' not in request.form:
+            BadRequest()  # 400
+
+        # Extract params
+        order = request.form['id_order']
+
+        # Build message
+        message, request_id = make_kafka_message(
+            action='NOTIFY_DELIVERY_REQUEST',
+            message={
+                "order": order
+            }
+        )
+
+        # Send
+        threads_mq['delivery'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "callbackUrl": request.url + '?id=' + str(request_id)
+        }), 202
+    else:
+        # Response callback
+        if 'id' not in request.args:
+            raise BadRequest()
+
+        request_id = int(request.args.get("id"))
+
+        if request_id not in callback_registry:
+            raise NotFound()
+
+        # Response
+        return jsonify(
+            callback_registry[request_id]
+        ), 200
+
+
+@app.route("/delivery_location",
+           methods=['GET', 'POST'])
+def delivery_location_route():
+    if request.method == 'POST':
+        # Verify user input
+        if 'id_order' not in request.form or 'id_steed' not in request.form or 'lat' not in request.form or 'long' not in request.form:
+            BadRequest()  # 400
+
+        # Extract params
+        order = request.form['id_order']
+        steed = request.form['id_steed']
+        lat = request.form['lat']
+        long = request.form['long']
+
+        # Build message
+        message, request_id = make_kafka_message(
+            action='DELIVERY_LOCATION_PUSH',
+            message={
+                "order": order,
+                "steed": steed,
+                "lat": lat,
+                "long": long
+            }
+        )
+
+        # Send
+        threads_mq['delivery'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "callbackUrl": request.url + '?id=' + str(request_id)
+        }), 202
+    else:
+        # Response callback
+        if 'order' not in request.args:
+            raise BadRequest()
+
+        order_id = int(request.args.get("order"))
+
+        # Response
+        return jsonify(
+            "Your order will arrive in : X minutes"  # TODO: Implement a system to retrieve last position
+        ), 200
+
+
+@app.route("/stats",
+           methods=['GET', 'POST'])
+def steed_stats_route():
+    if request.method == 'POST':
+        # Verify user input
+        if 'id_steed' not in request.form:
+            BadRequest()  # 400
+
+        # Extract params
+        steed = request.form['id_steed']
+
+        # Build message
+        message, request_id = make_kafka_message(
+            action='STEED_STAT_REQUEST',
+            message={
+                "steed": steed
+            }
+        )
+
+        # Send
+        threads_mq['delivery'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "callbackUrl": request.url + '?id=' + str(request_id)
+        }), 202
+    else:
+        if 'id' not in request.args:
+            raise BadRequest()
+
+        request_id = int(request.args.get("id"))
+
+        if request_id not in callback_registry:
+            raise NotFound()
+
+        # Response
+        return jsonify(
+            callback_registry[request_id]
+        ), 200
+
+
+@app.route("/steed_status",
+           methods=['POST'])
+def steed_stats_route():
+    if request.method == 'POST':
+        # Verify user input
+        if 'id_steed' not in request.form:
+            BadRequest()  # 400
+
+        # Extract params
+        steed = request.form['id_steed']
+        status = request.form['status']
+
+        # Build message
+        message, request_id = make_kafka_message(
+            action='SEND_STEED_STATUS',
+            message={
+                "steed": steed,
+                "status": status
+            }
+        )
+
+        # Send
+        threads_mq['delivery'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "Status updated"
+        }), 200
+
 ########################################################################################################################
 # END: ROUTES
 ########################################################################################################################
