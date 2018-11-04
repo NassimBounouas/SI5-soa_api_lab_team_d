@@ -15,6 +15,7 @@ from kafka import KafkaProducer
 from kafka import KafkaConsumer
 
 from business.create_order import create_order
+from business.prepare_order import prepare_order
 from business.validate_order import validate_order
 
 __product__ = "Ordering Service"
@@ -95,27 +96,28 @@ def __mysql_close(database_handle=None):
 
 # THREAD WORKERS
 
-def kafka_restaurant_producer_worker(mq: queue.Queue):
+def kafka_producer_worker(topic: str, mq: queue.Queue):
     """
-    Kafka Restaurant Topic Producer
+    Kafka Generic Message Producer
     as thread worker
     Get messages from a shared mq queue.Queue
+    :param topic: str
     :param mq: queue.Queue
     :return:
     """
-    global app_config
-
     # Client
     producer = KafkaProducer(bootstrap_servers=bootstrap_servers,
                              value_serializer=lambda item: json.dumps(item).encode('utf-8'))
 
     while not t_stop_event.is_set():
+        # 10ms
+        sleep(0.01)
         try:
             if mq.qsize() > 0:
                 # Topic + Message
                 msg = mq.get()
-                logging.info("GET %s FROM QUEUE AND SENDING TO %s" % (msg, 'restaurant'))
-                producer.send('restaurant', msg)
+                logging.info("GET %s AND SENDING TO %s" % (msg, topic))
+                producer.send(topic, msg)
                 # Force buffer flush in order to send the message
                 logging.info("MESSAGE SENT !")
                 producer.flush()
@@ -126,11 +128,12 @@ def kafka_restaurant_producer_worker(mq: queue.Queue):
     return
 
 
-def kafka_ordering_consumer_worker(mq: queue.Queue):
+def kafka_ordering_consumer_worker(ordering_mq: queue.Queue, restaurant_mq: queue.Queue):
     """
     Kafka Ordering Topic Consumer
     as thread worker
-    :param mq: queue.Queue
+    :param ordering_mq: queue.Queue
+    :param restaurant_mq: queue.Queue
     :return:
     """
     global app_config
@@ -163,18 +166,27 @@ def kafka_ordering_consumer_worker(mq: queue.Queue):
                 dbh = __mysql_connect()
 
                 # Action switch
-                if str(message.value["action"]).upper() == "ORDER_REQUEST":
+                if str(message.value["action"]).upper() == "RESTAURANT_ORDER_REQUEST":
                     logging.info("PUT create_order MESSAGE in QUEUE")
-                    mq.put(
+                    ordering_mq.put(
                         create_order(
                             dbh,
                             int(message.value["message"]["request"]),
                             message.value["message"]
                         )
                     )
-                elif str(message.value["action"]).upper() == "VALIDATE_ORDER":
+                elif str(message.value["action"]).upper() == "VALIDATE_ORDER_REQUEST":
                     logging.info("PUT validate_order MESSAGE in QUEUE")
-                    mq.put(
+                    # notify restaurant
+                    restaurant_mq.put(
+                        prepare_order(
+                            dbh,
+                            int(message.value["message"]["request"]),
+                            message.value["message"]
+                        )
+                    )
+                    # update order status as accepted
+                    ordering_mq.put(
                         validate_order(
                             dbh,
                             int(message.value["message"]["request"]),
@@ -221,24 +233,32 @@ if __name__ == "__main__":
 
     # RESTAURANT TOPIC I/O
     restaurant_mq = queue.Queue()
+    ordering_mq = queue.Queue()
 
-    # CONSUMER
+    # CONSUMERS
     t_consumer_worker = threading.Thread(
         name='kafka_ordering_consumer_worker',
         daemon=True,
         target=kafka_ordering_consumer_worker,
-        args=(restaurant_mq,)
+        args=(ordering_mq, restaurant_mq,)
     )
     threads.append(t_consumer_worker)
 
-    # PRODUCER
-    t_producer_worker = threading.Thread(
+    # PRODUCERS
+    t_restaurant_producer_worker = threading.Thread(
         name='kafka_restaurant_producer_worker',
         daemon=True,
-        target=kafka_restaurant_producer_worker,
-        args=(restaurant_mq,)
+        target=kafka_producer_worker,
+        args=('restaurant', restaurant_mq,)
     )
-    threads.append(t_producer_worker)
+    threads.append(t_restaurant_producer_worker)
+    t_ordering_producer_worker = threading.Thread(
+        name='kafka_ordering_producer_worker',
+        daemon=True,
+        target=kafka_producer_worker,
+        args=('ordering', ordering_mq,)
+    )
+    threads.append(t_ordering_producer_worker)
 
     ###########################################################
 

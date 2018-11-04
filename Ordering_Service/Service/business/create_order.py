@@ -26,7 +26,8 @@ def create_order(dbh, request_id, params: dict):
     client_address = ''
     if 'client_address' in params:
         client_address = params["client_address"]
-    status = 'Pending'
+
+    status = 'Created'
 
     with dbh.cursor() as cursor:
         # Create
