@@ -72,3 +72,50 @@ Usage :
 
 ### Validate an order
 
+Usage :
+
+> Listening `ordering` topic
+```json
+{
+  "action": "VALIDATE_ORDER_REQUEST",
+  "message": {
+    "request": 1665,
+    "id_order": 11,
+    "id_meal": 33,
+    "id_restaurant" : 11
+  }
+}
+```
+
+> Response on `ordering`:
+
+```json
+{
+  "action": "ORDER_ACCEPTED",
+  "message": {
+    "status": "OK",
+    "request": 1665,
+    "order": {
+      "id_order": 11,
+      "status": "Accepted"
+    }
+  }
+}
+```
+
+> Response on `restaurant`:
+
+```json
+{
+  "action": "PREPARE_ORDER",
+  "message": {
+    "status": "OK",
+    "request": 1665,
+    "order": {
+      "id_order": 11,
+      "id_meal": 33,
+      "id_restaurant": 11
+    }
+  }
+}
+```
