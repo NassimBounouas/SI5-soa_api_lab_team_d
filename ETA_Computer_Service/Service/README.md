@@ -45,7 +45,7 @@ Example of request:
 
 ```
 {	
-	"action": "eta_requested",
+	"action": "ETA_REQUESTED",
     	"message": {
 	"id_request": 1001,
 	"meal": "Sushi",
@@ -58,8 +58,9 @@ Example of request:
 Example of answer:
 ```
 {
-    "action": "eta_response",
+    "action": "ETA_RESPONSE",
     "message": {
+    	"statut": "OK",
     	"id_request": 1001,
         "delivery_address": "Campus Templier",
         "delivery_date": "Sun, 07 Oct 2018 14:54:31 GMT",
