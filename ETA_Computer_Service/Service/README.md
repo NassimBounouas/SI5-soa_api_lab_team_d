@@ -3,7 +3,7 @@
 ### Author
 __Duminy Gaétan__
 ### Updated
-__15:27 29/10/2018__
+__16:52 05/11/2018__
 
 ## Remarks
 
@@ -45,21 +45,22 @@ Example of request:
 
 ```
 {	
-	"action": "eta_requested",
-    	"message": {
+    "action": "ETA_REQUESTED",
+    "message": {
 	"id_request": 1001,
 	"meal": "Sushi",
 	"restaurant": "Le soleil de l'est",
 	"delivery_address": "Campus Templier"
-	}
+    }
 }
 ```
 
 Example of answer:
 ```
 {
-    "action": "eta_response",
+    "action": "ETA_RESPONSE",
     "message": {
+    	"statut": "OK",
     	"id_request": 1001,
         "delivery_address": "Campus Templier",
         "delivery_date": "Sun, 07 Oct 2018 14:54:31 GMT",
