@@ -448,7 +448,7 @@ def order_list_by_restaurant_route():
 
 @app.route("/eta",
            methods=['GET', 'POST'])
-def list_restaurant_menu_route():
+def eta_route():
     if request.method == 'POST':
         # Verify user input
         if 'from' not in request.form or 'to' not in request.form:
@@ -718,7 +718,7 @@ def steed_stats_route():
 
 @app.route("/steed_status",
            methods=['POST'])
-def steed_stats_route():
+def steed_status_route():
     if request.method == 'POST':
         # Verify user input
         if 'id_steed' not in request.form:

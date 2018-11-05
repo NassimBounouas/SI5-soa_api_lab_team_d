@@ -51,7 +51,10 @@ services:
   order:
     image: uberoolab/team-d-ordering-service
     depends_on:
-     - ordering-database
+      kafka:
+        condition: service_healthy
+      ordering-database:
+        condition: service_healthy
     ports:
      - "4001:5000"
 
@@ -59,6 +62,8 @@ services:
     image: uberoolab/team-d-ordering-database
     ports:
      - "4011:3306"
+    healthcheck:
+      test: "mysqladmin ping --silent"
 
 
   eta:
