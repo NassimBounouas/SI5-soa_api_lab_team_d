@@ -22,13 +22,13 @@ services:
     ports:
       - 2181:2181
 
-  api-gateway:
-    image: uberoolab/team-d-apigateway
-    depends_on:
-      kafka:
-        condition: service_healthy
-    ports:
-     - "8080:5000"
+#  api-gateway:
+#    image: uberoolab/team-d-apigateway
+#    depends_on:
+#      kafka:
+#        condition: service_healthy
+#    ports:
+#     - "8080:5000"
 
   menu:
     image: uberoolab/team-d-menu-service
@@ -68,23 +68,11 @@ services:
 
   eta:
     image: uberoolab/team-d-eta-computer-service
+    depends_on:
+      kafka:
+        condition: service_healthy
     ports:
      - "4002:5000"
-
-#  chinese-restaurant:
-#    image: uberoolab/team-d-chinese-restaurant-service
-#    environment:
-#      - DATABASE_CHINESE_RESTAURANT=chinese-restaurant-database:3306
-#    depends_on:
-#      - chinese-restaurant-database
-#    ports:
-#     - "4003:8080"
-
-#  chinese-restaurant-database:
-#    image: uberoolab/team-d-chinese-restaurant-database
-#    ports:
-#     - "4013:3306"
-
 
   delivery:
     image: uberoolab/team-d-delivery-service
