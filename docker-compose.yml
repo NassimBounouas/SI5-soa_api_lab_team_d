@@ -71,7 +71,6 @@ services:
     ports:
      - "4002:5000"
 
-
 #  chinese-restaurant:
 #    image: uberoolab/team-d-chinese-restaurant-service
 #    environment:
@@ -106,3 +105,19 @@ services:
     healthcheck:
       test: "mysqladmin ping --silent"
  
+  restaurant:
+    image: uberoolab/team-d-restaurant-service
+    depends_on:
+      kafka:
+        condition: service_healthy
+      restaurant-database:
+        condition: service_healthy
+    ports:
+     - "4005:5000"
+
+  restaurant-database:
+    image: uberoolab/team-d-restaurant-database
+    ports:
+     - "4015:3306"
+    healthcheck:
+      test: "mysqladmin ping --silent"
