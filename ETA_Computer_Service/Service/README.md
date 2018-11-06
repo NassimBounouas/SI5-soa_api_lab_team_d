@@ -60,7 +60,7 @@ Example of answer:
 {
     "action": "ETA_RESPONSE",
     "message": {
-    	"statut": "OK",
+    	"status": "OK",
     	"id_request": 1001,
         "delivery_address": "Campus Templier",
         "delivery_date": "Sun, 07 Oct 2018 14:54:31 GMT",
