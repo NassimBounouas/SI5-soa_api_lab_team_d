@@ -71,12 +71,6 @@ def __load_config(runtime_env):
 
 
 def compute_eta(request, restaurant, meal, delivery_address):
-    """
-    List available categories
-    :param dbh: database_handle
-    :param request_id: int
-    :return: json
-    """
 
     time1 = random.randint(10, 20)
     time2 = time1 + random.randint(5, 15)
