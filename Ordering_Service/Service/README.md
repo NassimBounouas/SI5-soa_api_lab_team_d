@@ -4,7 +4,7 @@
  * __Nikita ROUSSEAU__
  * __Rudy MEERSMAN__
 ### Updated
-__04/11/2018__
+__06/11/2018__
 
 ## Requirements
 
@@ -117,5 +117,37 @@ Usage :
       "id_restaurant": 11
     }
   }
+}
+```
+
+### Get list of order
+
+Usage :
+
+> Listening `restaurant` topic
+```json
+{
+  "action" : "ORDER_LIST_REQUEST",
+  "message" : {
+    "status" : "OK",
+    "request" : 10,
+    "id_restaurant" : 10
+    }
+}
+```
+
+> Response on `restaurant`:
+
+```json
+{
+  "action" : "ORDER_LIST_RESPONSE",
+  "message" : {
+    "status": "OK",
+    "request": 10,
+    "List" : [
+              {'id_meal': 13, 'id_order': 11}, 
+              {'id_meal': 18, 'id_order': 12}
+             ]
+            }
 }
 ```
