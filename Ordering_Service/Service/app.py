@@ -17,6 +17,7 @@ from kafka import KafkaConsumer
 from business.create_order import create_order
 from business.prepare_order import prepare_order
 from business.validate_order import validate_order
+from business.get_order_list import get_order_list
 
 __product__ = "Ordering Service"
 __author__ = "Nikita ROUSSEAU"
@@ -128,6 +129,60 @@ def kafka_producer_worker(topic: str, mq: queue.Queue):
     return
 
 
+def kafka_restaurant_consumer_worker(ordering_mq: queue.Queue, restaurant_mq: queue.Queue):
+    """
+    Kafka Restaurant Topic Consumer
+    as thread worker
+    :param ordering_mq: queue.Queue
+    :param restaurant_mq: queue.Queue
+    :return:
+    """
+    global app_config
+    consumer_restaurant = KafkaConsumer('restaurant',
+                                    bootstrap_servers=bootstrap_servers,
+                                    value_deserializer=lambda item: json.loads(item.decode('utf-8')))
+    while not t_stop_event.is_set():
+        try:
+            # Message loop
+            for message in consumer_restaurant:
+                logging.info("READING MESSAGE %s:%d:%d: key=%s value=%s" % (
+                    message.topic,
+                    message.partition,
+                    message.offset,
+                    message.key,
+                    message.value)
+                             )
+
+                # simple sanitizer
+                if ('action' not in message.value) \
+                        or ('message' not in message.value) \
+                        or ('request' not in message.value['message']):
+                    logging.info("MALFORMED MESSAGE value=%s SKIPPING" % (message.value,))
+                    continue
+
+                # Pre routine
+                dbh = __mysql_connect()
+
+                # Action switch
+                if str(message.value["action"]).upper() == "ORDER_LIST_REQUEST":
+                    logging.info("PUT get_order_list MESSAGE in QUEUE")
+                    restaurant_mq.put(
+                        get_order_list(
+                            dbh,
+                            int(message.value["message"]["request"]),
+                            message.value["message"]
+                        )
+                    )
+                # Post routine
+                __mysql_close(dbh)
+        except pymysql.err.OperationalError:
+            logging.error('Cannot process request : unable to connect to the database !')
+            logging.error('Maybe the `docker-compose` is not ready ?')
+        except Exception as e:
+            logging.fatal(e, exc_info=True)
+    consumer_restaurant.close()
+    return
+
 def kafka_ordering_consumer_worker(ordering_mq: queue.Queue, restaurant_mq: queue.Queue):
     """
     Kafka Ordering Topic Consumer
@@ -139,14 +194,13 @@ def kafka_ordering_consumer_worker(ordering_mq: queue.Queue, restaurant_mq: queu
     global app_config
 
     # Client
-    consumer = KafkaConsumer('ordering',
+    consumer_ordering = KafkaConsumer('ordering',
                              bootstrap_servers=bootstrap_servers,
                              value_deserializer=lambda item: json.loads(item.decode('utf-8')))
-
     while not t_stop_event.is_set():
         try:
             # Message loop
-            for message in consumer:
+            for message in consumer_ordering:
                 logging.info("READING MESSAGE %s:%d:%d: key=%s value=%s" % (
                     message.topic,
                     message.partition,
@@ -193,7 +247,6 @@ def kafka_ordering_consumer_worker(ordering_mq: queue.Queue, restaurant_mq: queu
                             message.value["message"]
                         )
                     )
-
                 # Post routine
                 __mysql_close(dbh)
         except pymysql.err.OperationalError:
@@ -201,8 +254,7 @@ def kafka_ordering_consumer_worker(ordering_mq: queue.Queue, restaurant_mq: queu
             logging.error('Maybe the `docker-compose` is not ready ?')
         except Exception as e:
             logging.fatal(e, exc_info=True)
-
-    consumer.close()
+    consumer_ordering.close()
     return
 
 
@@ -236,13 +288,21 @@ if __name__ == "__main__":
     ordering_mq = queue.Queue()
 
     # CONSUMERS
-    t_consumer_worker = threading.Thread(
+    t_consumer_ordering_worker = threading.Thread(
         name='kafka_ordering_consumer_worker',
         daemon=True,
         target=kafka_ordering_consumer_worker,
         args=(ordering_mq, restaurant_mq,)
     )
-    threads.append(t_consumer_worker)
+    threads.append(t_consumer_ordering_worker)
+
+    t_consumer_restaurant_worker = threading.Thread(
+        name='kafka_restaurant_consumer_worker',
+        daemon=True,
+        target=kafka_restaurant_consumer_worker,
+        args=(ordering_mq, restaurant_mq,)
+    )
+    threads.append(t_consumer_restaurant_worker)
 
     # PRODUCERS
     t_restaurant_producer_worker = threading.Thread(
