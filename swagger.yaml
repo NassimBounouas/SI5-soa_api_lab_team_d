@@ -119,6 +119,112 @@ paths:
       - petstore_auth:
         - "write:pets"
         - "read:pets"
+  /eta:
+    get:
+      tags:
+      - "restaurants"
+      summary: "Retrieve response after a meals by category list request"
+      description: "Returns a list of meals corresponding to category requested"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of the previous categories list request"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Eta"
+        404:
+          description: "Request id not found"
+      security:
+      - api_key: []
+    post:
+      tags:
+      - "restaurants"
+      summary: "Request the eta from a restaurant to a delivery location"
+      description: "Request the eta from a restaurant to a delivery location"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "from"
+        in: "formData"
+        required: true
+        type: "string"
+      - name: "to"
+        in: "formData"
+        required: true
+        type: "string"
+      responses:
+        202:
+          description: "successful operation returning the callback url to get the\
+            \ result"
+          schema:
+            $ref: "#/definitions/CallbackUrlEta"
+        400:
+          description: "Invalid status value"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /order_list_by_restaurant:
+    get:
+      tags:
+      - "restaurants"
+      summary: "Retrieve response after a meals by category list request"
+      description: "Returns a list of meals corresponding to category requested"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of the previous categories list request"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/OrderList"
+        404:
+          description: "Request id not found"
+      security:
+      - api_key: []
+    post:
+      tags:
+      - "restaurants"
+      summary: "Request the order list for a specific restaurant"
+      description: "Request the order list for a specific restaurant"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id_restaurant"
+        in: "formData"
+        required: true
+        type: "integer"
+      responses:
+        202:
+          description: "successful operation returning the callback url to get the\
+            \ result"
+          schema:
+            $ref: "#/definitions/CallbackUrlOrderList"
+        400:
+          description: "Invalid status value"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
 securityDefinitions:
   petstore_auth:
     type: "oauth2"
@@ -138,18 +244,36 @@ definitions:
       callbackUrl:
         type: "string"
         format: "uri"
-        example: "http://127.0.0.1:5000/list_categories?id=309534062390007280678553008932882969813"
+        example: "http://127.0.0.1:8080/list_categories?id=309534062390007280678553008932882969813"
     example:
-      callbackUrl: "http://127.0.0.1:5000/list_categories?id=309534062390007280678553008932882969813"
+      callbackUrl: "http://127.0.0.1:8080/list_categories?id=309534062390007280678553008932882969813"
   CallbackUrlListMealsByCategory:
     type: "object"
     properties:
       callbackUrl:
         type: "string"
         format: "uri"
-        example: "http://127.0.0.1:5000/list_meals_by_category?id=189983883581989648481499453509713428387"
+        example: "http://127.0.0.1:8080/list_meals_by_category?id=189983883581989648481499453509713428387"
     example:
-      callbackUrl: "http://127.0.0.1:5000/list_meals_by_category?id=189983883581989648481499453509713428387"
+      callbackUrl: "http://127.0.0.1:8080/list_meals_by_category?id=189983883581989648481499453509713428387"
+  CallbackUrlEta:
+    type: "object"
+    properties:
+      callbackUrl:
+        type: "string"
+        format: "uri"
+        example: "http://127.0.0.1:8080/eta?id=83127442128356504854469253173426612167"
+    example:
+      callbackUrl: "http://127.0.0.1:8080/eta?id=83127442128356504854469253173426612167"
+  CallbackUrlOrderList:
+    type: "object"
+    properties:
+      callbackUrl:
+        type: "string"
+        format: "uri"
+        example: "http://127.0.0.1:8080/order_list_by_restaurant?id=198167497956972391528026594988282542563"
+    example:
+      callbackUrl: "http://127.0.0.1:8080/order_list_by_restaurant?id=198167497956972391528026594988282542563"
   Category:
     type: "object"
     properties:
@@ -215,6 +339,65 @@ definitions:
     example:
       name: "Dragon d'Or"
       id: 11
+  Eta:
+    type: "object"
+    properties:
+      eta:
+        type: "number"
+        example: 10.0
+        description: "ETA in minutes"
+      from:
+        type: "string"
+        description: "Where the steed is retrieving the order"
+      to:
+        type: "string"
+        description: "Where the steed is supposed to deliver the order"
+      request:
+        type: "integer"
+      status:
+        type: "string"
+        example: "OK"
+    example:
+      request: 0
+      eta: 10.0
+      from: "from"
+      to: "to"
+      status: "OK"
+  Order:
+    type: "object"
+    properties:
+      id_meal:
+        type: "integer"
+      id_order:
+        type: "integer"
+      client_name:
+        type: "string"
+    example:
+      id_order: 6
+      id_meal: 0
+      client_name: "client_name"
+  OrderList:
+    type: "object"
+    properties:
+      List:
+        type: "array"
+        items:
+          $ref: "#/definitions/Order"
+      request:
+        type: "integer"
+      status:
+        type: "string"
+        example: "OK"
+    example:
+      request: 1
+      List:
+      - id_order: 6
+        id_meal: 0
+        client_name: "client_name"
+      - id_order: 6
+        id_meal: 0
+        client_name: "client_name"
+      status: "OK"
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"
