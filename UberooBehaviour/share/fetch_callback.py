@@ -14,8 +14,6 @@ def fetch_callback(endpoint: str, url: str, data: dict):
     """
     if len(endpoint) == 0:
         return ''
-    if data is None:
-        data = {}
 
     with request.urlopen(
         request.Request(
