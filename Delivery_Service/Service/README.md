@@ -3,7 +3,7 @@
 ### Author
 __Nikita ROUSSEAU__
 ### Updated
-__17:00 01/11/2018__
+__17:20 07/11/2018__
 
 ## Remarks
 
@@ -114,6 +114,121 @@ Usage :
 }
 ```
 Response : `Service is not generating any response` 
+
+### Notification of delivery
+
+Usage :
+
+> [KAFKA] `delivery` topic
+```json
+{
+    "action": "NOTIFY_DELIVERY_REQUEST",
+       "message": {
+            "request": 42,
+            "id_order": 1
+       }
+}
+```
+Response : `Service is not generating any response`
+
+### Update location of a delivery
+
+Usage :
+
+> [KAFKA] `delivery` topic
+```json
+{
+    "action": "DELIVERY_LOCATION_PUSH",
+    "message": {
+        "request": 42,
+        "id_order": 2,
+        "id_steed": 1,
+        "longitude": 42,
+        "latitude": -53
+    }
+}
+```
+Response : `Service is not generating any response`
+
+### Request a delivery
+
+Usage :
+
+> [KAFKA] `delivery` topic
+```json
+{
+    "action": "DELIVERY_LOCALISATION_REQUESTED",
+    "message": {
+        "status": "OK",
+        "request": 42,
+        "id_order": 2
+    }
+}
+```
+Response :
+
+> [KAFKA] `delivery` topic
+```json
+{
+    "action": "DELIVERY_LOCATION_STATUS",
+    "message": {
+        "status": "OK",
+        "request": 42,
+        "latitude": 42,
+        "longitude": -53,
+        "timestamp" : "2018-11-07 13:00"
+    }
+}
+```
+
+### Request the stat of a Steed
+
+Usage :
+
+> [KAFKA] `delivery` topic
+```json
+{
+    "action": "STEED_STAT_REQUEST",
+    "message": {
+        "request": 42,
+        "id_steed": 1
+    }
+}
+```
+Response :
+> [KAFKA] `delivery` topic
+```json
+{
+    "action": "DELIVERY_STAT_RESPONSE",
+    "message": {
+        "status": "OK",
+        "request": 42,
+        "value" :{
+            "average_pay": 13,
+            "average_time": 15,
+            "number_of_Delivery": 54
+        }
+    }
+}
+```
+
+
+### Update a delivery if steed had a problem
+
+Usage :
+
+> [KAFKA] `delivery` topic
+```json
+{
+    "action": "SEND_STEED_STATUS",
+    "message": {
+        "request": 42,
+        "id_steed": 1,
+        "status": "Accident"
+    }
+}
+```
+Response : `Service is not generating any response`
 
 ## Examples
 

@@ -53,6 +53,11 @@ def __sigint_handler(signal, frame):
 signal.signal(signal.SIGINT, __sigint_handler)
 signal.signal(signal.SIGTERM, __sigint_handler)
 
+from model.notify_delivery import notify_delivery
+from model.map_delivery import map_delivery
+from model.delivery_location import delivery_location,get_delivery_location
+from model.steed_stat_request import steed_stat_request
+from model.send_steed_status import send_steed_status
 
 def __load_config(runtime_env):
     """
@@ -97,7 +102,7 @@ def __populate_db():
     dbh = __mysql_connect()
 
     # Meals
-    Order(dbh=dbh, meal_name="testmeal", pickup_restaurant="testrestaurant", pickup_date="2018-11-02 12:00", delivery_address="testdeliveryaddress")
+    Order(dbh=dbh, meal_name="testmeal", pickup_restaurant="testrestaurant", pickup_date="2018-11-07 13:00", delivery_address="testdeliveryaddress")
 
     __mysql_close(dbh)
 
@@ -189,7 +194,55 @@ def kafka_delivery_consumer_worker(mq: queue.Queue):
                             message.value["message"]["pickup_date"],
                             message.value["message"]["delivery_address"]
                     )
-
+                if str(message.value["action"]).upper() == "NOTIFY_DELIVERY_REQUEST":
+                    logging.info("UPDATE A DELIVERY")
+                    notify_delivery(
+                        dbh,
+                        int(message.value["message"]["request"]),
+                        message.value["message"]
+                    )
+                #TODO
+                if str(message.value["action"]).upper() == "MAP_DELIVERY_PROBE":
+                    logging.info("GET INFORMATION FOR LOCALISATION OF ORDER")
+                    delivery_mq.put(
+                        map_delivery(
+                            dbh,
+                            int(message.value["message"]["request"]),
+                            message.value["message"]
+                        )
+                    )
+                if str(message.value["action"]).upper() == "DELIVERY_LOCATION_PUSH":
+                    logging.info("UPDATE A LOCALISATION")
+                    delivery_location(
+                        dbh,
+                        int(message.value["message"]["request"]),
+                        message.value["message"]
+                    )
+                if str(message.value["action"]).upper() == "DELIVERY_LOCALISATION_REQUESTED":
+                    logging.info("GET LOCALISATION OF STEED")
+                    delivery_mq.put(
+                        get_delivery_location(
+                            dbh,
+                            int(message.value["message"]["request"]),
+                            message.value["message"]
+                        )
+                    )
+                if str(message.value["action"]).upper() == "STEED_STAT_REQUEST":
+                    logging.info("GET INFOMRATION OF STEED")
+                    delivery_mq.put(
+                        steed_stat_request(
+                            dbh,
+                            int(message.value["message"]["request"]),
+                            message.value["message"]
+                        )
+                    )
+                if str(message.value["action"]).upper() == "SEND_STEED_STATUS":
+                    logging.info("UPDATE STATUS OF DELIVERY")
+                    send_steed_status(
+                        dbh,
+                        int(message.value["message"]["request"]),
+                        message.value["message"]
+                    )
                 # Post routine
                 __mysql_close(dbh)
         except pymysql.err.OperationalError:
