@@ -225,6 +225,54 @@ paths:
       - petstore_auth:
         - "write:pets"
         - "read:pets"
+  /restaurants:
+    get:
+      tags:
+      - "restaurants"
+      summary: "Retrieve response after a categories list request"
+      description: "Returns a list of available categories"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of the previous categories list request"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/RestaurantList"
+        404:
+          description: "Request id not found"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+    post:
+      tags:
+      - "restaurants"
+      summary: "Request the list of restaurants"
+      description: "Request the list of restaurants"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        202:
+          description: "successful operation returning the callback url to get the\
+            \ result"
+          schema:
+            $ref: "#/definitions/CallbackUrlRestaurants"
+        400:
+          description: "Invalid status value"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
 securityDefinitions:
   petstore_auth:
     type: "oauth2"
@@ -274,6 +322,15 @@ definitions:
         example: "http://127.0.0.1:8080/order_list_by_restaurant?id=198167497956972391528026594988282542563"
     example:
       callbackUrl: "http://127.0.0.1:8080/order_list_by_restaurant?id=198167497956972391528026594988282542563"
+  CallbackUrlRestaurants:
+    type: "object"
+    properties:
+      callbackUrl:
+        type: "string"
+        format: "uri"
+        example: "http://127.0.0.1:8080/restaurants?id=222064513089488915866312833514683871088"
+    example:
+      callbackUrl: "http://127.0.0.1:8080/restaurants?id=222064513089488915866312833514683871088"
   Category:
     type: "object"
     properties:
@@ -397,6 +454,26 @@ definitions:
       - id_order: 6
         id_meal: 0
         client_name: "client_name"
+      status: "OK"
+  RestaurantList:
+    type: "object"
+    properties:
+      restaurants:
+        type: "array"
+        items:
+          $ref: "#/definitions/Restaurant"
+      request:
+        type: "integer"
+      status:
+        type: "string"
+        example: "OK"
+    example:
+      request: 0
+      restaurants:
+      - name: "Dragon d'Or"
+        id: 11
+      - name: "Dragon d'Or"
+        id: 11
       status: "OK"
 externalDocs:
   description: "Find out more about Swagger"
