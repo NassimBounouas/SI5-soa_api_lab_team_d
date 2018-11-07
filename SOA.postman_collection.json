@@ -152,7 +152,7 @@
 					"urlencoded": [
 						{
 							"key": "id_restaurant",
-							"value": "12",
+							"value": "11",
 							"type": "text"
 						}
 					]
@@ -166,6 +166,107 @@
 					"port": "8080",
 					"path": [
 						"order_list_by_restaurant"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/restaurant-menu",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "id_restaurant",
+							"value": "11",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/restaurant-menu?",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"restaurant-menu"
+					],
+					"query": [
+						{
+							"key": "restaurant",
+							"value": "0",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/order",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "id_restaurant",
+							"value": "11",
+							"type": "text"
+						},
+						{
+							"key": "id_meal",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "client_name",
+							"value": "Philippe",
+							"type": "text"
+						},
+						{
+							"key": "client_address",
+							"value": "Polytech",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:80800/order",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "80800",
+					"path": [
+						"order"
+					],
+					"query": [
+						{
+							"key": "id_restaurant",
+							"value": "11",
+							"disabled": true
+						}
 					]
 				}
 			},
