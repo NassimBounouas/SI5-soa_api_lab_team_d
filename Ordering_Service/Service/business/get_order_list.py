@@ -14,10 +14,7 @@ def get_order_list(dbh, request_id, params: dict):
     with dbh.cursor() as cursor:
         # Get list
         sql = "SELECT id_meal,id_order FROM `order` WHERE status = 'Accepted'  AND id_restaurant = %s"
-        cursor.execute(sql,(
-                        id_restaurant_requested
-                        )
-                       )
+        cursor.execute(sql, id_restaurant_requested)
         list = cursor.fetchall()
     return {
         'action': 'ORDER_LIST_RESPONSE',

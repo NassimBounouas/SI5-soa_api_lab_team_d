@@ -22,13 +22,13 @@ services:
     ports:
       - 2181:2181
 
-#  api-gateway:
-#    image: uberoolab/team-d-apigateway
-#    depends_on:
-#      kafka:
-#        condition: service_healthy
-#    ports:
-#     - "8080:5000"
+  api-gateway:
+    image: uberoolab/team-d-apigateway
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+     - "8080:5000"
 
   menu:
     image: uberoolab/team-d-menu-service
