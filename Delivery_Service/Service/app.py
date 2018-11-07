@@ -185,7 +185,6 @@ def kafka_delivery_consumer_worker(mq: queue.Queue):
                 dbh = __mysql_connect()
 
                 # Action switch
-                #DONE
                 if str(message.value["action"]).upper() == "DELIVERY_REQUEST":
                     logging.info("SAVING A NEW ORDER")
                     save_order(
@@ -195,7 +194,6 @@ def kafka_delivery_consumer_worker(mq: queue.Queue):
                             message.value["message"]["pickup_date"],
                             message.value["message"]["delivery_address"]
                     )
-                #DONE
                 if str(message.value["action"]).upper() == "NOTIFY_DELIVERY_REQUEST":
                     logging.info("UPDATE A DELIVERY")
                     notify_delivery(
@@ -213,7 +211,6 @@ def kafka_delivery_consumer_worker(mq: queue.Queue):
                             message.value["message"]
                         )
                     )
-                #DONE
                 if str(message.value["action"]).upper() == "DELIVERY_LOCATION_PUSH":
                     logging.info("UPDATE A LOCALISATION")
                     delivery_location(
@@ -221,7 +218,6 @@ def kafka_delivery_consumer_worker(mq: queue.Queue):
                         int(message.value["message"]["request"]),
                         message.value["message"]
                     )
-                #DONE
                 if str(message.value["action"]).upper() == "DELIVERY_LOCALISATION_REQUESTED":
                     logging.info("GET LOCALISATION OF STEED")
                     delivery_mq.put(
@@ -231,7 +227,6 @@ def kafka_delivery_consumer_worker(mq: queue.Queue):
                             message.value["message"]
                         )
                     )
-                #TOTEST
                 if str(message.value["action"]).upper() == "STEED_STAT_REQUEST":
                     logging.info("GET INFOMRATION OF STEED")
                     delivery_mq.put(
@@ -241,7 +236,6 @@ def kafka_delivery_consumer_worker(mq: queue.Queue):
                             message.value["message"]
                         )
                     )
-                #TODO
                 if str(message.value["action"]).upper() == "SEND_STEED_STATUS":
                     logging.info("UPDATE STATUS OF DELIVERY")
                     send_steed_status(

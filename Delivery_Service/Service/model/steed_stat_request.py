@@ -2,6 +2,13 @@
 # -*- coding: utf-8 -*-
 
 def steed_stat_request(dbh, request_id, params: dict):
+    """
+    send stats of steed  from the database
+    :param dbh: database_handle
+    :param request_id: int
+    :param params: dict
+    :return: json
+    """
     id_steed = int(params["id_steed"])
     with dbh.cursor() as cursor:
         sql = "SELECT numberOfDelivery,averagePay,averageTime FROM steed_database WHERE id=%s"
