@@ -27,7 +27,8 @@ def create_order(dbh, request_id, params: dict):
     if 'client_address' in params:
         client_address = params["client_address"]
 
-    status = 'Created'
+    # status = 'Created'
+    status = 'Accepted' # Currently considered as Accepted by default
 
     with dbh.cursor() as cursor:
         # Create

@@ -123,14 +123,14 @@ paths:
     get:
       tags:
       - "restaurants"
-      summary: "Retrieve response after a meals by category list request"
-      description: "Returns a list of meals corresponding to category requested"
+      summary: "Retrieve response after an eta request"
+      description: "Retrieve response after an eta request"
       produces:
       - "application/json"
       parameters:
       - name: "id"
         in: "path"
-        description: "ID of the previous categories list request"
+        description: "ID of the previous eta request"
         required: true
         type: "integer"
         format: "int64"
@@ -177,14 +177,14 @@ paths:
     get:
       tags:
       - "restaurants"
-      summary: "Retrieve response after a meals by category list request"
-      description: "Returns a list of meals corresponding to category requested"
+      summary: "Retrieve response after an order list request"
+      description: "Retrieve response after an order list request"
       produces:
       - "application/json"
       parameters:
       - name: "id"
         in: "path"
-        description: "ID of the previous categories list request"
+        description: "ID of the previous order list request"
         required: true
         type: "integer"
         format: "int64"
@@ -229,14 +229,14 @@ paths:
     get:
       tags:
       - "restaurants"
-      summary: "Retrieve response after a categories list request"
-      description: "Returns a list of available categories"
+      summary: "Retrieve response after a restaurant list request"
+      description: "Returns a list of available restaurants"
       produces:
       - "application/json"
       parameters:
       - name: "id"
         in: "path"
-        description: "ID of the previous categories list request"
+        description: "ID of the previous restaurant list request"
         required: true
         type: "integer"
         format: "int64"
@@ -267,6 +267,129 @@ paths:
             \ result"
           schema:
             $ref: "#/definitions/CallbackUrlRestaurants"
+        400:
+          description: "Invalid status value"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /restaurant-menu:
+    get:
+      tags:
+      - "restaurants"
+      summary: "Retrieve response after a menu request corresponding to a specific\
+        \ restaurant"
+      description: "Retrieve response after a menu request corresponding to a specific\
+        \ restaurant"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of the previous menu request"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/RestaurantMenu"
+        404:
+          description: "Request id not found"
+      security:
+      - api_key: []
+    post:
+      tags:
+      - "restaurants"
+      summary: "Request the menu for a specific restaurant"
+      description: "Request the menu for a specific restaurant"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id_restaurant"
+        in: "formData"
+        description: "The id of the restaurant which can be found in /restaurants"
+        required: true
+        type: "integer"
+      responses:
+        202:
+          description: "successful operation returning the callback url to get the\
+            \ result"
+          schema:
+            $ref: "#/definitions/CallbackUrlRestaurantMenu"
+        400:
+          description: "Invalid status value"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /order:
+    get:
+      tags:
+      - "restaurants"
+      summary: "Retrieve response after an order"
+      description: "Retrieve response after an order"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of the previous order request"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/OrderConfirmation"
+        404:
+          description: "Request id not found"
+      security:
+      - api_key: []
+    post:
+      tags:
+      - "restaurants"
+      summary: "Order a meal from a restaurant"
+      description: "Order a meal from a restaurant"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id_restaurant"
+        in: "formData"
+        description: "The id of the restaurant which can be found in /restaurants"
+        required: true
+        type: "integer"
+      - name: "id_meal"
+        in: "formData"
+        description: "The id of the restaurant which can be found in /list_meals_by_category"
+        required: true
+        type: "integer"
+      - name: "client_name"
+        in: "formData"
+        description: "The client's name"
+        required: true
+        type: "string"
+      - name: "client_address"
+        in: "formData"
+        description: "The client's address"
+        required: true
+        type: "string"
+      responses:
+        202:
+          description: "successful operation returning the callback url to get the\
+            \ result"
+          schema:
+            $ref: "#/definitions/CallbackUrlRestaurantMenu"
         400:
           description: "Invalid status value"
       security:
@@ -331,6 +454,15 @@ definitions:
         example: "http://127.0.0.1:8080/restaurants?id=222064513089488915866312833514683871088"
     example:
       callbackUrl: "http://127.0.0.1:8080/restaurants?id=222064513089488915866312833514683871088"
+  CallbackUrlRestaurantMenu:
+    type: "object"
+    properties:
+      callbackUrl:
+        type: "string"
+        format: "uri"
+        example: "http://127.0.0.1:8080/restaurant-menu?id=30951829902060174782192139481906761577"
+    example:
+      callbackUrl: "http://127.0.0.1:8080/restaurant-menu?id=30951829902060174782192139481906761577"
   Category:
     type: "object"
     properties:
@@ -396,6 +528,46 @@ definitions:
     example:
       name: "Dragon d'Or"
       id: 11
+  RestaurantMenu:
+    type: "object"
+    properties:
+      meals:
+        type: "array"
+        items:
+          $ref: "#/definitions/Meal"
+      request:
+        type: "integer"
+      status:
+        type: "string"
+        example: "OK"
+    example:
+      request: 0
+      meals:
+      - image: "image"
+        price: "12.42"
+        restaurant:
+          name: "Dragon d'Or"
+          id: 11
+        name: "Sushis saumon"
+        id: 64
+        category:
+          name: "Japonais"
+          id: 12
+          region: "Asie"
+        is_menu: false
+      - image: "image"
+        price: "12.42"
+        restaurant:
+          name: "Dragon d'Or"
+          id: 11
+        name: "Sushis saumon"
+        id: 64
+        category:
+          name: "Japonais"
+          id: 12
+          region: "Asie"
+        is_menu: false
+      status: "OK"
   Eta:
     type: "object"
     properties:
@@ -474,6 +646,49 @@ definitions:
         id: 11
       - name: "Dragon d'Or"
         id: 11
+      status: "OK"
+  ClientOrder:
+    type: "object"
+    properties:
+      client_address:
+        type: "string"
+      client_name:
+        type: "string"
+      id_code:
+        type: "integer"
+      id_order:
+        type: "integer"
+      id_restaurant:
+        type: "integer"
+      status:
+        type: "string"
+        example: "Created"
+    example:
+      id_order: 6
+      client_address: "client_address"
+      id_restaurant: 1
+      client_name: "client_name"
+      id_code: 0
+      status: "Created"
+  OrderConfirmation:
+    type: "object"
+    properties:
+      order:
+        $ref: "#/definitions/ClientOrder"
+      request:
+        type: "integer"
+      status:
+        type: "string"
+        example: "OK"
+    example:
+      request: 5
+      order:
+        id_order: 6
+        client_address: "client_address"
+        id_restaurant: 1
+        client_name: "client_name"
+        id_code: 0
+        status: "Created"
       status: "OK"
 externalDocs:
   description: "Find out more about Swagger"
