@@ -415,7 +415,7 @@ def order_list_by_restaurant_route():
         message, request_id = make_kafka_message(
             action='ORDER_LIST_REQUEST',
             message={
-                "restaurant": restaurant
+                "id_restaurant": restaurant
             }
         )
 
