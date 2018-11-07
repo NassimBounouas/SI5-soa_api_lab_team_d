@@ -21,7 +21,11 @@ def query_callback(callback_url: str, response_key: str):
         try:
             req = request.Request(callback_url)
             with request.urlopen(req) as response:
-                return json.loads(response.read())[response_key]
+                ret = json.loads(response.read())
+                if response_key in ret:
+                    return ret[response_key]
+                else:
+                    return {}
         except HTTPError as e:
             http_code = int(e.code)
             time.sleep(0.1)

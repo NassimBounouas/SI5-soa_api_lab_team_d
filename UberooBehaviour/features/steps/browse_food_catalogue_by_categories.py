@@ -12,14 +12,12 @@ def step_impl(context):
     # Fetch CallbackURL
     callback_url = fetch_callback(context.endpoint, 'list_categories', {})
     if len(callback_url) == 0:
-        context.failed = True
-        return
+        raise ValueError()
 
     # Loop until response
     context.categories = query_callback(callback_url, 'categories')
     if len(context.categories) == 0:
-        context.failed = True
-        return
+        raise ValueError()
 
     # OK
     pass
@@ -51,8 +49,7 @@ def step_impl(context, meal):
     # Fetch CallbackURL
     callback_url = fetch_callback(context.endpoint, 'list_meals_by_category', form_data)
     if len(callback_url) == 0:
-        context.failed = True
-        return
+        raise ValueError()
 
     # Loop until response
     meals = query_callback(callback_url, 'meals')
@@ -61,4 +58,3 @@ def step_impl(context, meal):
             meal_exists = True
 
     assert meal_exists is True
-    assert context.failed is False

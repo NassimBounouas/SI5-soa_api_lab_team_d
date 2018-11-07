@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
     # Behave
 
-    result = subprocess.run(['behave'], stdout=subprocess.PIPE)
+    result = subprocess.run(['behave', '--tags=-skip'], stdout=subprocess.PIPE)
     logging.info(result.stdout.decode('utf-8'))
 
     # End
