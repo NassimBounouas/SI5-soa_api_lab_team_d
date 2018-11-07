@@ -23,15 +23,14 @@ class Order(PersistentObject):
             raise ValueError('An order must be bound to a pickup date !')
         if delivery_address is None:
             raise ValueError('An order must be bound to a delivery address !')
-
         self.identifier = pk
 
         self.meal_name = meal_name
         self.pickup_restaurant = pickup_restaurant
-
         self.pickup_date = pickup_date
         self.delivery_address = delivery_address
-
+        self.status = "WAITING"
+        self.id_steed = 1
         # Sync
         self.merge()
 
@@ -55,11 +54,16 @@ class Order(PersistentObject):
                 if len(self.meal_name) == 0:
                     self.meal_name = row['meal_name']
                 if len(self.pickup_restaurant) == 0:
-                    self.price = row['pickup_restaurant']
+                    self.pickup_restaurant = row['pickup_restaurant']
                 if self.pickup_date is None:
                     self.pickup_date = row['pickup_date']
                 if len(self.delivery_address) == 0:
                     self.delivery_address = row['delivery_address']
+                if len(self.status) == 0:
+                    self.status = row['status']
+                if self.id_steed is None:
+                    self.id_steed = row['id_steed']
+
 
     def merge(self):
         self.__resolve_identifier()
@@ -79,12 +83,12 @@ class Order(PersistentObject):
                 b2s.update(h.encode('utf-8'))
                 fingerprint = b2s.hexdigest()
                 if fingerprint != self.hash_id():
-                    sql = "UPDATE to_deliver_table SET meal_name=%s, pickup_restaurant=%s, pickup_date=%s, delivery_address=%s WHERE id=%s"
-                    cursor.execute(sql, (self.meal_name, self.pickup_restaurant, self.pickup_date, self.delivery_address, self.identifier))
+                    sql = "UPDATE to_deliver_table SET meal_name=%s, pickup_restaurant=%s, pickup_date=%s, delivery_address=%s, status=%s, id_steed=%s WHERE id=%s"
+                    cursor.execute(sql, (self.meal_name, self.pickup_restaurant, self.pickup_date, self.delivery_address, self.status, self.id_steed, self.identifier))
             else:
                 # Create
-                sql = "INSERT INTO to_deliver_table (id, meal_name, pickup_restaurant, pickup_date, delivery_address) VALUES (%s, %s, %s, %s, %s)"
-                cursor.execute(sql, (self.identifier, self.meal_name, self.pickup_restaurant, self.pickup_date, self.delivery_address))
+                sql = "INSERT INTO to_deliver_table (id, meal_name, pickup_restaurant, pickup_date, delivery_address, status, id_steed) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                cursor.execute(sql, (self.identifier, self.meal_name, self.pickup_restaurant, self.pickup_date, self.delivery_address, self.status, self.id_steed))
                 # Fetch identifier
                 self.identifier = cursor.lastrowid
 
@@ -105,11 +109,13 @@ class Order(PersistentObject):
             "meal_name": self.meal_name,
             "pickup_restaurant": self.pickup_restaurant,
             "pickup_date": self.pickup_date,
-            "delivery_address": self.delivery_address
+            "delivery_address": self.delivery_address,
+            "status": self.status,
+            "id_steed": self.id_steed
         }
 
     def hash_id(self):
         b2s = hashlib.blake2s(digest_size=8)
-        h = str(self.identifier) + self.meal_name + self.pickup_restaurant + str(self.pickup_date) + self.delivery_address
+        h = str(self.identifier) + self.meal_name + self.pickup_restaurant + str(self.pickup_date) + self.delivery_address + self.status
         b2s.update(h.encode('utf-8'))
         return b2s.hexdigest()
