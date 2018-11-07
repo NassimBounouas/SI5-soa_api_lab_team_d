@@ -171,13 +171,15 @@ def get_meals_by_filter(dbh, request_id, params: dict):
     meals = []
     if 'category' in params:
         category = params["category"]
+        action = 'FOOD_LIST_RESPONSE'
         meals = MealCollection(dbh=dbh, category=category)
     elif 'restaurant' in params:
         restaurant = params["restaurant"]
+        action = 'FOOD_MENU_RESPONSE'
         meals = MealCollection(dbh=dbh, restaurant=restaurant)
 
     return {
-        'action': 'FOOD_LIST_RESPONSE',
+        'action': action,
         'message': {
             'status': 'OK',
             'request': int(request_id),
@@ -273,7 +275,15 @@ def kafka_restaurant_consumer_worker(mq: queue.Queue):
                             message.value["message"]
                         )
                     )
-
+                elif str(message.value["action"]).upper() == "FOOD_MENU_REQUEST":
+                    logging.info("PUT get_meals_by_filter (restaurant) MESSAGE in QUEUE")
+                    mq.put(
+                        get_meals_by_filter(
+                            dbh,
+                            int(message.value["message"]["request"]),
+                            message.value["message"]
+                        )
+                    )
                 # Post routine
                 __mysql_close(dbh)
         except pymysql.err.OperationalError:
