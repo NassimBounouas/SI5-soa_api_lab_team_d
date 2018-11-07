@@ -83,7 +83,7 @@ docker push uberoolab/team-d-restaurant-database
 
 echo "### Building Restaurant service image ###"
 cd ../Service
-docker build -t uberoolab/team-d-restaurant-eservice .
+docker build -t uberoolab/team-d-restaurant-service .
 
 echo "### Pushing Restaurant service image to docker hub ###"
 docker push uberoolab/team-d-restaurant-service

@@ -98,9 +98,15 @@ paths:
       - "restaurants"
       summary: "Request the list of meals corresponding to a category"
       description: "Hello"
+      consumes:
+      - "application/x-www-form-urlencoded"
       produces:
       - "application/json"
-      parameters: []
+      parameters:
+      - name: "Category"
+        in: "formData"
+        required: true
+        type: "string"
       responses:
         202:
           description: "successful operation returning the callback url to get the\

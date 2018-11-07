@@ -1,7 +1,9 @@
 FROM python:3.6.5-slim
 WORKDIR /app
-ADD Eta.py /app/
-RUN pip install flask
+ADD . /app
+
+RUN python -m pip install --upgrade pip
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
 ENTRYPOINT ["python"]
-CMD ["Eta.py"]
+CMD ["app.py", "production"]
