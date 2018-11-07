@@ -32,9 +32,11 @@ def notify_delivery(dbh, request_id, params: dict):
         time_pick_up = deliver_data["pickup_date"]
         time_now = datetime.now()
         time = ((time_now.hour * 60) + time_now.minute) - ((time_pick_up.hour * 60)+ time_pick_up.minute)
-        sql = "DELETE FROM to_deliver_table WHERE id = %s"
+        sql = "UPDATE to_deliver_table SET status=%s WHERE id = %s AND status=%s"
         cursor.execute(sql,(
-            id_order
+            "DELIVERED",
+            id_order,
+            "DELIVERING"
             )
         )
         sql = "UPDATE steed_database SET numberOfDelivery=%s, averageTime=%s WHERE id=%s"

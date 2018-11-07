@@ -18,6 +18,7 @@ from business.create_order import create_order
 from business.prepare_order import prepare_order
 from business.validate_order import validate_order
 from business.get_order_list import get_order_list
+from business.notify_order import notify_order
 
 __product__ = "Ordering Service"
 __author__ = "Nikita ROUSSEAU"
@@ -172,6 +173,13 @@ def kafka_restaurant_consumer_worker(ordering_mq: queue.Queue, restaurant_mq: qu
                             int(message.value["message"]["request"]),
                             message.value["message"]
                         )
+                    )
+                if str(message.value["action"]).upper() == "NOTIFY_DELIVERY_RESPONSE":
+                    logging.info("Update order in DATABASE")
+                    notify_order(
+                        dbh,
+                        int(message.value["message"]["request"]),
+                        message.value["message"]
                     )
                 # Post routine
                 __mysql_close(dbh)
