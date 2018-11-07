@@ -123,14 +123,14 @@ paths:
     get:
       tags:
       - "restaurants"
-      summary: "Retrieve response after a meals by category list request"
-      description: "Returns a list of meals corresponding to category requested"
+      summary: "Retrieve response after an eta request"
+      description: "Retrieve response after an eta request"
       produces:
       - "application/json"
       parameters:
       - name: "id"
         in: "path"
-        description: "ID of the previous categories list request"
+        description: "ID of the previous eta request"
         required: true
         type: "integer"
         format: "int64"
@@ -177,14 +177,14 @@ paths:
     get:
       tags:
       - "restaurants"
-      summary: "Retrieve response after a meals by category list request"
-      description: "Returns a list of meals corresponding to category requested"
+      summary: "Retrieve response after an order list request"
+      description: "Retrieve response after an order list request"
       produces:
       - "application/json"
       parameters:
       - name: "id"
         in: "path"
-        description: "ID of the previous categories list request"
+        description: "ID of the previous order list request"
         required: true
         type: "integer"
         format: "int64"
@@ -229,14 +229,14 @@ paths:
     get:
       tags:
       - "restaurants"
-      summary: "Retrieve response after a categories list request"
-      description: "Returns a list of available categories"
+      summary: "Retrieve response after a restaurant list request"
+      description: "Returns a list of available restaurants"
       produces:
       - "application/json"
       parameters:
       - name: "id"
         in: "path"
-        description: "ID of the previous categories list request"
+        description: "ID of the previous restaurant list request"
         required: true
         type: "integer"
         format: "int64"
@@ -277,14 +277,16 @@ paths:
     get:
       tags:
       - "restaurants"
-      summary: "Retrieve response after a meals by category list request"
-      description: "Returns a list of meals corresponding to category requested"
+      summary: "Retrieve response after a menu request corresponding to a specific\
+        \ restaurant"
+      description: "Retrieve response after a menu request corresponding to a specific\
+        \ restaurant"
       produces:
       - "application/json"
       parameters:
       - name: "id"
         in: "path"
-        description: "ID of the previous categories list request"
+        description: "ID of the previous menu request"
         required: true
         type: "integer"
         format: "int64"
@@ -311,6 +313,7 @@ paths:
       parameters:
       - name: "id_restaurant"
         in: "formData"
+        description: "The id of the restaurant which can be found in /restaurants"
         required: true
         type: "integer"
       responses:
@@ -502,7 +505,7 @@ definitions:
     properties:
       eta:
         type: "number"
-        example: 10.0
+        example: 10
         description: "ETA in minutes"
       from:
         type: "string"
@@ -517,7 +520,7 @@ definitions:
         example: "OK"
     example:
       request: 0
-      eta: 10.0
+      eta: 10
       from: "from"
       to: "to"
       status: "OK"

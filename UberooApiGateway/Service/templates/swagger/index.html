@@ -990,12 +990,12 @@ margin-bottom: 20px;
                       <article id="api-Restaurants-etaGet-0" data-group="User" data-name="etaGet" data-version="0">
                         <div class="pull-left">
                           <h1>etaGet</h1>
-                          <p>Retrieve response after a meals by category list request</p>
+                          <p>Retrieve response after an eta request</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
                         <p></p>
-                        <p class="marked">Returns a list of meals corresponding to category requested</p>
+                        <p class="marked">Retrieve response after an eta request</p>
                         <p></p>
                         <br />
                         <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/eta</span></code></pre>
@@ -1041,7 +1041,7 @@ public class RestaurantsApiExample {
         //api_key.setApiKeyPrefix("Token");
 
         RestaurantsApi apiInstance = new RestaurantsApi();
-        Long id = 789; // Long | ID of the previous categories list request
+        Long id = 789; // Long | ID of the previous eta request
         try {
             Eta result = apiInstance.etaGet(id);
             System.out.println(result);
@@ -1060,7 +1060,7 @@ public class RestaurantsApiExample {
 
     public static void main(String[] args) {
         RestaurantsApi apiInstance = new RestaurantsApi();
-        Long id = 789; // Long | ID of the previous categories list request
+        Long id = 789; // Long | ID of the previous eta request
         try {
             Eta result = apiInstance.etaGet(id);
             System.out.println(result);
@@ -1083,11 +1083,11 @@ public class RestaurantsApiExample {
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
 //[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"api_key"];
 
-Long *id = 789; // ID of the previous categories list request
+Long *id = 789; // ID of the previous eta request
 
 RestaurantsApi *apiInstance = [[RestaurantsApi alloc] init];
 
-// Retrieve response after a meals by category list request
+// Retrieve response after an eta request
 [apiInstance etaGetWith:id
               completionHandler: ^(Eta output, NSError* error) {
                             if (output) {
@@ -1112,7 +1112,7 @@ api_key.apiKey = "YOUR API KEY"
 
 var api = new UberooApiGateway.RestaurantsApi()
 
-var id = 789; // {Long} ID of the previous categories list request
+var id = 789; // {Long} ID of the previous eta request
 
 
 var callback = function(error, data, response) {
@@ -1149,11 +1149,11 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("api_key", "Bearer");
 
             var apiInstance = new RestaurantsApi();
-            var id = 789;  // Long | ID of the previous categories list request
+            var id = 789;  // Long | ID of the previous eta request
 
             try
             {
-                // Retrieve response after a meals by category list request
+                // Retrieve response after an eta request
                 Eta result = apiInstance.etaGet(id);
                 Debug.WriteLine(result);
             }
@@ -1177,7 +1177,7 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('api_key', 'Y
 // Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('api_key', 'Bearer');
 
 $api_instance = new Swagger\Client\Api\RestaurantsApi();
-$id = 789; // Long | ID of the previous categories list request
+$id = 789; // Long | ID of the previous eta request
 
 try {
     $result = $api_instance->etaGet($id);
@@ -1199,7 +1199,7 @@ $WWW::SwaggerClient::Configuration::api_key->{'api_key'} = 'YOUR_API_KEY';
 #$WWW::SwaggerClient::Configuration::api_key_prefix->{'api_key'} = "Bearer";
 
 my $api_instance = WWW::SwaggerClient::RestaurantsApi->new();
-my $id = 789; # Long | ID of the previous categories list request
+my $id = 789; # Long | ID of the previous eta request
 
 eval { 
     my $result = $api_instance->etaGet(id => $id);
@@ -1224,10 +1224,10 @@ swagger_client.configuration.api_key['api_key'] = 'YOUR_API_KEY'
 
 # create an instance of the API class
 api_instance = swagger_client.RestaurantsApi()
-id = 789 # Long | ID of the previous categories list request
+id = 789 # Long | ID of the previous eta request
 
 try: 
-    # Retrieve response after a meals by category list request
+    # Retrieve response after an eta request
     api_response = api_instance.eta_get(id)
     pprint(api_response)
 except ApiException as e:
@@ -1258,7 +1258,7 @@ except ApiException as e:
                     </span>
 
                     <div class="inner description">
-                        ID of the previous categories list request
+                        ID of the previous eta request
                     </div>
             </div>
                 <div class="inner required">
@@ -2979,12 +2979,12 @@ except ApiException as e:
                       <article id="api-Restaurants-orderListByRestaurantGet-0" data-group="User" data-name="orderListByRestaurantGet" data-version="0">
                         <div class="pull-left">
                           <h1>orderListByRestaurantGet</h1>
-                          <p>Retrieve response after a meals by category list request</p>
+                          <p>Retrieve response after an order list request</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
                         <p></p>
-                        <p class="marked">Returns a list of meals corresponding to category requested</p>
+                        <p class="marked">Retrieve response after an order list request</p>
                         <p></p>
                         <br />
                         <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/order_list_by_restaurant</span></code></pre>
@@ -3030,7 +3030,7 @@ public class RestaurantsApiExample {
         //api_key.setApiKeyPrefix("Token");
 
         RestaurantsApi apiInstance = new RestaurantsApi();
-        Long id = 789; // Long | ID of the previous categories list request
+        Long id = 789; // Long | ID of the previous order list request
         try {
             array[OrderList] result = apiInstance.orderListByRestaurantGet(id);
             System.out.println(result);
@@ -3049,7 +3049,7 @@ public class RestaurantsApiExample {
 
     public static void main(String[] args) {
         RestaurantsApi apiInstance = new RestaurantsApi();
-        Long id = 789; // Long | ID of the previous categories list request
+        Long id = 789; // Long | ID of the previous order list request
         try {
             array[OrderList] result = apiInstance.orderListByRestaurantGet(id);
             System.out.println(result);
@@ -3072,11 +3072,11 @@ public class RestaurantsApiExample {
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
 //[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"api_key"];
 
-Long *id = 789; // ID of the previous categories list request
+Long *id = 789; // ID of the previous order list request
 
 RestaurantsApi *apiInstance = [[RestaurantsApi alloc] init];
 
-// Retrieve response after a meals by category list request
+// Retrieve response after an order list request
 [apiInstance orderListByRestaurantGetWith:id
               completionHandler: ^(array[OrderList] output, NSError* error) {
                             if (output) {
@@ -3101,7 +3101,7 @@ api_key.apiKey = "YOUR API KEY"
 
 var api = new UberooApiGateway.RestaurantsApi()
 
-var id = 789; // {Long} ID of the previous categories list request
+var id = 789; // {Long} ID of the previous order list request
 
 
 var callback = function(error, data, response) {
@@ -3138,11 +3138,11 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("api_key", "Bearer");
 
             var apiInstance = new RestaurantsApi();
-            var id = 789;  // Long | ID of the previous categories list request
+            var id = 789;  // Long | ID of the previous order list request
 
             try
             {
-                // Retrieve response after a meals by category list request
+                // Retrieve response after an order list request
                 array[OrderList] result = apiInstance.orderListByRestaurantGet(id);
                 Debug.WriteLine(result);
             }
@@ -3166,7 +3166,7 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('api_key', 'Y
 // Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('api_key', 'Bearer');
 
 $api_instance = new Swagger\Client\Api\RestaurantsApi();
-$id = 789; // Long | ID of the previous categories list request
+$id = 789; // Long | ID of the previous order list request
 
 try {
     $result = $api_instance->orderListByRestaurantGet($id);
@@ -3188,7 +3188,7 @@ $WWW::SwaggerClient::Configuration::api_key->{'api_key'} = 'YOUR_API_KEY';
 #$WWW::SwaggerClient::Configuration::api_key_prefix->{'api_key'} = "Bearer";
 
 my $api_instance = WWW::SwaggerClient::RestaurantsApi->new();
-my $id = 789; # Long | ID of the previous categories list request
+my $id = 789; # Long | ID of the previous order list request
 
 eval { 
     my $result = $api_instance->orderListByRestaurantGet(id => $id);
@@ -3213,10 +3213,10 @@ swagger_client.configuration.api_key['api_key'] = 'YOUR_API_KEY'
 
 # create an instance of the API class
 api_instance = swagger_client.RestaurantsApi()
-id = 789 # Long | ID of the previous categories list request
+id = 789 # Long | ID of the previous order list request
 
 try: 
-    # Retrieve response after a meals by category list request
+    # Retrieve response after an order list request
     api_response = api_instance.order_list_by_restaurant_get(id)
     pprint(api_response)
 except ApiException as e:
@@ -3247,7 +3247,7 @@ except ApiException as e:
                     </span>
 
                     <div class="inner description">
-                        ID of the previous categories list request
+                        ID of the previous order list request
                     </div>
             </div>
                 <div class="inner required">
@@ -3650,12 +3650,12 @@ except ApiException as e:
                       <article id="api-Restaurants-restaurantMenuGet-0" data-group="User" data-name="restaurantMenuGet" data-version="0">
                         <div class="pull-left">
                           <h1>restaurantMenuGet</h1>
-                          <p>Retrieve response after a meals by category list request</p>
+                          <p>Retrieve response after a menu request corresponding to a specific restaurant</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
                         <p></p>
-                        <p class="marked">Returns a list of meals corresponding to category requested</p>
+                        <p class="marked">Retrieve response after a menu request corresponding to a specific restaurant</p>
                         <p></p>
                         <br />
                         <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/restaurant-menu</span></code></pre>
@@ -3701,7 +3701,7 @@ public class RestaurantsApiExample {
         //api_key.setApiKeyPrefix("Token");
 
         RestaurantsApi apiInstance = new RestaurantsApi();
-        Long id = 789; // Long | ID of the previous categories list request
+        Long id = 789; // Long | ID of the previous menu request
         try {
             array[RestaurantMenu] result = apiInstance.restaurantMenuGet(id);
             System.out.println(result);
@@ -3720,7 +3720,7 @@ public class RestaurantsApiExample {
 
     public static void main(String[] args) {
         RestaurantsApi apiInstance = new RestaurantsApi();
-        Long id = 789; // Long | ID of the previous categories list request
+        Long id = 789; // Long | ID of the previous menu request
         try {
             array[RestaurantMenu] result = apiInstance.restaurantMenuGet(id);
             System.out.println(result);
@@ -3743,11 +3743,11 @@ public class RestaurantsApiExample {
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
 //[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"api_key"];
 
-Long *id = 789; // ID of the previous categories list request
+Long *id = 789; // ID of the previous menu request
 
 RestaurantsApi *apiInstance = [[RestaurantsApi alloc] init];
 
-// Retrieve response after a meals by category list request
+// Retrieve response after a menu request corresponding to a specific restaurant
 [apiInstance restaurantMenuGetWith:id
               completionHandler: ^(array[RestaurantMenu] output, NSError* error) {
                             if (output) {
@@ -3772,7 +3772,7 @@ api_key.apiKey = "YOUR API KEY"
 
 var api = new UberooApiGateway.RestaurantsApi()
 
-var id = 789; // {Long} ID of the previous categories list request
+var id = 789; // {Long} ID of the previous menu request
 
 
 var callback = function(error, data, response) {
@@ -3809,11 +3809,11 @@ namespace Example
             // Configuration.Default.ApiKeyPrefix.Add("api_key", "Bearer");
 
             var apiInstance = new RestaurantsApi();
-            var id = 789;  // Long | ID of the previous categories list request
+            var id = 789;  // Long | ID of the previous menu request
 
             try
             {
-                // Retrieve response after a meals by category list request
+                // Retrieve response after a menu request corresponding to a specific restaurant
                 array[RestaurantMenu] result = apiInstance.restaurantMenuGet(id);
                 Debug.WriteLine(result);
             }
@@ -3837,7 +3837,7 @@ Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('api_key', 'Y
 // Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('api_key', 'Bearer');
 
 $api_instance = new Swagger\Client\Api\RestaurantsApi();
-$id = 789; // Long | ID of the previous categories list request
+$id = 789; // Long | ID of the previous menu request
 
 try {
     $result = $api_instance->restaurantMenuGet($id);
@@ -3859,7 +3859,7 @@ $WWW::SwaggerClient::Configuration::api_key->{'api_key'} = 'YOUR_API_KEY';
 #$WWW::SwaggerClient::Configuration::api_key_prefix->{'api_key'} = "Bearer";
 
 my $api_instance = WWW::SwaggerClient::RestaurantsApi->new();
-my $id = 789; # Long | ID of the previous categories list request
+my $id = 789; # Long | ID of the previous menu request
 
 eval { 
     my $result = $api_instance->restaurantMenuGet(id => $id);
@@ -3884,10 +3884,10 @@ swagger_client.configuration.api_key['api_key'] = 'YOUR_API_KEY'
 
 # create an instance of the API class
 api_instance = swagger_client.RestaurantsApi()
-id = 789 # Long | ID of the previous categories list request
+id = 789 # Long | ID of the previous menu request
 
 try: 
-    # Retrieve response after a meals by category list request
+    # Retrieve response after a menu request corresponding to a specific restaurant
     api_response = api_instance.restaurant_menu_get(id)
     pprint(api_response)
 except ApiException as e:
@@ -3918,7 +3918,7 @@ except ApiException as e:
                     </span>
 
                     <div class="inner description">
-                        ID of the previous categories list request
+                        ID of the previous menu request
                     </div>
             </div>
                 <div class="inner required">
@@ -4046,7 +4046,7 @@ public class RestaurantsApiExample {
         petstore_auth.setAccessToken("YOUR ACCESS TOKEN");
 
         RestaurantsApi apiInstance = new RestaurantsApi();
-        Integer idRestaurant = 56; // Integer | 
+        Integer idRestaurant = 56; // Integer | The id of the restaurant which can be found in /restaurants
         try {
             CallbackUrlRestaurantMenu result = apiInstance.restaurantMenuPost(idRestaurant);
             System.out.println(result);
@@ -4065,7 +4065,7 @@ public class RestaurantsApiExample {
 
     public static void main(String[] args) {
         RestaurantsApi apiInstance = new RestaurantsApi();
-        Integer idRestaurant = 56; // Integer | 
+        Integer idRestaurant = 56; // Integer | The id of the restaurant which can be found in /restaurants
         try {
             CallbackUrlRestaurantMenu result = apiInstance.restaurantMenuPost(idRestaurant);
             System.out.println(result);
@@ -4086,7 +4086,7 @@ public class RestaurantsApiExample {
 // Configure OAuth2 access token for authorization: (authentication scheme: petstore_auth)
 [apiConfig setAccessToken:@"YOUR_ACCESS_TOKEN"];
 
-Integer *idRestaurant = 56; // 
+Integer *idRestaurant = 56; // The id of the restaurant which can be found in /restaurants
 
 RestaurantsApi *apiInstance = [[RestaurantsApi alloc] init];
 
@@ -4113,7 +4113,7 @@ petstore_auth.accessToken = "YOUR ACCESS TOKEN"
 
 var api = new UberooApiGateway.RestaurantsApi()
 
-var idRestaurant = 56; // {Integer} 
+var idRestaurant = 56; // {Integer} The id of the restaurant which can be found in /restaurants
 
 
 var callback = function(error, data, response) {
@@ -4148,7 +4148,7 @@ namespace Example
             Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
 
             var apiInstance = new RestaurantsApi();
-            var idRestaurant = 56;  // Integer | 
+            var idRestaurant = 56;  // Integer | The id of the restaurant which can be found in /restaurants
 
             try
             {
@@ -4174,7 +4174,7 @@ require_once(__DIR__ . '/vendor/autoload.php');
 Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_ACCESS_TOKEN');
 
 $api_instance = new Swagger\Client\Api\RestaurantsApi();
-$idRestaurant = 56; // Integer | 
+$idRestaurant = 56; // Integer | The id of the restaurant which can be found in /restaurants
 
 try {
     $result = $api_instance->restaurantMenuPost($idRestaurant);
@@ -4194,7 +4194,7 @@ use WWW::SwaggerClient::RestaurantsApi;
 $WWW::SwaggerClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
 
 my $api_instance = WWW::SwaggerClient::RestaurantsApi->new();
-my $idRestaurant = 56; # Integer | 
+my $idRestaurant = 56; # Integer | The id of the restaurant which can be found in /restaurants
 
 eval { 
     my $result = $api_instance->restaurantMenuPost(idRestaurant => $idRestaurant);
@@ -4217,7 +4217,7 @@ swagger_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
 
 # create an instance of the API class
 api_instance = swagger_client.RestaurantsApi()
-idRestaurant = 56 # Integer | 
+idRestaurant = 56 # Integer | The id of the restaurant which can be found in /restaurants
 
 try: 
     # Request the menu for a specific restaurant
@@ -4250,6 +4250,9 @@ except ApiException as e:
                     Integer
                 </span>
 
+                    <div class="inner description">
+                        The id of the restaurant which can be found in /restaurants
+                    </div>
             </div>
                 <div class="inner required">
                     Required
@@ -4321,12 +4324,12 @@ except ApiException as e:
                       <article id="api-Restaurants-restaurantsGet-0" data-group="User" data-name="restaurantsGet" data-version="0">
                         <div class="pull-left">
                           <h1>restaurantsGet</h1>
-                          <p>Retrieve response after a categories list request</p>
+                          <p>Retrieve response after a restaurant list request</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
                         <p></p>
-                        <p class="marked">Returns a list of available categories</p>
+                        <p class="marked">Returns a list of available restaurants</p>
                         <p></p>
                         <br />
                         <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/restaurants</span></code></pre>
@@ -4370,7 +4373,7 @@ public class RestaurantsApiExample {
         petstore_auth.setAccessToken("YOUR ACCESS TOKEN");
 
         RestaurantsApi apiInstance = new RestaurantsApi();
-        Long id = 789; // Long | ID of the previous categories list request
+        Long id = 789; // Long | ID of the previous restaurant list request
         try {
             array[RestaurantList] result = apiInstance.restaurantsGet(id);
             System.out.println(result);
@@ -4389,7 +4392,7 @@ public class RestaurantsApiExample {
 
     public static void main(String[] args) {
         RestaurantsApi apiInstance = new RestaurantsApi();
-        Long id = 789; // Long | ID of the previous categories list request
+        Long id = 789; // Long | ID of the previous restaurant list request
         try {
             array[RestaurantList] result = apiInstance.restaurantsGet(id);
             System.out.println(result);
@@ -4410,11 +4413,11 @@ public class RestaurantsApiExample {
 // Configure OAuth2 access token for authorization: (authentication scheme: petstore_auth)
 [apiConfig setAccessToken:@"YOUR_ACCESS_TOKEN"];
 
-Long *id = 789; // ID of the previous categories list request
+Long *id = 789; // ID of the previous restaurant list request
 
 RestaurantsApi *apiInstance = [[RestaurantsApi alloc] init];
 
-// Retrieve response after a categories list request
+// Retrieve response after a restaurant list request
 [apiInstance restaurantsGetWith:id
               completionHandler: ^(array[RestaurantList] output, NSError* error) {
                             if (output) {
@@ -4437,7 +4440,7 @@ petstore_auth.accessToken = "YOUR ACCESS TOKEN"
 
 var api = new UberooApiGateway.RestaurantsApi()
 
-var id = 789; // {Long} ID of the previous categories list request
+var id = 789; // {Long} ID of the previous restaurant list request
 
 
 var callback = function(error, data, response) {
@@ -4472,11 +4475,11 @@ namespace Example
             Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
 
             var apiInstance = new RestaurantsApi();
-            var id = 789;  // Long | ID of the previous categories list request
+            var id = 789;  // Long | ID of the previous restaurant list request
 
             try
             {
-                // Retrieve response after a categories list request
+                // Retrieve response after a restaurant list request
                 array[RestaurantList] result = apiInstance.restaurantsGet(id);
                 Debug.WriteLine(result);
             }
@@ -4498,7 +4501,7 @@ require_once(__DIR__ . '/vendor/autoload.php');
 Swagger\Client\Configuration::getDefaultConfiguration()->setAccessToken('YOUR_ACCESS_TOKEN');
 
 $api_instance = new Swagger\Client\Api\RestaurantsApi();
-$id = 789; // Long | ID of the previous categories list request
+$id = 789; // Long | ID of the previous restaurant list request
 
 try {
     $result = $api_instance->restaurantsGet($id);
@@ -4518,7 +4521,7 @@ use WWW::SwaggerClient::RestaurantsApi;
 $WWW::SwaggerClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
 
 my $api_instance = WWW::SwaggerClient::RestaurantsApi->new();
-my $id = 789; # Long | ID of the previous categories list request
+my $id = 789; # Long | ID of the previous restaurant list request
 
 eval { 
     my $result = $api_instance->restaurantsGet(id => $id);
@@ -4541,10 +4544,10 @@ swagger_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
 
 # create an instance of the API class
 api_instance = swagger_client.RestaurantsApi()
-id = 789 # Long | ID of the previous categories list request
+id = 789 # Long | ID of the previous restaurant list request
 
 try: 
-    # Retrieve response after a categories list request
+    # Retrieve response after a restaurant list request
     api_response = api_instance.restaurants_get(id)
     pprint(api_response)
 except ApiException as e:
@@ -4575,7 +4578,7 @@ except ApiException as e:
                     </span>
 
                     <div class="inner description">
-                        ID of the previous categories list request
+                        ID of the previous restaurant list request
                     </div>
             </div>
                 <div class="inner required">
@@ -4951,7 +4954,7 @@ except ApiException as e:
           </div>
           <div id="generator">
             <div class="content">
-              Generated 2018-11-07T02:00:44.801Z
+              Generated 2018-11-07T02:30:06.156Z
             </div>
           </div>
       </div>
