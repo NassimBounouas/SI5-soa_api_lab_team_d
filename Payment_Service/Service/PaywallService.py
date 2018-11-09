@@ -127,7 +127,6 @@ def kafka_ordering_consumer_worker(mq: queue.Queue):
     # Client
     consumer = KafkaConsumer('ordering',
                              bootstrap_servers=bootstrap_servers,
-                             auto_offset_reset='earliest',
                              value_deserializer=lambda item: json.loads(item.decode('utf-8')))
 
     while not t_stop_event.is_set():
@@ -174,8 +173,9 @@ def kafka_payment_consumer_worker(mq: queue.Queue):
     # Client
     consumer = KafkaConsumer('payment',
                              bootstrap_servers=bootstrap_servers,
-                             auto_offset_reset='earliest',
                              value_deserializer=lambda item: json.loads(item.decode('utf-8')))
+
+
 
     while not t_stop_event.is_set():
         try:
