@@ -36,35 +36,45 @@ With Eclipse: PaywallService.py > right-click > Run As > Python Run
 
 Send a Json on the kafka topic "ordering" and give a response on the same topic.
 
-### Notify Delivery Response
-
-Send a Json on the kafka topic "payment" and don't give response.
-
 **Examples:**
 
 Example of request:
 
 ```
 {	
-	"action": "payment_placed",
-        "message": {
-	    "id_request": 1001,
-	    "card_number": 1234123412341234,
-	    "shipping_address": "10 rue du test"
-	}
+     "action": "PAYMENT_PLACED",
+     "message": {
+	"request": 1001,
+	"card_number": 1234123412341234,
+	"shipping_address": "10 rue du test"
+     }
 }
 ```
 
 Example of answer:
 ```
 {
-    "action": "payment_accepted",
+    "action": "PAYMENT_ACCEPTED",
     "message": {
-    	"id_request": 1001
+	"status": "OK",
+    	"request": 1001
+    }
+}
+```
+
+### Notify Delivery Response
+
+Send a Json on the kafka topic "payment" and don't give response.
+
+```
+{	
+    "action": "NOTIFY_DELIVERY_RESPONSE"
+    "message": {
+	"request": 1001
     }
 }
 ```
 
 > Note :
 
-> The actions of this service are mocked
+> The actions of this service are simulate

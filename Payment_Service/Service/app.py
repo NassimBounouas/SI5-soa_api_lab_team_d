@@ -70,6 +70,11 @@ def __load_config(runtime_env):
 
 
 def check_validity(request_id):
+    """
+    Check payment validity (simulated)
+    :param request: int
+    :return: json
+    """
     return {
         "action": "PAYMENT_ACCEPTED",
         "message": {
@@ -79,6 +84,10 @@ def check_validity(request_id):
     }
 
 def credit_deliverer():
+    """
+    Credit deliverer account for its delivery (simulated)
+    :return: boolean
+    """
     return True
 
 

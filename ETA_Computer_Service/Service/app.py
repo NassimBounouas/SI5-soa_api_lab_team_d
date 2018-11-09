@@ -72,8 +72,11 @@ def __load_config(runtime_env):
 
 def compute_eta(request, _from, to):
     """
-    Compute Eta and return a JSON
-    Eta is a simple random
+    Compute Eta, eta is a simple random (simulated)
+    :param request: int
+    :param _from: str
+    :param to: str
+    :return: json
     """
 
     time = random.randint(10, 20)
@@ -91,8 +94,14 @@ def compute_eta(request, _from, to):
 
 def update_eta(request, order, to, lastLatitude, lastLongitude, timestamp):
     """
-    Compute Eta and return a JSON
-    Eta is a simple random
+    Update Eta, eta is a simple random (simulated)
+    :param request: int
+    :param order: int
+    :param to: str
+    :param lastLatitude: int
+    :param lastLongitude: int
+    :param timestamp: str
+    :return: json
     """
 
     time = random.randint(1, 9)
@@ -102,7 +111,7 @@ def update_eta(request, order, to, lastLatitude, lastLongitude, timestamp):
         "message": {
             "status": "OK",
             "request": int(request),
-            "order": int(order),
+            "id_order": int(order),
             "to": to,
             "lastLatitude": lastLatitude,
             "lastLongitude": lastLongitude,
