@@ -14,7 +14,7 @@ from time import sleep
 from kafka import KafkaProducer
 from kafka import KafkaConsumer
 
-from  Delivery_Service.Service.business.notify_delivery import notify_delivery
+from  Delivery_Service.Service.business.notify_delivery import notify_delivery_ordering,notify_delivery_payment
 from  Delivery_Service.Service.business.map_delivery import map_delivery
 from  Delivery_Service.Service.business.delivery_location import delivery_location,get_delivery_location
 from  Delivery_Service.Service.business.steed_stat_request import steed_stat_request
@@ -146,6 +146,65 @@ def kafka_delivery_producer_worker(mq: queue.Queue):
     producer.close()
     return
 
+def kafka_restaurant_producer_worker(mq: queue.Queue):
+    """
+    Kafka Restaurant Topic Producer
+    as thread worker
+    Get messages from a shared mq queue.Queue
+    :param mq: queue.Queue
+    :return:
+    """
+    global app_config
+
+    # Client
+    producer = KafkaProducer(bootstrap_servers=bootstrap_servers,
+                             value_serializer=lambda item: json.dumps(item).encode('utf-8'))
+
+    while not t_stop_event.is_set():
+        try:
+            if mq.qsize() > 0:
+                # Topic + Message
+                msg = mq.get()
+                logging.info("GET %s FROM QUEUE AND SENDING TO %s" % (msg, 'restaurant'))
+                producer.send('restaurant', msg)
+                # Force buffer flush in order to send the message
+                logging.info("MESSAGE SENT !")
+                producer.flush()
+        except Exception as e:
+            logging.fatal(e, exc_info=True)
+
+    producer.close()
+    return
+
+def kafka_payment_producer_worker(mq: queue.Queue):
+    """
+    Kafka Payment Topic Producer
+    as thread worker
+    Get messages from a shared mq queue.Queue
+    :param mq: queue.Queue
+    :return:
+    """
+    global app_config
+
+    # Client
+    producer = KafkaProducer(bootstrap_servers=bootstrap_servers,
+                             value_serializer=lambda item: json.dumps(item).encode('utf-8'))
+
+    while not t_stop_event.is_set():
+        try:
+            if mq.qsize() > 0:
+                # Topic + Message
+                msg = mq.get()
+                logging.info("GET %s FROM QUEUE AND SENDING TO %s" % (msg, 'payment'))
+                producer.send('payment', msg)
+                # Force buffer flush in order to send the message
+                logging.info("MESSAGE SENT !")
+                producer.flush()
+        except Exception as e:
+            logging.fatal(e, exc_info=True)
+
+    producer.close()
+    return
 
 def kafka_delivery_consumer_worker(mq: queue.Queue):
     """
@@ -195,10 +254,17 @@ def kafka_delivery_consumer_worker(mq: queue.Queue):
                     )
                 elif str(message.value["action"]).upper() == "NOTIFY_DELIVERY_REQUEST":
                     logging.info("UPDATE A DELIVERY")
-                    notify_delivery(
+                    restaurant_mq.put(notify_delivery_ordering(
                         dbh,
                         int(message.value["message"]["request"]),
                         message.value["message"]
+                        )
+                    )
+                    payment_mq.put(notify_delivery_payment(
+                        dbh,
+                        int(message.value["message"]["request"]),
+                        message.value["message"]
+                        )
                     )
                 #TODO
                 elif str(message.value["action"]).upper() == "MAP_DELIVERY_PROBE":
@@ -253,7 +319,6 @@ def kafka_delivery_consumer_worker(mq: queue.Queue):
     consumer.close()
     return
 
-
 # MAIN
 
 if __name__ == "__main__":
@@ -282,6 +347,8 @@ if __name__ == "__main__":
 
     # DELIVERY CONSUMER
     delivery_mq = queue.Queue()  # Shared queue between consumer / producer threads
+    restaurant_mq = queue.Queue()
+    payment_mq = queue.Queue()
 
     t_kafka_delivery_consumer_worker = threading.Thread(
         name='kafka_consumer_worker',
@@ -292,13 +359,29 @@ if __name__ == "__main__":
     threads.append(t_kafka_delivery_consumer_worker)
 
     # PRODUCER
-    t_producer_worker = threading.Thread(
+    t_delivery_producer_worker = threading.Thread(
         name='kafka_producer_worker',
         daemon=True,
         target=kafka_delivery_producer_worker,
         args=(delivery_mq,)
     )
-    threads.append(t_producer_worker)
+    threads.append(t_delivery_producer_worker)
+
+    t_payment_producer_worker = threading.Thread(
+        name='kafka_producer_worker',
+        daemon=True,
+        target=kafka_payment_producer_worker,
+        args=(payment_mq,)
+    )
+    threads.append(t_payment_producer_worker)
+
+    t_restaurant_producer_worker = threading.Thread(
+        name='kafka_producer_worker',
+        daemon=True,
+        target=kafka_restaurant_producer_worker,
+        args=(restaurant_mq,)
+    )
+    threads.append(t_restaurant_producer_worker)
 
     # Start
     logging.info('Starting...')

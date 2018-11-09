@@ -63,7 +63,8 @@ def get_delivery_location(dbh,request_id, params: dict):
             'status': 'OK',
             'request': int(request_id),
             'latitude': res["latitude"],
-            'longitude' : res["longitude"],
-            'timestamp' : str(res["lastUpdate"])
+            'longitude': res["longitude"],
+            'timestamp': str(res["lastUpdate"]),
+            'delivery_address': params["delivery_address"]
         }
     }

@@ -3,18 +3,18 @@
 
 from datetime import datetime
 
-def notify_delivery(dbh, request_id, params: dict):
+def notify_delivery_ordering(dbh, request_id, params: dict):
     """
-    delete from the database the order delivered
+    update status from the database the order delivered
     :param dbh: database_handle
     :param request_id: int
     :param params: dict
-    :return: void
+    :return: json
     """
     id_order = int(params["id_order"])
     with dbh.cursor() as cursor:
         # Get list
-        sql = "SELECT pickup_date,id_steed FROM to_deliver_table WHERE id = %s"
+        sql = "SELECT pickup_date,id_steed,pickup_restaurant FROM to_deliver_table WHERE id = %s"
         cursor.execute(sql,(
             id_order
             )
@@ -46,4 +46,55 @@ def notify_delivery(dbh, request_id, params: dict):
             id_steed
             )
         )
-    return
+    return {
+        'action' : 'NOTIFY_DELIVERY_RESPONSE',
+        'message' : {
+            'status': 'OK',
+            'request': int(request_id),
+            'id_restaurant' : deliver_data["pickup_restaurant"],
+            'id_order' : id_order
+
+        }
+    }
+
+def notify_delivery_payment(dbh, request_id, params: dict):
+    """
+    return json for payment update
+    :param dbh: database_handle
+    :param request_id: int
+    :param params: dict
+    :return: json
+    """
+    id_order = int(params["id_order"])
+    with dbh.cursor() as cursor:
+        sql = "SELECT status,id_steed FROM to_deliver_table WHERE id = %s"
+        cursor.execute(sql,(
+            id_order
+        )
+    )
+    data = cursor.fetchone()
+    if data['status'] == "DELIVERED":
+        return {
+            'action' : 'NOTIFY_DELIVERY_RESPONSE',
+            'message' : {
+                'status': 'OK',
+                'request': int(request_id),
+                'id_steed' : data["id_steed"],
+                'id_order' : id_order,
+                'amount' : 0
+
+            }
+        }
+
+    else:
+        return {
+            'action' : 'NOTIFY_DELIVERY_RESPONSE',
+            'message' : {
+                'status': 'KO',
+                'request': int(request_id),
+                'id_steed' : 0,
+                'id_order' : 0,
+                'amount' : 0
+
+            }
+        }
