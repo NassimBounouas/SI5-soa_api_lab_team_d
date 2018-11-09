@@ -145,8 +145,14 @@ Usage :
     "status": "OK",
     "request": 10,
     "List" : [
-              {"id_meal": 13, "id_order": 11}, 
-              {"id_meal": 18, "id_order": 12}
+              {
+                "id_meal": 13,
+                "id_order": 11
+              },
+              {
+                "id_meal": 18,
+                "id_order": 12
+              }
              ]
             }
 }
