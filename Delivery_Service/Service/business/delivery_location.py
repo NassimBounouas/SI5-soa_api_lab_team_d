@@ -44,17 +44,6 @@ def get_delivery_location(dbh,request_id, params: dict):
     :param params: dict
     :return: json
     """
-    if "id_order" not in params:
-        return {
-            'action': 'DELIVERY_LOCATION_STATUS',
-            'message': {
-                'status': 'KO',
-                'request': int(request_id),
-                'latitude': 0,
-                'longitude' :0,
-                'timestamp' : "1900-01-01 00:00"
-            }
-        }
     id_order = int(params["id_order"])
     with dbh.cursor() as cursor:
         sql= "SELECT id_steed FROM to_deliver_table WHERE id = %s"
@@ -69,7 +58,7 @@ def get_delivery_location(dbh,request_id, params: dict):
         )
         res = cursor.fetchall()[0]
     return {
-        'action': 'DELIVERY_LOCATION_STATUS',
+        'action': 'ETA_UPDATE_REQUESTED',
         'message': {
             'status': 'OK',
             'request': int(request_id),
