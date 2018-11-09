@@ -174,7 +174,7 @@ def kafka_restaurant_consumer_worker(ordering_mq: queue.Queue, restaurant_mq: qu
                             message.value["message"]
                         )
                     )
-                if str(message.value["action"]).upper() == "NOTIFY_DELIVERY_RESPONSE":
+                elif str(message.value["action"]).upper() == "NOTIFY_DELIVERY_RESPONSE":
                     logging.info("Update order in DATABASE")
                     notify_order(
                         dbh,

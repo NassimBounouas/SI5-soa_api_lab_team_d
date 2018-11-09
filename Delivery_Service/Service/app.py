@@ -14,10 +14,16 @@ from time import sleep
 from kafka import KafkaProducer
 from kafka import KafkaConsumer
 
+from  Delivery_Service.Service.business.notify_delivery import notify_delivery
+from  Delivery_Service.Service.business.map_delivery import map_delivery
+from  Delivery_Service.Service.business.delivery_location import delivery_location,get_delivery_location
+from  Delivery_Service.Service.business.steed_stat_request import steed_stat_request
+from  Delivery_Service.Service.business.send_steed_status import send_steed_status
+
 __product__ = "Delivery Service"
 __author__ = "Nassim Bounouas"
 __copyright__ = "Copyright 2018, Polytech Nice Sophia"
-__credits__ = ["Nassim Bounouas", "Nikita Rousseau"]
+__credits__ = ["Nassim Bounouas", "Nikita Rousseau", "Rudy Meersman"]
 __license__ = "MIT"
 __version__ = "2.0"
 __maintainer__ = "Nassim BOUNOUAS"
@@ -52,12 +58,6 @@ def __sigint_handler(signal, frame):
 
 signal.signal(signal.SIGINT, __sigint_handler)
 signal.signal(signal.SIGTERM, __sigint_handler)
-
-from model.notify_delivery import notify_delivery
-from model.map_delivery import map_delivery
-from model.delivery_location import delivery_location,get_delivery_location
-from model.steed_stat_request import steed_stat_request
-from model.send_steed_status import send_steed_status
 
 def __load_config(runtime_env):
     """
@@ -108,7 +108,6 @@ def __populate_db():
 
 
 # BUSINESS FUNCTIONS
-
 
 def save_order(dbh,meal_name, pickup_restaurant, pickup_date, delivery_address):
     from model.order import Order
@@ -194,7 +193,7 @@ def kafka_delivery_consumer_worker(mq: queue.Queue):
                             message.value["message"]["pickup_date"],
                             message.value["message"]["delivery_address"]
                     )
-                if str(message.value["action"]).upper() == "NOTIFY_DELIVERY_REQUEST":
+                elif str(message.value["action"]).upper() == "NOTIFY_DELIVERY_REQUEST":
                     logging.info("UPDATE A DELIVERY")
                     notify_delivery(
                         dbh,
@@ -202,7 +201,7 @@ def kafka_delivery_consumer_worker(mq: queue.Queue):
                         message.value["message"]
                     )
                 #TODO
-                if str(message.value["action"]).upper() == "MAP_DELIVERY_PROBE":
+                elif str(message.value["action"]).upper() == "MAP_DELIVERY_PROBE":
                     logging.info("GET INFORMATION FOR LOCALISATION OF ORDER")
                     delivery_mq.put(
                         map_delivery(
@@ -211,14 +210,14 @@ def kafka_delivery_consumer_worker(mq: queue.Queue):
                             message.value["message"]
                         )
                     )
-                if str(message.value["action"]).upper() == "DELIVERY_LOCATION_PUSH":
+                elif str(message.value["action"]).upper() == "DELIVERY_LOCATION_PUSH":
                     logging.info("UPDATE A LOCALISATION")
                     delivery_location(
                         dbh,
                         int(message.value["message"]["request"]),
                         message.value["message"]
                     )
-                if str(message.value["action"]).upper() == "DELIVERY_LOCALISATION_REQUESTED":
+                elif str(message.value["action"]).upper() == "DELIVERY_LOCALISATION_REQUESTED":
                     logging.info("GET LOCALISATION OF STEED")
                     delivery_mq.put(
                         get_delivery_location(
@@ -227,7 +226,7 @@ def kafka_delivery_consumer_worker(mq: queue.Queue):
                             message.value["message"]
                         )
                     )
-                if str(message.value["action"]).upper() == "STEED_STAT_REQUEST":
+                elif str(message.value["action"]).upper() == "STEED_STAT_REQUEST":
                     logging.info("GET INFOMRATION OF STEED")
                     delivery_mq.put(
                         steed_stat_request(
@@ -236,7 +235,7 @@ def kafka_delivery_consumer_worker(mq: queue.Queue):
                             message.value["message"]
                         )
                     )
-                if str(message.value["action"]).upper() == "SEND_STEED_STATUS":
+                elif str(message.value["action"]).upper() == "SEND_STEED_STATUS":
                     logging.info("UPDATE STATUS OF DELIVERY")
                     send_steed_status(
                         dbh,

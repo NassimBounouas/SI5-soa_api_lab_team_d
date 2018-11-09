@@ -10,6 +10,16 @@ def get_order_list(dbh, request_id, params: dict):
     :param params: dict
     :return: json
     """
+    if "id_restaurant" not in params:
+        return {
+            'action': 'ORDER_LIST_RESPONSE',
+            'message': {
+                    'status': 'KO',
+                    'request' : int(request_id),
+                    'List': []
+            }
+        }
+
     id_restaurant_requested = int(params["id_restaurant"])
     with dbh.cursor() as cursor:
         # Get list

@@ -9,6 +9,19 @@ def steed_stat_request(dbh, request_id, params: dict):
     :param params: dict
     :return: json
     """
+    if "id_steed" not in params:
+        return {
+            'action': 'DELIVERY_STAT_RESPONSE',
+            'message': {
+                'status': 'KO',
+                'request': int(request_id),
+                'value' : {
+                    'average_pay': 0,
+                    'average_time':0,
+                    'number_of_Delivery':0
+                }
+            }
+        }
     id_steed = int(params["id_steed"])
     with dbh.cursor() as cursor:
         sql = "SELECT numberOfDelivery,averagePay,averageTime FROM steed_database WHERE id=%s"
