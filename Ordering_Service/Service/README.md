@@ -151,3 +151,20 @@ Usage :
             }
 }
 ```
+
+### Notify order when finished
+
+Usage:
+
+> Listening on `restaurant`:
+```json
+{
+    "action": "NOTIFY_DELIVERY_RESPONSE" ,
+    "message": {
+        "request":42,
+        "id_order":11
+    }
+}
+
+```
+Response : `Service is not generating any response`
