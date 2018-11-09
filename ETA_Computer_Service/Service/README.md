@@ -3,7 +3,7 @@
 ### Author
 __Duminy Gaétan__
 ### Updated
-__16:52 05/11/2018__
+__20:03 09/11/2018__
 
 ## Remarks
 
@@ -15,42 +15,32 @@ The application was developed under Windows 10 with Eclipse and the PyDev module
 pip install kafka-python
 ```
 
-## Server Startup
-
-```
-With Eclipse: Eta.py > right-click > Run As > Python Run
-```
-
 ## Communicate with the kafka topic
 
 ```
 -Open Zookeeper
 -Open Kafka
 -Create the topic "eta"
+-Create the topic "delivery"
 ```
 
 ## API Usage
 
 ### Compute Eta
 
-Send a Json on the kafka topic "eta" and give a response on the same topic.
-
-The **delivery date** is the date estimated by the system for the customer to receive his order.
-
-The **pick up date** is the date estimated by the system for the delivery person to pick up the order from the restaurant.
+Send a Json with, "ETA_REQUEST" on the action field and the armuments in the message field, to the kafka topic "eta" and give a response on the same topic.
 
 **Examples:**
 
 Example of request:
 
 ```
-{	
-    "action": "ETA_REQUESTED",
+{   
+    "action": "ETA_REQUEST",
     "message": {
-	"id_request": 1001,
-	"meal": "Sushi",
-	"restaurant": "Le soleil de l'est",
-	"delivery_address": "Campus Templier"
+	"request" : 1001,
+	"from": "Le soleil de l'est",
+	"to": "Campus Templier"
     }
 }
 ```
@@ -60,17 +50,58 @@ Example of answer:
 {
     "action": "ETA_RESPONSE",
     "message": {
-    	"status": "OK",
-    	"id_request": 1001,
-        "delivery_address": "Campus Templier",
-        "delivery_date": "Sun, 07 Oct 2018 14:54:31 GMT",
-        "meal": "Sushi",
-        "pick_up_date": "Sun, 07 Oct 2018 14:41:31 GMT",
-        "restaurant": "Le soleil de l'est"
+        "status": "OK",
+        "request": 1001,
+        "from": "Le soleil de l'est",
+        "to": "Campus Templier",
+        "eta": 16
     }
 }
 ```
 
-> Note :
+### Update Eta
+
+Send a Json with, "ETA_UPDATE_REQUESTED" on the action field and the armuments in the message field, to the kafka topic "delivery" and give a response on the same topic.
+
+**Examples:**
+
+Example of request:
+
+```
+{  
+     "action": "ETA_UPDATE_REQUESTED",
+     "message": {
+	"request" : 1001,
+	"id_order": 421,
+	"to": "Campus Templier",
+	"lastLatitude": 7,
+	"lastLongitude": 43,
+	"timestamp": "2018-11-01 12:30"
+    }
+}
+```
+
+Example of answer:
+```
+{
+    "action": "DELIVERY_LOCATION_STATUS",
+    "message": {
+        "status": "OK",
+        "request": 1001,
+        "order": 421,
+        "to": "Campus Templier",
+        "lastLatitude": 7,
+        "lastLongitude": 43,
+        "timestamp": "2018-11-01 12:30",
+        "eta": 6
+    }
+}
+```
+
+> **Note :**
+
+> ETA_UPDATE_REQUESTED is the continuation of another workflow
+
 > The times indicated by ETA are currently simple random integers
-> Data type is now a String
+
+> *timestamp* type is String

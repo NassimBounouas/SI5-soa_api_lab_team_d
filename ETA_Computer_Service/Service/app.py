@@ -71,20 +71,45 @@ def __load_config(runtime_env):
 
 
 def compute_eta(request, _from, to):
+    """
+    Compute Eta and return a JSON
+    Eta is a simple random
+    """
 
-    time1 = random.randint(10, 20)
+    time = random.randint(10, 20)
 
     return {
         "action": "ETA_RESPONSE",
         "message": {
-                    "status": "OK",
-                    "request": int(request),
-                    "from": _from,
-                    "to": to,
-                    "eta": time1
+            "status": "OK",
+            "request": int(request),
+            "from": _from,
+            "to": to,
+            "eta": time
         }
     }
 
+def update_eta(request, order, to, lastLatitude, lastLongitude, timestamp):
+    """
+    Compute Eta and return a JSON
+    Eta is a simple random
+    """
+
+    time = random.randint(1, 9)
+
+    return {
+        "action": "DELIVERY_LOCATION_STATUS",
+        "message": {
+            "status": "OK",
+            "request": int(request),
+            "order": int(order),
+            "to": to,
+            "lastLatitude": lastLatitude,
+            "lastLongitude": lastLongitude,
+            "timestamp": timestamp,
+            "eta": time
+        }
+    }
 
 # THREAD WORKERS
 
@@ -119,7 +144,39 @@ def kafka_eta_producer_worker(mq: queue.Queue):
     producer.close()
     return
 
-def kafka_eta_consumer_worker(mq: queue.Queue):
+
+def kafka_delivery_producer_worker(mq: queue.Queue):
+    """
+    Kafka Delivery Topic Producer
+    as thread worker
+    Get messages from a shared mq queue.Queue
+    :param mq: queue.Queue
+    :return:
+    """
+    global app_config
+
+    # Client
+    producer = KafkaProducer(bootstrap_servers=bootstrap_servers,
+                             value_serializer=lambda item: json.dumps(item).encode('utf-8'))
+
+    while not t_stop_event.is_set():
+        try:
+            if mq.qsize() > 0:
+                # Topic + Message
+                msg = mq.get()
+                logging.info("GET %s FROM QUEUE AND SENDING TO %s" % (msg, 'delivery'))
+                producer.send('delivery', msg)
+                # Force buffer flush in order to send the message
+                logging.info("MESSAGE SENT !")
+                producer.flush()
+        except Exception as e:
+            logging.fatal(e, exc_info=True)
+
+    producer.close()
+    return
+
+
+def kafka_eta_consumer_worker(mq_eta: queue.Queue):
     """
     Kafka Eta Topic Consumer
     as thread worker
@@ -143,7 +200,7 @@ def kafka_eta_consumer_worker(mq: queue.Queue):
                     message.offset,
                     message.key,
                     message.value)
-                )
+                             )
 
                 # simple sanitizer
                 if ("action" not in message.value) \
@@ -155,20 +212,72 @@ def kafka_eta_consumer_worker(mq: queue.Queue):
                 # Action switch
                 if str(message.value["action"]).upper() == "ETA_REQUEST":
                     logging.info("PUT compute_eta MESSAGE in QUEUE")
-                    mq.put(
+                    mq_eta.put(
                         compute_eta(
                             message.value["message"]["request"],
                             message.value["message"]["from"],
                             message.value["message"]["to"]
                         )
-                    ) 
+                    )
         except Exception as e:
             logging.fatal(e, exc_info=True)
     # Post routine
 
     consumer.close()
     return
-            
+
+def kafka_delivery_consumer_worker(mq_delivery: queue.Queue):
+    """
+    Kafka Delivery Topic Consumer
+    as thread worker
+    :param mq: queue.Queue
+    :return:
+    """
+    global app_config
+
+    # Client
+    consumer = KafkaConsumer('delivery',
+                             bootstrap_servers=bootstrap_servers,
+                             value_deserializer=lambda item: json.loads(item.decode('utf-8')))
+
+    while not t_stop_event.is_set():
+        try:
+            # Message loop
+            for message in consumer:
+                logging.info("READING MESSAGE %s:%d:%d: key=%s value=%s" % (
+                    message.topic,
+                    message.partition,
+                    message.offset,
+                    message.key,
+                    message.value)
+                             )
+
+                # simple sanitizer
+                if ("action" not in message.value) \
+                        or ("message" not in message.value) \
+                        or ("request" not in message.value["message"]):
+                    logging.info("MALFORMED MESSAGE value=%s SKIPPING" % (message.value,))
+                    continue
+
+                # Action switch
+                if str(message.value["action"]).upper() == "ETA_UPDATE_REQUESTED":
+                    logging.info("PUT update_eta MESSAGE in QUEUE")
+                    mq_delivery.put(
+                        update_eta(
+                            message.value["message"]["request"],
+                            message.value["message"]["id_order"],
+                            message.value["message"]["to"],
+                            message.value["message"]["lastLatitude"],
+                            message.value["message"]["lastLongitude"],
+                            message.value["message"]["timestamp"]
+                        )
+                    )
+        except Exception as e:
+            logging.fatal(e, exc_info=True)
+    # Post routine
+
+    consumer.close()
+    return
 
 # MAIN
 
@@ -193,25 +302,46 @@ if __name__ == "__main__":
     else:
         bootstrap_servers.append(str(app_config['bootstrap_servers']))
 
-    # ETA CONSUMER
+    #QUEUES
     eta_mq = queue.Queue()  # Shared queue between consumer / producer threads
+    delivery_mq = queue.Queue()
 
+    # ETA CONSUMER
     t_kafka_eta_consumer_worker = threading.Thread(
-        name='kafka_consumer_worker',
+        name='kafka_eta_consumer_worker',
         daemon=True,
         target=kafka_eta_consumer_worker,
         args=(eta_mq,)
     )
     threads.append(t_kafka_eta_consumer_worker)
 
-    # PRODUCER
-    t_producer_worker = threading.Thread(
-        name='kafka_producer_worker',
+    # DELIVERY CONSUMER
+    t_kafka_delivery_consumer_worker = threading.Thread(
+        name='kafka_delivery_consumer_worker',
+        daemon=True,
+        target=kafka_delivery_consumer_worker,
+        args=(delivery_mq,)
+    )
+    threads.append(t_kafka_delivery_consumer_worker)
+
+    # ETA PRODUCER
+    t_eta_producer_worker = threading.Thread(
+        name='kafka_eta_producer_worker',
         daemon=True,
         target=kafka_eta_producer_worker,
         args=(eta_mq,)
     )
-    threads.append(t_producer_worker)
+    threads.append(t_eta_producer_worker)
+
+    # DELIVERY PRODUCER
+    t_delivery_producer_worker = threading.Thread(
+        name='kafka_delivery_producer_worker',
+        daemon=True,
+        target=kafka_delivery_producer_worker,
+        args=(delivery_mq,)
+    )
+    threads.append(t_delivery_producer_worker)
+
 
     # Start
     logging.info('Starting...')
