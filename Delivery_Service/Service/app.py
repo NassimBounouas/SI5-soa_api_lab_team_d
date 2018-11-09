@@ -276,7 +276,7 @@ def kafka_delivery_consumer_worker(mq: queue.Queue):
                             message.value["message"]
                         )
                     )
-                elif str(message.value["action"]).upper() == "DELIVERY_LOCATION_PUSH":
+                elif str(message.value["action"]).upper() == "DELIVERY_LOCALISATION_PUSH":
                     logging.info("UPDATE A LOCALISATION")
                     delivery_location(
                         dbh,

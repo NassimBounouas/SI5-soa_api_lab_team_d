@@ -129,7 +129,34 @@ Usage :
        }
 }
 ```
-Response : `Service is not generating any response`
+Response :
+
+> [KAFKA] `restaurant` topic
+```json
+{
+    "action": "NOTIFY_DELIVERY_RESPONSE",
+    "message": {
+        "status": "OK",
+        "request": 10,
+        "id_restaurant": "Lyianhg Restaurant",
+        "id_order": 2
+    }
+}
+```
+
+> [KAFKA] `payment` topic
+```json
+{
+    "action": "NOTIFY_DELIVERY_RESPONSE",
+    "message": {
+        "status": "OK",
+        "request": 10,
+        "id_steed": 1,
+        "id_order": 2,
+        "amount": 0
+    }
+}
+```
 
 ### Update location of a delivery
 
@@ -138,7 +165,7 @@ Usage :
 > [KAFKA] `delivery` topic
 ```json
 {
-    "action": "DELIVERY_LOCATION_PUSH",
+    "action": "DELIVERY_LOCALISATION_PUSH",
     "message": {
         "request": 42,
         "id_order": 2,
@@ -229,6 +256,40 @@ Usage :
 }
 ```
 Response : `Service is not generating any response`
+
+### Get order around the steed (mock)
+
+Usage:
+
+>[KAFKA] `delivery` topic
+```json
+{
+    "action": "MAP_DELIVERY_PROBE",
+    "message": {
+        "request": 13121,
+        "lat": 4,
+        "long": 9
+    }
+}
+```
+
+Response:
+
+>[KAFKA] `delivery` topic
+```json
+{
+    "action": "MAP_DELIVERY_AVAILABLE_PICKUPS",
+    "message": {
+        "status": "OK",
+        "request": 13121,
+        "long": 9,
+        "lat": 4,
+        "orders": {
+            'id': 1
+        }
+    }
+}
+```
 
 ## Examples
 
