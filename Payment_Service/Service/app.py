@@ -83,6 +83,18 @@ def check_validity(request_id):
         }
     }
 
+
+def validate_order(params: dict):
+    # Build message to automatically validate order
+    return {
+        "action": "VALIDATE_ORDER_REQUEST",
+        "message": {
+            "request": params['request'],
+            "id_order": params['order'],
+        }
+    }
+
+
 def credit_deliverer():
     """
     Credit deliverer account for its delivery (simulated)
@@ -124,6 +136,7 @@ def kafka_ordering_producer_worker(mq: queue.Queue):
     producer.close()
     return
 
+
 def kafka_ordering_consumer_worker(mq: queue.Queue):
     """
     Kafka Ordering Topic Consumer
@@ -162,7 +175,10 @@ def kafka_ordering_consumer_worker(mq: queue.Queue):
                     logging.info("PUT check_validity MESSAGE in QUEUE")
                     mq.put(
                         check_validity(message.value["message"]["request"])
-                    ) 
+                    )
+                    mq.put(
+                        validate_order(message.value["message"])
+                    )
         except Exception as e:
             logging.fatal(e, exc_info=True)
     # Post routine

@@ -6,4 +6,4 @@ RUN python -m pip install --upgrade pip
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
 ENTRYPOINT ["python"]
-CMD ["PaywallService.py"]
+CMD ["app.py"]
