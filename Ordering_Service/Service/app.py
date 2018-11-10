@@ -181,6 +181,16 @@ def kafka_restaurant_consumer_worker(ordering_mq: queue.Queue, restaurant_mq: qu
                         int(message.value["message"]["request"]),
                         message.value["message"]
                     )
+                elif str(message.value["action"]).upper() == "VALIDATE_ORDER_REQUEST":
+                    logging.info("Validate Order in DATABASE")
+                    ordering_mq.put(
+                        validate_order(
+                            dbh,
+                            int(message.value["message"]["request"]),
+                            message.value["message"]
+                        )
+                    )
+
                 # Post routine
                 __mysql_close(dbh)
         except pymysql.err.OperationalError:

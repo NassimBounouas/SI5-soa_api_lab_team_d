@@ -170,8 +170,8 @@ Usage :
         "request": 42,
         "id_order": 2,
         "id_steed": 1,
-        "longitude": 42,
-        "latitude": -53
+        "longitude": 42.0,
+        "latitude": -53.0
     }
 }
 ```
@@ -201,8 +201,8 @@ Response :
     "message": {
         "status": "OK",
         "request": 42,
-        "latitude": 42,
-        "longitude": -53,
+        "latitude": 42.0,
+        "longitude": -53.0,
         "timestamp" : "2018-11-07 13:00"
     }
 }

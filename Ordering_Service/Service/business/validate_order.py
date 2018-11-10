@@ -25,7 +25,7 @@ def validate_order(dbh, request_id, params: dict):
             ))
     if id_order > 0:
         return {
-            'action': 'ORDER_ACCEPTED',
+            'action': 'ORDER_STATUS',
             'message': {
                 'status': 'OK',
                 'request': int(request_id),
@@ -36,7 +36,7 @@ def validate_order(dbh, request_id, params: dict):
             }
         }
     return {
-        'action': 'ORDER_ACCEPTED',
+        'action': 'ORDER_STATUS',
         'message': {
             'status': 'KO',
             'request': int(request_id),
