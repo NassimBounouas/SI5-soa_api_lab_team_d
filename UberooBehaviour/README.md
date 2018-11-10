@@ -3,7 +3,7 @@
 ### Author
 __Nikita ROUSSEAU__
 ### Updated
-__00:00 07/11/2018__
+__20:00 10/11/2018__
 
 ## Requirements
 
@@ -35,6 +35,7 @@ $ python app.py
   - Erin, a software developer working in a major company;
   - Jordan, restaurant chef;
   - Jamie, a coursier;
+  - Terry, restaurant owner.
 
 ### Week 41: Initial Story set
 
@@ -42,13 +43,11 @@ $ python app.py
   + As Gail, I can browse the food catalogue by categories so that I can immediately identify my favorite junk food;
   - As Erin, I want to know before ordering the estimated time of delivery of the meal so that I can schedule my work around it, and be ready when it arrives.
   - As Erin, I can pay directly by credit card on the platform, so that I only have to retrieve my food when delivered;
-  + As Jordan, I want to access to the order list, so that I can prepare the meal efficiently.
-  + As Jamie, I want to know the orders that will have to be delivered around me, so that I can choose one and go to the restaurant to begin the course.
-  + As Jamie, I want to notify that the order has been delivered, so that my account can be credited and the restaurant can be informed.
+  - As Jordan, I want to access to the order list, so that I can prepare the meal efficiently.
+  - As Jamie, I want to know the orders that will have to be delivered around me, so that I can choose one and go to the restaurant to begin the course.
+  - As Jamie, I want to notify that the order has been delivered, so that my account can be credited and the restaurant can be informed.
 
 ### Week 43: First evolution
-
-New personna: Terry, restaurant owner.
 
   - As Jordan, I want the customers to be able to review the meals so that I can improve them according to their feedback;
   - As a customer (Gail, Erin), I want to track the geolocation of the coursier in real time, so that I can anticipate when I will eat.
@@ -61,5 +60,5 @@ New personna: Terry, restaurant owner.
 
 ### Week 45: Last evolution
 
-  - As Terry, I can emit a promotional code based on my menu contents (e.g., 10% discout for an entry-main course-dessert order), so that I can sell more expensive orders.
+  - (Dismissed) As Terry, I can emit a promotional code based on my menu contents (e.g., 10% discout for an entry-main course-dessert order), so that I can sell more expensive orders.
   - As Gail or Erin, I can follow the position of Jamie in real time, so that the food ETA can be updated automatically.

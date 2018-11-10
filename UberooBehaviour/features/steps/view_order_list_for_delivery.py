@@ -14,6 +14,6 @@ def step_impl(context):
     pass
 
 
-@then('an order collection is fetched')
+@then('a pickup order collection is fetched')
 def step_impl(context):
     pass
