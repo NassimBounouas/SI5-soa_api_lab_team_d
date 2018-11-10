@@ -6,6 +6,6 @@ Feature: Review meals
 
   @skip
   Scenario: Review a meal
-    Given a client "Erin" with an order that contains "Sushis saumon"
+    Given a customer "Erin" with an order that contains "Sushis saumon"
      When leaving a review on meal "Sushis saumon"
      Then the feedback is readable by the chief

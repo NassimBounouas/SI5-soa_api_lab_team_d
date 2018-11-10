@@ -6,6 +6,6 @@ Feature: Track coursier
 
   @skip
   Scenario: Track a coursier while delivering
-    Given a client "Erin" with a picked up order id "42"
+    Given a customer "Erin" with a picked up order id "42"
      When the customer asks from the geolocation of the coursier
      Then the geolocation is returned

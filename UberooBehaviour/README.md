@@ -3,7 +3,7 @@
 ### Author
 __Nikita ROUSSEAU__
 ### Updated
-__00:00 07/11/2018__
+__20:00 10/11/2018__
 
 ## Requirements
 
@@ -60,5 +60,5 @@ $ python app.py
 
 ### Week 45: Last evolution
 
-  - As Terry, I can emit a promotional code based on my menu contents (e.g., 10% discout for an entry-main course-dessert order), so that I can sell more expensive orders.
+  - (Dismissed) As Terry, I can emit a promotional code based on my menu contents (e.g., 10% discout for an entry-main course-dessert order), so that I can sell more expensive orders.
   - As Gail or Erin, I can follow the position of Jamie in real time, so that the food ETA can be updated automatically.

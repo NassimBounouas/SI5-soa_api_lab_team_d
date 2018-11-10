@@ -4,6 +4,7 @@ from share.fetch_callback import fetch_callback
 from share.query_callback import query_callback
 
 
+# Note the final $ for regex
 @given('a steed "{steed_name}"')
 def step_impl(context, steed_name):
     pass

@@ -4,6 +4,7 @@ Feature: Emit a promotional code
   I can emit a promotional code,
   so that I can attract more customer to my restaurant.
 
+  @skip
   Scenario: Emit a promo code
     Given a restaurant "Dragon d'Or"
      When creating a new promo code "5OFF" giving a "5%" discount

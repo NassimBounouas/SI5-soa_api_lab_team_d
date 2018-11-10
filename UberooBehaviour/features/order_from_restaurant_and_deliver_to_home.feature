@@ -6,12 +6,12 @@ Feature: Order from restaurant and deliver to home
 
   @skip
   Scenario: Order a lunch from a restaurant
-    Given a client "Gail" that wants to eat "Sushis saumon"
+    Given a customer "Gail" that wants to eat "Sushis saumon"
      When the order is marked as ready for pickup
      Then the order is available for pickup by steeds
 
   @skip
   Scenario: Deliver a lunch to a place
-    Given a client "Gail" and its last order ready for pickup
+    Given a customer "Gail" and its last order ready for pickup
      When the order is to customer place
      Then the order is marked as delivered
