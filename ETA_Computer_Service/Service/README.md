@@ -85,8 +85,8 @@ Example of request:
 	"request" : 1001,
 	"id_order": 421,
 	"to": "Campus Templier",
-	"lastLatitude": 7,
-	"lastLongitude": 43,
+	"lastLatitude": 7.1,
+	"lastLongitude": 43.6,
 	"timestamp": "2018-11-01 12:30"
     }
 }
@@ -101,8 +101,8 @@ Example of answer:
         "request": 1001,
         "id_order": 421,
         "to": "Campus Templier",
-        "lastLatitude": 7,
-        "lastLongitude": 43,
+        "lastLatitude": 7.1,
+        "lastLongitude": 43.6,
         "timestamp": "2018-11-01 12:30",
         "eta": 6
     }
