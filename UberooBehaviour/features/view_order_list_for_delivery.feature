@@ -8,4 +8,4 @@ Feature: View order list for delivery
   Scenario: View orders around position
     Given a steed "Jamie" with a GPS position "43.700000,7.250000"
      When listing available orders around
-     Then an order collection is fetched
+     Then a pickup order collection is fetched

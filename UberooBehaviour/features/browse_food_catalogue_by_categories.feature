@@ -4,7 +4,6 @@ Feature: Browse the food catalogue by categories
   I can browse the food catalogue by categories,
   so that I can immediately identify my favorite junk food.
 
-  @skip
   Scenario: Search for sushis saumon meal
     Given a list of food categories
      When listing meals by "Japonais" category
