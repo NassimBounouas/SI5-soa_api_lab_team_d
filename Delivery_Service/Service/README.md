@@ -170,8 +170,8 @@ Usage :
         "request": 42,
         "id_order": 2,
         "id_steed": 1,
-        "longitude": 42,
-        "latitude": -53
+        "longitude": 42.0,
+        "latitude": -53.0
     }
 }
 ```
@@ -201,8 +201,8 @@ Response :
     "message": {
         "status": "OK",
         "request": 42,
-        "latitude": 42,
-        "longitude": -53,
+        "latitude": 42.0,
+        "longitude": -53.0,
         "timestamp" : "2018-11-07 13:00"
     }
 }
@@ -267,8 +267,8 @@ Usage:
     "action": "MAP_DELIVERY_PROBE",
     "message": {
         "request": 13121,
-        "lat": 4,
-        "long": 9
+        "lat": 40.0,
+        "long": 9.0
     }
 }
 ```
@@ -282,11 +282,15 @@ Response:
     "message": {
         "status": "OK",
         "request": 13121,
-        "long": 9,
-        "lat": 4,
-        "orders": {
-            'id': 1
-        }
+        "orders": [
+            {
+                "delivery_address": "testdeliveryaddress",
+                "meal_name": "testmeal",
+                "id": 1,
+                "pickup_restaurant": "testrestaurant",
+                "gps": [40.0, 9.0]
+            }
+        ]
     }
 }
 ```

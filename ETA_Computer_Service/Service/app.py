@@ -98,8 +98,8 @@ def update_eta(request, order, to, lastLatitude, lastLongitude, timestamp):
     :param request: int
     :param order: int
     :param to: str
-    :param lastLatitude: int
-    :param lastLongitude: int
+    :param lastLatitude: float
+    :param lastLongitude: float
     :param timestamp: str
     :return: json
     """
@@ -113,8 +113,8 @@ def update_eta(request, order, to, lastLatitude, lastLongitude, timestamp):
             "request": int(request),
             "id_order": int(order),
             "to": to,
-            "lastLatitude": lastLatitude,
-            "lastLongitude": lastLongitude,
+            "lastLatitude": float(lastLatitude),
+            "lastLongitude": float(lastLongitude),
             "timestamp": timestamp,
             "eta": time
         }
