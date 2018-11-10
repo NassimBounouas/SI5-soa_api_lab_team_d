@@ -4,6 +4,7 @@ Feature: Track coursier
   I want to track the geolocation of the coursier in real time,
   so that I can anticipate when I will eat.
 
+  @skip
   Scenario: Track a coursier while delivering
     Given a client "Erin" with a picked up order id "42"
      When the customer asks from the geolocation of the coursier
