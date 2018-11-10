@@ -20,7 +20,7 @@ cwd=$(pwd)
 
 echo -e " \n\n${BLUE}### Testing API Gateway availability... ###${NC}\n"
 
-curl -sSf http://api-gateway:8080/status > /dev/null
+curl -sSf http://127.0.0.1:8080/status > /dev/null
 
 if [ $? -ne 0 ]; then
     echo -e " \n\n${RED}### API GATEWAY IS NOT AVAILABLE ! EXIT(1) ###${NC}\n"
