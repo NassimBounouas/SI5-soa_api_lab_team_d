@@ -1,10 +1,7 @@
 #!/bin/bash
-echo -e "Eta_Computer, Ordering and Menu Services are in Python - they don't need to be compiled\n\n"
+curl -sSf http://127.0.0.1:8080/ > /dev/null
 
-echo -e "Building Chinese_Restaurant and Delivery Services - Go must be installed on your system\n"
-cd Chinese_Restaurant_Service/Service
-./build.sh
-cd ../../Delivery_Service/Service
-./build.sh
-cd ../..
-
+if [ $? -eq 0 ]; then
+    echo -e " \n\n${RED}### LOCALHOST PORT 8080 IS ALREADY BOUND ! PLEASE RELEASE THE PORT ! ###${NC}\n"
+    exit 1
+fi
