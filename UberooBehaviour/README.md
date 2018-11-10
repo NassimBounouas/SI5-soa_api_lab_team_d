@@ -35,6 +35,7 @@ $ python app.py
   - Erin, a software developer working in a major company;
   - Jordan, restaurant chef;
   - Jamie, a coursier;
+  - Terry, restaurant owner.
 
 ### Week 41: Initial Story set
 
@@ -48,9 +49,7 @@ $ python app.py
 
 ### Week 43: First evolution
 
-New personna: Terry, restaurant owner.
-
-  - As Jordan, I want the customers to be able to review the meals so that I can improve them according to their feedback;
+  + As Jordan, I want the customers to be able to review the meals so that I can improve them according to their feedback;
   - As a customer (Gail, Erin), I want to track the geolocation of the coursier in real time, so that I can anticipate when I will eat.
   - As Terry, I want to get some statistics (speed, cost) about global delivery time and delivery per coursier.
   
