@@ -107,3 +107,11 @@ services:
      - "4015:3306"
     healthcheck:
       test: "mysqladmin ping --silent"
+
+  payment:
+    image: uberoolab/team-d-payment-service
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+     - "4006:5000"
