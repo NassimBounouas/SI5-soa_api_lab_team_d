@@ -19,6 +19,7 @@ from business.prepare_order import prepare_order
 from business.validate_order import validate_order
 from business.get_order_list import get_order_list
 from business.notify_order import notify_order
+from business.request_delivery import request_delivery
 
 __product__ = "Ordering Service"
 __author__ = "Nikita ROUSSEAU"
@@ -201,7 +202,8 @@ def kafka_restaurant_consumer_worker(ordering_mq: queue.Queue, restaurant_mq: qu
     consumer_restaurant.close()
     return
 
-def kafka_ordering_consumer_worker(ordering_mq: queue.Queue, restaurant_mq: queue.Queue):
+
+def kafka_ordering_consumer_worker(ordering_mq: queue.Queue, restaurant_mq: queue.Queue, delivery_mq: queue.Queue):
     """
     Kafka Ordering Topic Consumer
     as thread worker
@@ -257,9 +259,17 @@ def kafka_ordering_consumer_worker(ordering_mq: queue.Queue, restaurant_mq: queu
                             message.value["message"]
                         )
                     )
-                    # update order status as accepted
+                    # update order status as accepted and responde to api gateway
                     ordering_mq.put(
                         validate_order(
+                            dbh,
+                            int(message.value["message"]["request"]),
+                            message.value["message"]
+                        )
+                    )
+                    # Request a delivery
+                    delivery_mq.put(
+                        request_delivery(
                             dbh,
                             int(message.value["message"]["request"]),
                             message.value["message"]
@@ -304,13 +314,14 @@ if __name__ == "__main__":
     # RESTAURANT TOPIC I/O
     restaurant_mq = queue.Queue()
     ordering_mq = queue.Queue()
+    delivery_mq = queue.Queue()
 
     # CONSUMERS
     t_consumer_ordering_worker = threading.Thread(
         name='kafka_ordering_consumer_worker',
         daemon=True,
         target=kafka_ordering_consumer_worker,
-        args=(ordering_mq, restaurant_mq,)
+        args=(ordering_mq, restaurant_mq, delivery_mq)
     )
     threads.append(t_consumer_ordering_worker)
 
@@ -337,6 +348,13 @@ if __name__ == "__main__":
         args=('ordering', ordering_mq,)
     )
     threads.append(t_ordering_producer_worker)
+    t_delivery_producer_worker = threading.Thread(
+        name='kafka_delivery_producer_worker',
+        daemon=True,
+        target=kafka_producer_worker,
+        args=('delivery', delivery_mq,)
+    )
+    threads.append(t_delivery_producer_worker)
 
     ###########################################################
 

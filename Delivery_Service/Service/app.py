@@ -14,11 +14,11 @@ from time import sleep
 from kafka import KafkaProducer
 from kafka import KafkaConsumer
 
-from  Delivery_Service.Service.business.notify_delivery import notify_delivery_ordering,notify_delivery_payment
-from  Delivery_Service.Service.business.map_delivery import map_delivery
-from  Delivery_Service.Service.business.delivery_location import delivery_location,get_delivery_location
-from  Delivery_Service.Service.business.steed_stat_request import steed_stat_request
-from  Delivery_Service.Service.business.send_steed_status import send_steed_status
+from  business.notify_delivery import notify_delivery_ordering,notify_delivery_payment
+from  business.map_delivery import map_delivery
+from  business.delivery_location import delivery_location,get_delivery_location
+from  business.steed_stat_request import steed_stat_request
+from  business.send_steed_status import send_steed_status
 
 __product__ = "Delivery Service"
 __author__ = "Nassim Bounouas"
