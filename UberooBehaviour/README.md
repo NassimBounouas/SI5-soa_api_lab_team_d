@@ -43,7 +43,7 @@ $ python app.py
   - As Erin, I want to know before ordering the estimated time of delivery of the meal so that I can schedule my work around it, and be ready when it arrives.
   - As Erin, I can pay directly by credit card on the platform, so that I only have to retrieve my food when delivered;
   + As Jordan, I want to access to the order list, so that I can prepare the meal efficiently.
-  - As Jamie, I want to know the orders that will have to be delivered around me, so that I can choose one and go to the restaurant to begin the course.
+  + As Jamie, I want to know the orders that will have to be delivered around me, so that I can choose one and go to the restaurant to begin the course.
   - As Jamie, I want to notify that the order has been delivered, so that my account can be credited and the restaurant can be informed.
 
 ### Week 43: First evolution
