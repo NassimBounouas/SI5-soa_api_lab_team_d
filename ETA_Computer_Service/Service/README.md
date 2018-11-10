@@ -63,6 +63,17 @@ Example of answer:
 
 Send a Json with, "ETA_UPDATE_REQUESTED" on the action field and the armuments in the message field, to the kafka topic "delivery" and give a response on the same topic.
 
+```
+{   
+    "action": "ETA_REQUEST",
+    "message": {
+	"request" : 1001,
+	"from": "Le soleil de l'est",
+	"to": "Campus Templier"
+    }
+}
+```
+
 **Examples:**
 
 Example of request:
@@ -74,8 +85,8 @@ Example of request:
 	"request" : 1001,
 	"id_order": 421,
 	"to": "Campus Templier",
-	"lastLatitude": 7,
-	"lastLongitude": 43,
+	"lastLatitude": 7.1,
+	"lastLongitude": 43.6,
 	"timestamp": "2018-11-01 12:30"
     }
 }
@@ -90,8 +101,8 @@ Example of answer:
         "request": 1001,
         "id_order": 421,
         "to": "Campus Templier",
-        "lastLatitude": 7,
-        "lastLongitude": 43,
+        "lastLatitude": 7.1,
+        "lastLongitude": 43.6,
         "timestamp": "2018-11-01 12:30",
         "eta": 6
     }
