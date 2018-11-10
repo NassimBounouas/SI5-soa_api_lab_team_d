@@ -310,7 +310,36 @@ def create_promotional_route():
         }), 200
 
 
+@app.route("/add_promotional_code",
+           methods=['POST'])
+def add_promotional_code_route():
+    if request.method == 'POST':
+        # Verify user input
+        if 'code' not in request.form or 'reduction' not in request.form or 'id_foods' not in request.form:
+            BadRequest()  # 400
 
+        # Extract params
+        code = request.form['code']
+        reduction = request.form['reduction']
+        listOfFoodId = request.form['id_foods']
+
+        # Build message
+        message, request_id = make_kafka_message(
+            action='ADD_PROMOTIONAL_CODE',
+            message={
+                "code": code,
+                "reduction": reduction,
+                "listOfFoodId": listOfFoodId
+            }
+        )
+
+        # Send
+        threads_mq['restaurant'].put(message)
+
+        # Response with callback url
+        return jsonify({
+            "Promotional code created"
+        }), 200
 ########################################################################################################################
 # ORDERING SERVICE
 ########################################################################################################################
@@ -375,13 +404,13 @@ def validate_order_route():
             BadRequest()  # 400
 
         # Extract params
-        order = request.form['id_order']
+        id_order = request.form['id_order']
 
         # Build message
         message, request_id = make_kafka_message(
             action='VALIDATE_ORDER_REQUEST',
             message={
-                "order": order,
+                "id_order": id_order,
             }
         )
 
@@ -390,7 +419,7 @@ def validate_order_route():
 
         # Response with callback url
         return jsonify({
-            "callbackUrl": request.url + '?id=' + str(request_id)
+            "callbackUrl": request.headers.get('host') + '/order-status?id=' + str(request_id)
         }), 202
 
 
