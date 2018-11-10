@@ -5,7 +5,7 @@ from share.query_callback import query_callback
 
 
 # Note the final $ for regex
-@given('a steed "{steed_name}"')
+@given('a steed "{steed_name}"$')
 def step_impl(context, steed_name):
     pass
 
