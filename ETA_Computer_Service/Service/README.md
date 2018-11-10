@@ -63,6 +63,17 @@ Example of answer:
 
 Send a Json with, "ETA_UPDATE_REQUESTED" on the action field and the armuments in the message field, to the kafka topic "delivery" and give a response on the same topic.
 
+```
+{   
+    "action": "ETA_REQUEST",
+    "message": {
+	"request" : 1001,
+	"from": "Le soleil de l'est",
+	"to": "Campus Templier"
+    }
+}
+```
+
 **Examples:**
 
 Example of request:
