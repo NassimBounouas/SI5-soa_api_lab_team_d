@@ -50,7 +50,4 @@ def step_impl(context):
 @then('an order collection is fetched')
 def step_impl(context):
 
-    if len(context.orders) < 2:
-        raise ValueError()
-
-    assert len(context.orders) > 2
+    assert len(context.orders) >= 2
