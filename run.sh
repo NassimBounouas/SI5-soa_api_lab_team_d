@@ -8,4 +8,10 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 ####
+
 echo -e " \n\n${RED}### Starting Behaviour Test Suite ###${NC}\n"
+
+cd UberooBehaviour
+
+docker-compose up --force-recreate
+docker-compose down
