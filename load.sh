@@ -27,10 +27,10 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-### Behaviour Test Suite
+### Load Runner
 
-echo -e " \n\n${GREEN}### Starting Behaviour test suite... ###${NC}\n"
-cd UberooBehaviour
+echo -e " \n\n${GREEN}### Launching Load Runner... ###${NC}\n"
+cd UberooLoadRunner
 
 docker-compose up --build --force-recreate
 
