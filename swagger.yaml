@@ -450,6 +450,62 @@ paths:
           description: "Request id not found"
       security:
       - api_key: []
+  /map:
+    get:
+      tags:
+      - "restaurants"
+      summary: "Retrieve response after an order list near a position request"
+      description: "Retrieve response after an order list near a position request"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of the previous list order request"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/OrderNearList"
+        404:
+          description: "Request id not found"
+      security:
+      - api_key: []
+    post:
+      tags:
+      - "restaurants"
+      summary: "Request order list which are near the steed"
+      description: "Request order list which are near the steed"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "long"
+        in: "formData"
+        description: "The steed longitude"
+        required: true
+        type: "number"
+      - name: "lat"
+        in: "formData"
+        description: "The steed latitude"
+        required: true
+        type: "number"
+      responses:
+        202:
+          description: "successful operation returning the callback url to get the\
+            \ result"
+          schema:
+            $ref: "#/definitions/CallbackUrlMap"
+        400:
+          description: "Invalid status value"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
 securityDefinitions:
   petstore_auth:
     type: "oauth2"
@@ -508,6 +564,15 @@ definitions:
         example: "http://127.0.0.1:8080/restaurants?id=222064513089488915866312833514683871088"
     example:
       callbackUrl: "http://127.0.0.1:8080/restaurants?id=222064513089488915866312833514683871088"
+  CallbackUrlMap:
+    type: "object"
+    properties:
+      callbackUrl:
+        type: "string"
+        format: "uri"
+        example: "http://127.0.0.1:8080/map?id=274813161631029623315697941684127011112"
+    example:
+      callbackUrl: "http://127.0.0.1:8080/map?id=274813161631029623315697941684127011112"
   CallbackUrlRestaurantMenu:
     type: "object"
     properties:
@@ -579,6 +644,45 @@ definitions:
         id: 12
         region: "Asie"
       is_menu: false
+  OrderNear:
+    type: "object"
+    properties:
+      delivery_address:
+        type: "string"
+      id:
+        type: "integer"
+      meal_name:
+        type: "integer"
+      pickup_restaurant:
+        type: "string"
+    example:
+      delivery_address: "delivery_address"
+      pickup_restaurant: "pickup_restaurant"
+      meal_name: 6
+      id: 0
+  OrderNearList:
+    type: "object"
+    properties:
+      orders:
+        type: "array"
+        items:
+          $ref: "#/definitions/OrderNear"
+      request:
+        type: "integer"
+      status:
+        type: "string"
+    example:
+      request: 1
+      orders:
+      - delivery_address: "delivery_address"
+        pickup_restaurant: "pickup_restaurant"
+        meal_name: 6
+        id: 0
+      - delivery_address: "delivery_address"
+        pickup_restaurant: "pickup_restaurant"
+        meal_name: 6
+        id: 0
+      status: "status"
   Restaurant:
     type: "object"
     properties:
@@ -636,7 +740,7 @@ definitions:
     properties:
       eta:
         type: "number"
-        example: 10
+        example: 10.0
         description: "ETA in minutes"
       from:
         type: "string"
@@ -651,7 +755,7 @@ definitions:
         example: "OK"
     example:
       request: 0
-      eta: 10
+      eta: 10.0
       from: "from"
       to: "to"
       status: "OK"
