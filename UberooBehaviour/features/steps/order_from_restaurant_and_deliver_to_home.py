@@ -6,7 +6,7 @@ from share.query_callback import query_callback
 
 # Scenario: Order a lunch from a restaurant
 
-@given('a client "{customer_name}" that wants to eat "{meal_name}"')
+@given('a customer "{customer_name}" that wants to eat "{meal_name}"')
 def step_impl(context, customer_name, meal_name):
     pass
 
@@ -26,7 +26,7 @@ def step_impl(context):
 
 # Scenario: Deliver a lunch to a place
 
-@given('a client "{customer_name}" and its last order ready for pickup')
+@given('a customer "{customer_name}" and its last order ready for pickup')
 def step_impl(context, customer_name):
     pass
 

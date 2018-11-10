@@ -4,8 +4,8 @@ from share.fetch_callback import fetch_callback
 from share.query_callback import query_callback
 
 
-@given('a client "{client_name}" with an order id "{order_id}"')
-def step_impl(context, client_name, order_id):
+@given('a customer "{customer_name}" with an order id "{order_id}"')
+def step_impl(context, customer_name, order_id):
     pass
 
 
