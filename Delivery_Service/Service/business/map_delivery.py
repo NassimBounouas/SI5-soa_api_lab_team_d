@@ -31,10 +31,10 @@ def map_delivery(dbh, request_id, params: dict):
             if name not in rest_gps:
                 long = random.uniform(-50.0,50.0)
                 lat = random.uniform(-50.0,50.0)
-                rest_gps[name] = [long,lat]
+                rest_gps[name] = [lat,long]
             gps = rest_gps[name]
             #if stted within the range 3km, then ok
-            if ((latitude - r/111) < gps[1]) and ((latitude + r/111) > gps[1]) and ((longitude - r/76) < gps[0]) and ((longitude + r/76) > gps[0]):
+            if ((latitude - r/111) < gps[0]) and ((latitude + r/111) > gps[0]) and ((longitude - r/76) < gps[1]) and ((longitude + r/76) > gps[1]):
                 order['gps'] = gps
                 res.append(order)
     return {
