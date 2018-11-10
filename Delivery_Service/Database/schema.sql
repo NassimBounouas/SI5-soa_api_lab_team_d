@@ -17,8 +17,8 @@ name varchar(255),
 averagePay int,
 averageTime int,
 numberOfDelivery int,
-longitude int,
-latitude int,
+longitude float,
+latitude float,
 lastUpdate DATETIME
 );
 

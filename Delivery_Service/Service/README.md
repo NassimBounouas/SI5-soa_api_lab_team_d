@@ -267,8 +267,8 @@ Usage:
     "action": "MAP_DELIVERY_PROBE",
     "message": {
         "request": 13121,
-        "lat": 4,
-        "long": 9
+        "lat": 40.0,
+        "long": 9.0
     }
 }
 ```
@@ -282,11 +282,15 @@ Response:
     "message": {
         "status": "OK",
         "request": 13121,
-        "long": 9,
-        "lat": 4,
-        "orders": {
-            'id': 1
-        }
+        "orders": [
+            {
+                "delivery_address": "testdeliveryaddress",
+                "meal_name": "testmeal",
+                "id": 1,
+                "pickup_restaurant": "testrestaurant",
+                "gps": [40.0, 9.0]
+            }
+        ]
     }
 }
 ```
