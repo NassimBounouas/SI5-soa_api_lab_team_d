@@ -1,9 +1,9 @@
 version: "3.6"
 
 services:
-  bertha:
+  mg42:
     image: denvazh/gatling
-    container_name: bertha
+    container_name: mg42
     network_mode: "host"
     command: "-s LoadTest"
     ports:
