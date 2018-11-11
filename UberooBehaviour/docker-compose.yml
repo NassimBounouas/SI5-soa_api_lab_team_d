@@ -4,3 +4,4 @@ services:
   behaviour:
     build: .
     container_name: behaviour
+    network_mode: "host"
