@@ -4,14 +4,8 @@ Feature: Order from restaurant and deliver to home
   I can order my lunch from a restaurant,
   so that the food is delivered to my place.
 
-  @skip
   Scenario: Order a lunch from a restaurant
-    Given a customer "Gail" that wants to eat "Sushis saumon"
-     When the order is marked as ready for pickup
-     Then the order is available for pickup by steeds
-
-  @skip
-  Scenario: Deliver a lunch to a place
-    Given a customer "Gail" and its last order ready for pickup
-     When the order is to customer place
-     Then the order is marked as delivered
+    Given a customer "Gail" that wants to eat "Sushis saumon" at "Gail's home"
+     When "Gail" is browsing the menu correspoding to the category "Japonais" and he selects "Sushis saumon"
+     Then "Gail" is ordering the meal from the right restaurant to be delivered at "Gail's home"
+     Then A delivery request is created
