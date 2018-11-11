@@ -39,4 +39,4 @@ docker-compose up --build --force-recreate
 echo -e " \n\n${ORANGE}### Clean up... ###${NC}\n"
 docker-compose down
 
-cd cwd
+cd $cwd
